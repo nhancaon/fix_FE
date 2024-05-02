@@ -1,47 +1,61 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
 import { images } from "../../constants";
 import { CustomButton, FormField } from "../../components";
-import { getCurrentUser, signIn } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { useNavigation } from '@react-navigation/native';
-import api from '../../api/server';
-import * as SecureStore from 'expo-secure-store';
-import { decodeJwtMiddleware } from '../middleware/decode'; 
+import { login,getUserInformationById } from "../../services/LoginServices";
+import { AuthContext } from "../../store/AuthContext";
+import { decodeJwtMiddleware } from '../../middleware/decode';
 
 const SignIn = () => {
   const { setUser, setIsLogged } = useGlobalContext();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-  const navigation = useNavigation();
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const submit = async () => {
-    setIsSubmitting(true);
-  
+  const authCtx = useContext(AuthContext);
+
+  function handleChangeEmail(email) {
+    setEmail(email);
+  }
+
+  function handleChangePassword(password) {
+    setPassword(password);
+  }
+
+  async function handleLogin() {
     try {
-      const response = await api.post('/auth/login', {
-        email: form.email,
-        password: form.password
-      });
-  
-      console.log(response.data);
-      // Lưu trữ token trong SecureStore
-      await SecureStore.setItemAsync('token', response.data.result.token);
+      if (email === "" || password === "") {
+        Alert.alert("Error", "Please fill in all fields");
+      }
+      setSubmitting(true);
+      const loginResponse = await login(email, password);
+      if (loginResponse.code === 4000) {
+        Alert.alert("Failed", `Login failed, ${loginResponse.message}`);
+        return;
+      }
+      //store token to context
+      const authObj = loginResponse.result;
+      
+      authCtx.authenticate(authObj.token);
 
+      console.log(authObj);
+      const userLogin = await getUserInformationById(authObj.token, authObj.id)
+      console.log(userLogin);
+      setUser(userLogin);
+      setIsLogged(true);
+
+      Alert.alert("Success", "User signed in successfully");
       // Giải mã token
-      const decodedToken = await decodeJwtMiddleware(response);
-
-      // Kiểm tra role của người dùng
+      const decodedToken = await decodeJwtMiddleware(authObj.token); 
       if (decodedToken.role === 'product manager') {
-        navigation.navigate('ProductManagerHome');
-      } else if (decodedToken.role === 'other role') {
-        // Chuyển hướng đến màn hình khác nếu role không phải là 'product manager'
-        navigation.navigate('OtherHomePage');
+        router.replace("/AccountantHome"); 
+      } else if (decodedToken.role === 'chairman') {
+        router.replace("/AccountantHome");
+      } else if (decodedToken.role === 'accountant') {
+        router.replace("/AccountantHome"); 
       }
     } catch (error) {
       console.error(error);
@@ -54,9 +68,9 @@ const SignIn = () => {
       } else {
         console.log('Error', error.message);
       }
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
-  };
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -79,22 +93,22 @@ const SignIn = () => {
 
           <FormField
             title="Email"
-            value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
+            value={email}
+            handleChangeText={handleChangeEmail}
             otherStyles="mt-7"
             keyboardType="email-address"
           />
 
           <FormField
             title="Password"
-            value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
+            value={password}
+            handleChangeText={handleChangePassword}
             otherStyles="mt-7"
           />
 
           <CustomButton
             title="Sign In"
-            handlePress={submit}
+            handlePress={handleLogin}
             containerStyles="mt-7"
             isLoading={isSubmitting}
           />
