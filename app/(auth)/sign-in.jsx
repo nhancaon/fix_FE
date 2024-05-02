@@ -2,7 +2,6 @@ import { useState,useContext } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
 import { images } from "../../constants";
 import { CustomButton, FormField } from "../../components";
 import { getCurrentUser, signIn } from "../../lib/appwrite";
@@ -51,10 +50,55 @@ const SignIn = () => {
 
       Alert.alert("Success", "User signed in successfully");
       router.replace("/ac_home");  
+// import { useNavigation } from '@react-navigation/native';
+// import api from '../../api/server';
+// import * as SecureStore from 'expo-secure-store';
+// import { decodeJwtMiddleware } from '../middleware/decode'; 
+
+// const SignIn = () => {
+//   const { setUser, setIsLogged } = useGlobalContext();
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [form, setForm] = useState({
+//     email: "",
+//     password: "",
+//   });
+//   const navigation = useNavigation();
+
+//   const submit = async () => {
+//     setIsSubmitting(true);
+  
+//     try {
+//       const response = await api.post('/auth/login', {
+//         email: form.email,
+//         password: form.password
+//       });
+  
+//       console.log(response.data);
+//       // Lưu trữ token trong SecureStore
+//       await SecureStore.setItemAsync('token', response.data.result.token);
+
+//       // Giải mã token
+//       const decodedToken = await decodeJwtMiddleware(response);
+
+//       // Kiểm tra role của người dùng
+//       if (decodedToken.role === 'product manager') {
+//         navigation.navigate('ProductManagerHome');
+//       } else if (decodedToken.role === 'other role') {
+//         // Chuyển hướng đến màn hình khác nếu role không phải là 'product manager'
+//         navigation.navigate('OtherHomePage');
+//       }
     } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setSubmitting(false);
+      console.error(error);
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+      setIsSubmitting(false);
     }
   }
 
