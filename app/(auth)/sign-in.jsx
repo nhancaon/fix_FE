@@ -32,11 +32,11 @@ const SignIn = () => {
       }
       setSubmitting(true);
       const loginResponse = await login(email, password);
-      if (loginResponse.code === 4000) {
-        Alert.alert("Failed", `Login failed, ${loginResponse.message}`);
+      if (!loginResponse) {
+        Alert.alert("Failed", "Password or email is incorrect");
+        setSubmitting(false);
         return;
       }
-      //store token to context
       const authObj = loginResponse.result;
       
       authCtx.authenticate(authObj.token);
@@ -51,9 +51,9 @@ const SignIn = () => {
       // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token); 
       if (decodedToken.role === 'product manager') {
-        router.replace("/AccountantHome"); 
+        router.replace("/ProductManagerHome"); 
       } else if (decodedToken.role === 'chairman') {
-        router.replace("/AccountantHome");
+        router.replace("/ChairmanHome");
       } else if (decodedToken.role === 'accountant') {
         router.replace("/AccountantHome"); 
       }
