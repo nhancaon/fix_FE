@@ -50,7 +50,7 @@ const SignIn = () => {
       Alert.alert("Success", "User signed in successfully");
       // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token); 
-      if (decodedToken.role === 'SCOPE_MANAGER') {
+      if (decodedToken.role === 'PRODUCT_MANAGER') {
         router.replace("/ProductManagerHome"); 
       } else if (decodedToken.role === 'CHAIRMAN') {
         router.replace("/ChairmanHome");
