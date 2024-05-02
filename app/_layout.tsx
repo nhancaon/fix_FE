@@ -40,11 +40,11 @@ const RootLayout = () => {
   return (
     <GlobalProvider>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(accountant)" options={{ headerShown: false }}/>
+        <Stack.Screen name="(chairman)" options={{ headerShown: false }}/>
+        <Stack.Screen name="(productManager)" options={{ headerShown: false }}/>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
       </Stack>
     </GlobalProvider>

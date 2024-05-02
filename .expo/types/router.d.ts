@@ -7,29 +7,7 @@ declare module "expo-router" {
   export * from 'expo-router/build';
 
   // prettier-ignore
-type StaticRoutes = 
-  | `/` 
-  | `/(accountant)/ac_home` 
-  | `/ac_home` 
-  | `/(accountant)/inventory` 
-  | `/inventory` 
-  | `/(accountant)/work-order` 
-  | `/work-order` 
-  | `/(auth)/sign-in` 
-  | `/sign-in` 
-  | `/(auth)/sign-up` 
-  | `/sign-up` 
-  | `/(tabs)/bookmark` 
-  | `/bookmark` 
-  | `/(tabs)/create` 
-  | `/create` 
-  | `/(tabs)/home` 
-  | `/home` 
-  | `/(tabs)/profile` 
-  | `/profile` 
-  | `/middleware/decode` 
-  | `/screens/ProductManagerHome`;
-
+  type StaticRoutes = `/` | `/(accountant)/AccountantHome` | `/AccountantHome` | `/(accountant)/InventoryPage` | `/InventoryPage` | `/(accountant)/WordOrderPage` | `/WordOrderPage` | `/(auth)/sign-in` | `/sign-in` | `/(auth)/sign-up` | `/sign-up` | `/(chairman)/ChairmanHome` | `/ChairmanHome` | `/(productManager)/ProductManagerHome` | `/ProductManagerHome` | `/(tabs)/bookmark` | `/bookmark` | `/(tabs)/create` | `/create` | `/(tabs)/home` | `/home` | `/(tabs)/profile` | `/profile`;
   // prettier-ignore
   type DynamicRoutes<T extends string> = `/search/${SingleRoutePart<T>}`;
   // prettier-ignore

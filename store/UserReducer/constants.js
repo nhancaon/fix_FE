@@ -1,9 +1,0 @@
-export const SET_FULLNAME = "SET_FULLNAME";
-export const SET_EMAIL = "SET_EMAIL";
-export const SET_DATE_OF_BIRTH = "SET_DATE_OF_BIRTH";
-export const SET_PHONE = "SET_PHONE";
-export const SET_ROLE = "SET_ROLE";
-export const SET_ADDRESS = "SET_ADDRESS";
-export const SET_ALL = "SET_ALL";
-export const CLEAR_ALL = "CLEAR_ALL";
-export const SET_ALL_EXCEPT_EMAIL = "SET_ALL_EXCEPT_EMAIL";

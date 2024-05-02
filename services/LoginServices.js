@@ -5,8 +5,8 @@ export const login = async (email, password) => {
         const res = await http.post(
             "/api/auth/login",
             {
-                email: email,
-                password: password,
+                email,
+                password,
             },
             { withCredentials: true }
         );
@@ -24,7 +24,7 @@ export const getUserInformationById = async (token, id) => {
     };
     try {
         const res = await http.get(
-            `/api/auth/getUserInformationById/${id}`,
+            `/api/users/getUserInformationById/${id}`,
             config);
         return res;
     } catch (e) {

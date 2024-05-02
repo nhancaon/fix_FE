@@ -9,9 +9,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
-import Home from './ac_home';
-import Inventory from './inventory';
-import WorkOrder from './work-order';
+import AccountantHome from './AccountantHome';
+import Inventory from './InventoryPage'
+import WorkOrder from './WordOrderPage';
 import { images } from "../../constants";
 
 const Drawer = createDrawerNavigator()
@@ -81,10 +81,10 @@ const AccountantLayout = () => {
       }}
     >
       <Drawer.Screen
-        name="Home"
+        name="AccountantHome"
         options={{
-          drawerLabel: "Home",
-          title: "Home",
+          drawerLabel: "AccountantHome",
+          title: "AccountantHome",
           headerShadowVisible: false,
           drawerIcon: () => (
             <SimpleLineIcons
@@ -93,7 +93,7 @@ const AccountantLayout = () => {
               color={"#808080"} />
           ),
         }}
-        component={Home} 
+        component={AccountantHome} 
       />
       <Drawer.Screen
         name="Inventory"

@@ -9,13 +9,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
-=======
->>>>>>> ddc76456047e68aec0c8f271fadef48d4f925da7
     "@types/react": "~18.2.45",
     "axios": "^1.6.8",
     "expo": "~50.0.14",

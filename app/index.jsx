@@ -6,9 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import { CustomButton, Loader } from "../components";
 import { useGlobalContext } from "../context/GlobalProvider";
-import { login } from "../services/LoginServices";
-import { AuthContext } from "../store/AuthContext";
-
 const Welcome = () => {
   const { loading, isLogged } = useGlobalContext();
 
