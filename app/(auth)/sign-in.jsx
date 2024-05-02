@@ -50,11 +50,11 @@ const SignIn = () => {
       Alert.alert("Success", "User signed in successfully");
       // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token); 
-      if (decodedToken.role === 'product manager') {
+      if (decodedToken.role === 'SCOPE_MANAGER') {
         router.replace("/ProductManagerHome"); 
-      } else if (decodedToken.role === 'chairman') {
+      } else if (decodedToken.role === 'CHAIRMAN') {
         router.replace("/ChairmanHome");
-      } else if (decodedToken.role === 'accountant') {
+      } else if (decodedToken.role === 'ACCOUNTANT') {
         router.replace("/AccountantHome"); 
       }
     } catch (error) {
