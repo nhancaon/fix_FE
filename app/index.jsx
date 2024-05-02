@@ -6,6 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import { CustomButton, Loader } from "../components";
 import { useGlobalContext } from "../context/GlobalProvider";
+import { login } from "../services/LoginServices";
+import { AuthContext } from "../store/AuthContext";
 
 const Welcome = () => {
   const { loading, isLogged } = useGlobalContext();
@@ -36,7 +38,7 @@ const Welcome = () => {
 
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Explore Infinite{"\n"}
+              Explores Infinite{"\n"}
               Opportunities with{" "}
               <Text className="text-secondary-200">Manufacturio</Text>
             </Text>
@@ -64,6 +66,7 @@ const Welcome = () => {
       <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
+
 };
 
 export default Welcome;
