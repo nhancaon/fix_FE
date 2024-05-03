@@ -10,6 +10,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
 import ChairmanHome from './ChairmanHome';
+import SignIn from '../(auth)/sign-in';
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { AuthContext } from "../../store/AuthContext";
+import React, { useContext } from 'react';
 
 const Drawer = createDrawerNavigator()
 const COLORS = {
@@ -19,6 +23,15 @@ const COLORS = {
 }
 
 const ChairmanLayout = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+  const authCtx = useContext(AuthContext);
+  const handleLogout = () => {
+    // Clear user data and token
+    setUser(null);
+    setIsLogged(false);
+    authCtx.logout();
+    
+  };
   return (
     
     <Drawer.Navigator>
@@ -36,6 +49,16 @@ const ChairmanLayout = () => {
           ),
         }}
         component={ChairmanHome} 
+      />
+      <Drawer.Screen
+        name="logout"
+        component={SignIn} 
+        listeners={{
+          focus: handleLogout,
+        }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Drawer.Navigator>
   )

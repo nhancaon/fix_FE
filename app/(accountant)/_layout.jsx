@@ -13,6 +13,10 @@ import AccountantHome from './AccountantHome';
 import Inventory from './InventoryPage'
 import WorkOrder from './WordOrderPage';
 import { images } from "../../constants";
+import SignIn from '../(auth)/sign-in';
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { AuthContext } from "../../store/AuthContext";
+import React, { useContext } from 'react';
 
 const Drawer = createDrawerNavigator()
 const COLORS = {
@@ -22,6 +26,15 @@ const COLORS = {
 }
 
 const AccountantLayout = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+  const authCtx = useContext(AuthContext);
+  const handleLogout = () => {
+    // Clear user data and token
+    setUser(null);
+    setIsLogged(false);
+    authCtx.logout();
+    
+  };
   return (
     
     <Drawer.Navigator
@@ -124,6 +137,16 @@ const AccountantLayout = () => {
           ),
         }}
         component={WorkOrder} 
+      />
+      <Drawer.Screen
+        name="logout"
+        component={SignIn} 
+        listeners={{
+          focus: handleLogout,
+        }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Drawer.Navigator>
   )

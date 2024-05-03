@@ -51,11 +51,14 @@ const SignIn = () => {
       // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token); 
       if (decodedToken.role === 'PRODUCT_MANAGER') {
-        router.replace("/ProductManagerHome"); 
+        setSubmitting(false);
+        router.push("/ProductManagerHome"); 
       } else if (decodedToken.role === 'CHAIRMAN') {
-        router.replace("/ChairmanHome");
+        setSubmitting(false);
+        router.push("/ChairmanHome");
       } else if (decodedToken.role === 'ACCOUNTANT') {
-        router.replace("/AccountantHome"); 
+        setSubmitting(false);
+        router.push("/AccountantHome"); 
       }
     } catch (error) {
       console.error(error);

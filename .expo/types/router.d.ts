@@ -7,11 +7,11 @@ declare module "expo-router" {
   export * from 'expo-router/build';
 
   // prettier-ignore
-  type StaticRoutes = `/` | `/(accountant)/AccountantHome` | `/AccountantHome` | `/(accountant)/InventoryPage` | `/InventoryPage` | `/(accountant)/WordOrderPage` | `/WordOrderPage` | `/(auth)/sign-in` | `/sign-in` | `/(auth)/sign-up` | `/sign-up` | `/(chairman)/ChairmanHome` | `/ChairmanHome` | `/(productManager)/ProductManagerHome` | `/ProductManagerHome` | `/(tabs)/bookmark` | `/bookmark` | `/(tabs)/create` | `/create` | `/(tabs)/home` | `/home` | `/(tabs)/profile` | `/profile`;
+  type StaticRoutes = `/` | `/(accountant)/AccountantHome` | `/AccountantHome` | `/(accountant)/InventoryPage` | `/InventoryPage` | `/(accountant)/WordOrderPage` | `/WordOrderPage` | `/(auth)/sign-in` | `/sign-in` | `/(auth)/sign-up` | `/sign-up` | `/(chairman)/ChairmanHome` | `/ChairmanHome` | `/(productManager)/ProductManagerHome` | `/ProductManagerHome`;
   // prettier-ignore
-  type DynamicRoutes<T extends string> = `/search/${SingleRoutePart<T>}`;
+  type DynamicRoutes<T extends string> = never;
   // prettier-ignore
-  type DynamicRouteTemplate = `/search/[query]`;
+  type DynamicRouteTemplate = never;
 
   type RelativePathString = `./${string}` | `../${string}` | '..';
   type AbsoluteRoute = DynamicRouteTemplate | StaticRoutes;

@@ -1,14 +1,12 @@
-import { Text, View, Image } from 'react-native'
 import 'react-native-gesture-handler';
+import React, { useContext } from 'react';
 import {
   SimpleLineIcons,
   MaterialIcons,
   MaterialCommunityIcons,
   FontAwesome
 } from '@expo/vector-icons'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { NavigationContainer } from '@react-navigation/native'
-import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
+import {createDrawerNavigator } from '@react-navigation/drawer'
 import ProductManagerHome from './ProductManagerHome';
 const Drawer = createDrawerNavigator()
 const COLORS = {
@@ -16,10 +14,22 @@ const COLORS = {
     white: "#FFFFFF",
     gray: "#ECF0F4",
 }
+import SignIn from '../(auth)/sign-in';
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { AuthContext } from "../../store/AuthContext";
 
 const ProductManagerLayout = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+  const authCtx = useContext(AuthContext);
+  const handleLogout = () => {
+    // Clear user data and token
+    setUser(null);
+    setIsLogged(false);
+    authCtx.logout();
+    
+  };
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator >
       <Drawer.Screen
         name="ProductManagerHome"
         options={{
@@ -34,6 +44,16 @@ const ProductManagerLayout = () => {
           ),
         }}
         component={ProductManagerHome} 
+      />
+      <Drawer.Screen
+        name="logout"
+        component={SignIn} 
+        listeners={{
+          focus: handleLogout,
+        }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Drawer.Navigator>
   )
