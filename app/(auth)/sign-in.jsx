@@ -1,4 +1,4 @@
-import { useState,useContext } from "react";
+import { useState,useContext} from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
@@ -41,9 +41,9 @@ const SignIn = () => {
       
       authCtx.authenticate(authObj.token);
 
-      console.log(authObj);
+      
       const userLogin = await getUserInformationById(authObj.token, authObj.id)
-      console.log(userLogin);
+      
       setUser(userLogin);
       setIsLogged(true);
 
@@ -91,7 +91,7 @@ const SignIn = () => {
           />
 
           <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
-            Log in to Aora
+            Log in to Manufacturio
           </Text>
 
           <FormField

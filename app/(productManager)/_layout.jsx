@@ -8,6 +8,9 @@ import {
 } from '@expo/vector-icons'
 import {createDrawerNavigator } from '@react-navigation/drawer'
 import ProductManagerHome from './ProductManagerHome';
+import ProductionSchedule from './ProductionSchedule';
+import WorkOrder from './WorkOrder';
+import PMBOM from './PMBOM';
 const Drawer = createDrawerNavigator()
 const COLORS = {
     primary: '#13678A',
@@ -17,6 +20,7 @@ const COLORS = {
 import SignIn from '../(auth)/sign-in';
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { AuthContext } from "../../store/AuthContext";
+
 
 const ProductManagerLayout = () => {
   const { setUser, setIsLogged } = useGlobalContext();
@@ -44,6 +48,51 @@ const ProductManagerLayout = () => {
           ),
         }}
         component={ProductManagerHome} 
+      />
+      <Drawer.Screen
+        name="ProductionSchedule"
+        options={{
+          drawerLabel: "ProductionSchedule",
+          title: "ProductionSchedule",
+          headerShadowVisible: false,
+          drawerIcon: () => (
+            <MaterialCommunityIcons
+              name="calendar-clock"
+              size={20}
+              color={"#808080"} />
+          ),
+        }}
+        component={ProductionSchedule}  
+      />
+      <Drawer.Screen
+        name="WorkOrder"
+        options={{
+          drawerLabel: "WorkOrder",
+          title: "WorkOrder",
+          headerShadowVisible: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="work"
+              size={20}
+              color={"#808080"} />
+          ),
+        }}
+        component={WorkOrder}
+      />
+      <Drawer.Screen
+        name="PMBOM"
+        options={{
+          drawerLabel: "BOM",
+          title: "PMBOM",
+          headerShadowVisible: false,
+          drawerIcon: () => (
+            <FontAwesome
+              name="list-alt"
+              size={20}
+              color={"#808080"} />
+          ),
+        }}
+        component={PMBOM}
       />
       <Drawer.Screen
         name="logout"
