@@ -9,8 +9,9 @@ import { login,getUserInformationById } from "../../services/LoginServices";
 import { AuthContext } from "../../store/AuthContext";
 import { decodeJwtMiddleware } from '../../middleware/decode';
 
+
 const SignIn = () => {
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setUser, setIsLogged, setUserLogin  } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,7 +62,8 @@ const SignIn = () => {
         router.push("/ChairmanHome");
       } else if (decodedToken.role === 'ACCOUNTANT') {
         setSubmitting(false);
-        router.push("/AccountantHome"); 
+        setUserLogin(userLogin);
+        router.push("/AccountantHome");
       }
     } catch (error) {
       console.error(error);
