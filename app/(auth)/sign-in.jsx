@@ -38,7 +38,10 @@ const SignIn = () => {
         return;
       }
       const authObj = loginResponse.result;
-      
+      const token = loginResponse.result.token;
+      authCtx.setToken(token);
+      console.log("Token stored: ", token);
+      console.log("Token : ", authObj.token);
       authCtx.authenticate(authObj.token);
 
       
