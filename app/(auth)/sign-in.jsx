@@ -11,7 +11,7 @@ import { decodeJwtMiddleware } from '../../middleware/decode';
 
 
 const SignIn = () => {
-  const { setUser, setIsLogged, setUserLogin  } = useGlobalContext();
+  const { setUser, setIsLogged, setUserLogin, setToken  } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,16 +39,15 @@ const SignIn = () => {
         return;
       }
       const authObj = loginResponse.result;
-      
-      authCtx.authenticate(authObj.token);
+      const token = loginResponse.result.token;
+      console.log("Token: ", token);
+      setToken(token);
 
-      
       const userLogin = await getUserInformationById(authObj.token, authObj.id)
       
       setUser(userLogin);
       setIsLogged(true);
 
-      Alert.alert("Success", "User signed in successfully");
       // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token); 
       if (decodedToken.role === 'PRODUCT_MANAGER') {

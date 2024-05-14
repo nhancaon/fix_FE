@@ -4,9 +4,10 @@ import SearchBar from '../../components/SearchBar';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getAllBOMs } from '../../services/BOMServices';
-import { AuthContext } from '../../store/AuthContext';
+import { useGlobalContext } from '../../context/GlobalProvider';
 
 const PMBOM = () => {
+  const { token  } = useGlobalContext();
   const [search, setSearch] = useState('');
   const [boms, setBoms] = useState([]);
   const [open, setOpen] = useState(false);
@@ -16,15 +17,11 @@ const PMBOM = () => {
     { label: 'Check Price', value: 'CHECK_PRICE' },
     { label: 'Finish', value: 'FINISH' },
   ]);
-  const authCtx = useContext(AuthContext);
-  const token = authCtx.token;
-  console.log("token BOM: " + token);
-  //const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwbUBnbWFpbC5jb20iLCJyb2xlIjoiUFJPRFVDVF9NQU5BR0VSIiwic2NvcGUiOiJTQ09QRV9QUk9EVUNUX01BTkFHRVIgTUFOQUdFUl9CT00iLCJleHAiOjE3MTQ5MTY5MDgsImlhdCI6MTcxNDkxNTEwNywidXNlcklkIjoxLCJqdGkiOiJhNzQyMTkzYS03ZjMxLTRlZWEtYjRkNy0zNmE2OTcyMGU2MjUifQ.X6j7588LC5HiVzE7ZMmWC8FhOiOn9cJqmknPwq6WDdY';
-  
+ 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getAllBOMs(token);
-      setBoms(data);
+      setBoms(data.result);
     };
   
     fetchData();
