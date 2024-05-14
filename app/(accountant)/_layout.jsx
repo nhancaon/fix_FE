@@ -3,11 +3,8 @@ import 'react-native-gesture-handler';
 import {
   SimpleLineIcons,
   MaterialIcons,
-  MaterialCommunityIcons,
-  FontAwesome
 } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { NavigationContainer } from '@react-navigation/native'
 import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
 import AccountantHome from './AccountantHome';
 import Inventory from './InventoryPage'
@@ -18,15 +15,10 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { AuthContext } from "../../store/AuthContext";
 import React, { useContext } from 'react';
 
-const Drawer = createDrawerNavigator()
-const COLORS = {
-    primary: '#13678A',
-    white: "#FFFFFF",
-    gray: "#ECF0F4",
-}
+const Drawer = createDrawerNavigator();
 
 const AccountantLayout = () => {
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setUser, setIsLogged ,userLogin} = useGlobalContext();
   const authCtx = useContext(AuthContext);
   const handleLogout = () => {
     // Clear user data and token
@@ -36,7 +28,6 @@ const AccountantLayout = () => {
     
   };
   return (
-    
     <Drawer.Navigator
     drawerContent={
         (props)=>{
@@ -47,7 +38,7 @@ const AccountantLayout = () => {
                         width: "100%",
                         justifyContent: "center",
                         alignItems: "center",
-                        backgroundColor: COLORS.white
+                        backgroundColor: "#ff9c01"
                     }}>
                         <Image
                           source={images.accountant}
@@ -58,40 +49,26 @@ const AccountantLayout = () => {
                             marginBottom: 12
                           }}
                         />
-                        <Text style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: COLORS.black,
-                            marginBottom: 6
-                        }}>Isabella Joanna</Text>
-                        <Text style={{
-                            fontSize: 16,
-                            color: COLORS.black
-
-                        }}>Accountant</Text>
+                        <Text className="text-xl text-black font-bold">
+                          {userLogin.result.fullName}
+                        </Text>
+                        <Text className="text-lg text-black font-bold">
+                          Accountant
+                        </Text>
                     </View>
                     <DrawerItemList {...props} />
                 </SafeAreaView>
             )
         }
       }
-      screenListeners={{
+      screenOptions={{
+        drawerActiveTintColor: '#ff9c01',
+        drawerInactiveTintColor: '#ffffff',
         drawerStyle: {
-          backgroundColor: '#fff',
-          width: 240
-        },
-        headerStyle: {
-          backgroundColor: '#f4511e'
-        },
-        headerTintColor: '#fff',
-        headerTintStyles: {
-          fontWeight: 'bold'
-        },
-        drawerActiveTintColor: 'blue',
-        drawerLabelStyle: {
-          color: "#111"
-        }
-      }}
+        backgroundColor: '#161622',
+        width: 240,
+    },
+  }}
     >
       <Drawer.Screen
         name="AccountantHome"
@@ -103,7 +80,7 @@ const AccountantLayout = () => {
             <SimpleLineIcons
               name="home"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={AccountantHome} 
@@ -118,7 +95,7 @@ const AccountantLayout = () => {
             <MaterialIcons
               name="inventory"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={Inventory} 
@@ -133,7 +110,7 @@ const AccountantLayout = () => {
             <MaterialIcons
               name="work"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={WorkOrder} 
