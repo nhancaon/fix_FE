@@ -4,6 +4,8 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { getAllSaleForecast,addSaleForecast } from '../../services/SaleForecastService';
 import { AppLoader } from '../../components/AppLoader';
+import { LoaderApp } from '../../components/LoaderApp';
+import { Loader } from '../../components/Loader';
 import { CustomButton } from "../../components";
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -16,9 +18,7 @@ const SaleForecast = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      console.log('Tokenqq:', token);
       const res = await getAllSaleForecast(token);
-      console.log('Get all sale forecast', res);
       setData(res.result);
     } catch (err) {
       setError(err);
@@ -35,13 +35,14 @@ const SaleForecast = () => {
 
   async function createSaleForecast() {
     const add_res = await addSaleForecast(token, parseInt(userLogin.id));
-    console.log('Add sale forecast',token);
-    console.log('Add sale forecast',userLogin.id);
       if (!add_res) {
-        Alert.alert("Failed", "Password or email is incorrect");
+        Alert.alert("Failed", "Failed to add saleforecast");
+      } else {
+        
+        await fetchData();
       }
   }
-  //if (loading) return AppLoader;
+  if (loading) return <View><LoaderApp/></View>;
   //if (error) return <Text>Error: {error.message}</Text>;
   console.log('Get all haha',data);
   const renderItem = ({ item }) => {
@@ -65,11 +66,13 @@ const SaleForecast = () => {
               <Text className="text-lg text-center font-psemibold text-black w-40">Date End</Text>
             </View>
               {data.length > 0 ? (
-                <FlatList
-                  data={data}
-                  renderItem={renderItem}
-                  keyExtractor={(item) => item.id.toString()}
-                />
+                <View style={{ maxHeight: 6 * 77 }}>
+                  <FlatList
+                    data={data}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                  />
+                </View>
               ) : (
                 <Text style={styles.noDataText}>No data available</Text>
               )}

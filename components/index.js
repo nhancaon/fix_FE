@@ -6,6 +6,7 @@ import TabButton from "./TabButton";
 import SearchBar from "./SearchBar";
 import IconButton from "./IconButton";
 import AppLoader from "./AppLoader";
+import LoaderApp from "./LoaderApp";
 export {
   FormField,
   CustomButton,
@@ -15,4 +16,5 @@ export {
   SearchBar,
   IconButton,
   AppLoader,
+  LoaderApp
 };

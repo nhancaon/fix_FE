@@ -15,28 +15,21 @@ export const getAllSaleForecast = async (token) => {
 };
 
 export const addSaleForecast = async (token, accountant_id) => {
-    console.log('Token:', token);
-    console.log('Accountant_id:', accountant_id);
-    const headers = {
+    const config = {
         headers: {
-            'Content-Type': 'application/json',
             Authorization: "Bearer " + token,
         },
+        params: {
+            ac_id: accountant_id,
+        },
+    };
+    const data = {
+
     };
     try {
-        const res = await http.post(`/api/sale_forecast/create?ac_id=${accountant_id}`, null, { ...headers });
+        const res = await http.post(`/api/sale_forecast/create`, null, config);
         return res;
-    } catch (error) {
-        if (error.response) {
-            // Server responded with an error status code (4xx or 5xx)
-            console.log("Error at Add sale forecast: ", error.response.status);
-            console.log("Error response data: ", error.response);
-        } else if (error.request) {
-            // Request was made but no response was received
-            console.log("No response received: ", error.request);
-        } else {
-            // Something else happened while setting up the request
-            console.log("Error setting up request: ", error.message);
-        }
+    } catch (e) {
+        console.log("Error at Add sale forecast: ", e);
     }
 };
