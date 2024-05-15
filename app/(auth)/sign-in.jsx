@@ -44,7 +44,6 @@ const SignIn = () => {
       setToken(token);
 
       const userLogin = await getUserInformationById(authObj.token, authObj.id)
-      
       setUser(userLogin);
       setIsLogged(true);
 
@@ -58,7 +57,7 @@ const SignIn = () => {
         router.push("/ChairmanHome");
       } else if (decodedToken.role === 'ACCOUNTANT') {
         setSubmitting(false);
-        setUserLogin(userLogin);
+        setUserLogin(userLogin.result);
         router.push("/AccountantHome");
       }
     } catch (error) {

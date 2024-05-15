@@ -50,7 +50,7 @@ const AccountantLayout = () => {
                           }}
                         />
                         <Text className="text-xl text-black font-bold">
-                          {userLogin.result.fullName}
+                          {userLogin.fullName}
                         </Text>
                         <Text className="text-lg text-black font-bold">
                           Accountant
