@@ -19,7 +19,7 @@ export const login = async (email, password) => {
 export const getUserInformationById = async (token, id) => {
     const config = {
         headers: {
-            Authorization: "Bearer " + token,
+            Authorization: `Bearer ${token}`,
         },
     };
     try {

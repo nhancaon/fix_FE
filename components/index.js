@@ -5,6 +5,7 @@ import EmptyState from "./EmptyState";
 import TabButton from "./TabButton";
 import SearchBar from "./SearchBar";
 import IconButton from "./IconButton";
+import AppLoader from "./AppLoader";
 export {
   FormField,
   CustomButton,
@@ -12,5 +13,6 @@ export {
   EmptyState,
   TabButton,
   SearchBar,
-  IconButton
+  IconButton,
+  AppLoader,
 };
