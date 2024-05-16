@@ -15,7 +15,7 @@ const buttonWidth = width / 4;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor:"#FFA500" ,
     padding: 10,
     borderRadius: 5,
     shadowColor: '#000',
