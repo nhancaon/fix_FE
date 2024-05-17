@@ -11,16 +11,26 @@ import ProductManagerHome from './ProductManagerHome';
 import ProductionSchedule from './ProductionSchedule';
 import WorkOrder from './WorkOrder';
 import PMBOM from './PMBOM';
+import SignIn from '../(auth)/sign-in';
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { AuthContext } from "../../store/AuthContext";
+import BOMDetail from '../../components/BOM/BOMDetail';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+const PMBOMStack = () => (
+  <Stack.Navigator initialRouteName="PMBOM" screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="PMBOM" component={PMBOM} />
+    <Stack.Screen name="BOMDetail" component={BOMDetail} />
+  </Stack.Navigator>
+);
 const Drawer = createDrawerNavigator()
 const COLORS = {
     primary: '#13678A',
     white: "#FFFFFF",
     gray: "#ECF0F4",
 }
-import SignIn from '../(auth)/sign-in';
-import { useGlobalContext } from "../../context/GlobalProvider";
-import { AuthContext } from "../../store/AuthContext";
-
 
 const ProductManagerLayout = () => {
   const { setUser, setIsLogged } = useGlobalContext();
@@ -79,20 +89,20 @@ const ProductManagerLayout = () => {
         }}
         component={WorkOrder}
       />
-      <Drawer.Screen
-        name="PMBOM"
-        options={{
-          drawerLabel: "BOM",
-          title: "PMBOM",
-          headerShadowVisible: false,
+      <Drawer.Screen 
+        name="BOM" 
+        component={PMBOMStack} 
+        headerShadowVisible={false}
+        options={{ 
+          drawerLabel: 'BOM',
           drawerIcon: () => (
             <FontAwesome
               name="list-alt"
               size={20}
-              color={"#808080"} />
+              color={"#808080"} 
+            />
           ),
         }}
-        component={PMBOM}
       />
       <Drawer.Screen
         name="logout"
@@ -105,6 +115,7 @@ const ProductManagerLayout = () => {
         }}
       />
     </Drawer.Navigator>
+    
   )
 }
 export default ProductManagerLayout

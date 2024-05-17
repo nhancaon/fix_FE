@@ -5,6 +5,8 @@ import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getAllBOMs } from '../../services/BOMServices';
 import { useGlobalContext } from '../../context/GlobalProvider';
+import { Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 const PMBOM = () => {
   const { token  } = useGlobalContext();
@@ -43,7 +45,15 @@ const PMBOM = () => {
     // Implement delete functionality here
   };
 
-
+  const navigation = useNavigation();
+  const handleCardPress = async (id) => {
+    console.log(`Card with id ${id} was pressed.`);
+    try {
+      navigation.navigate('BOMDetail', { id });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -52,7 +62,7 @@ const PMBOM = () => {
         onChangeText={setSearch}
         onSearch={handleSearch}
       />
-
+      {/* fillter */}
       <DropDownPicker
               open={open}
               value={value}
@@ -69,32 +79,23 @@ const PMBOM = () => {
                 setValue(value);
               }}
             />
-
+      {/* get All */}
       <FlatList
-      data={boms}
-      keyExtractor={item => item.bomname} // Sử dụng bomname như là key duy nhất cho mỗi item
-      renderItem={({ item }) => (
-        <View>
-          <Text>{item.bomname}</Text>
-          <Text>{item.totalPrice}</Text>
-          <Text>{item.sellPrice}</Text>
-          <Text>{item.dateCreation}</Text>
-          {/* Hiển thị danh sách vật liệu */}
-          <FlatList
-            data={item.materials}
-            keyExtractor={material => material.materialName} // Sử dụng materialName như là key duy nhất cho mỗi material
-            renderItem={({ item: material }) => (
-              <View>
-                <Text>{material.materialName}</Text>
-                <Text>{material.materialPrice}</Text>
-                <Text>{material.materialVolume}</Text>
-              </View>
-            )}
-          />
-        </View>
-      )}
-    />
+        data={boms}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <Card style={styles.card} onPress={() => handleCardPress(item.id)}>
+            <Card.Title title={item.bomname} titleStyle={styles.title}/>
+            <Card.Content>
+              <Text>Total Price: {item.totalPrice}</Text>
+              <Text>Sell Price: {item.sellPrice}</Text>
+              <Text>Date Creation: {item.dateCreation}</Text>
+            </Card.Content>
+          </Card>
+        )}
+      />
       
+      {/* button */}
       <View style={styles.buttonContainer}>
         <IconButton onPress={handleInsert} iconName="plus" />
         <IconButton onPress={handleUpdate} iconName="edit" />
@@ -112,8 +113,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 15,
     width: '100%',
+
   },
-  
+  card: {
+    margin: 10,
+    padding: 10,
+  },
+  material: {
+    marginTop: 10,
+  },
+  title: {
+    color: '#FFA500', // Màu cam
+    fontSize: 20, // Kích thước font
+    fontWeight: 'bold', // Đặt font chữ đậm
+  },
 
 });
 

@@ -11,3 +11,15 @@ export const getAllBOMs = async (token) => {
         console.log("Error at BOM Service: ", e);
     }
 };
+
+export const getBOMDetail = async (token, id) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.get(`/api/BOMs/getBOMById/${id}`, config);
+        return res;
+    } catch (e) {
+        console.log("Error at BOM Service: ", e);
+    }
+};
