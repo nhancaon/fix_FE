@@ -7,7 +7,7 @@ declare module "expo-router" {
   export * from 'expo-router/build';
 
   // prettier-ignore
-  type StaticRoutes = `/` | `/(accountant)/AccountantHome` | `/AccountantHome` | `/(accountant)/InventoryPage` | `/InventoryPage` | `/(accountant)/OrderPage` | `/OrderPage` | `/(accountant)/ProduceOrderPage` | `/ProduceOrderPage` | `/(accountant)/SaleForecastPage` | `/SaleForecastPage` | `/(accountant)/SaleOrderPage` | `/SaleOrderPage` | `/(accountant)/WordOrderPage` | `/WordOrderPage` | `/(auth)/sign-in` | `/sign-in` | `/(auth)/sign-up` | `/sign-up` | `/(chairman)/ChairmanHome` | `/ChairmanHome` | `/(productManager)/PMBOM` | `/PMBOM` | `/(productManager)/ProductionSchedule` | `/ProductionSchedule` | `/(productManager)/ProductManagerHome` | `/ProductManagerHome` | `/(productManager)/WorkOrder` | `/WorkOrder`;
+  type StaticRoutes = `/` | `/(accountant)/AccountantHome` | `/AccountantHome` | `/(accountant)/InventoryPage` | `/InventoryPage` | `/(accountant)/OrderPage` | `/OrderPage` | `/(accountant)/ProduceOrderPage` | `/ProduceOrderPage` | `/(accountant)/SaleForecastDetailPage` | `/SaleForecastDetailPage` | `/(accountant)/SaleForecastPage` | `/SaleForecastPage` | `/(accountant)/SaleOrderPage` | `/SaleOrderPage` | `/(accountant)/Stack/SaleForecastStack` | `/Stack/SaleForecastStack` | `/(accountant)/WordOrderPage` | `/WordOrderPage` | `/(auth)/sign-in` | `/sign-in` | `/(auth)/sign-up` | `/sign-up` | `/(chairman)/ChairmanHome` | `/ChairmanHome` | `/(productManager)/PMBOM` | `/PMBOM` | `/(productManager)/ProductionSchedule` | `/ProductionSchedule` | `/(productManager)/ProductManagerHome` | `/ProductManagerHome` | `/(productManager)/WorkOrder` | `/WorkOrder`;
   // prettier-ignore
   type DynamicRoutes<T extends string> = never;
   // prettier-ignore
