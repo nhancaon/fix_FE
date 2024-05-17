@@ -23,13 +23,24 @@ export const addSaleForecast = async (token, accountant_id) => {
             ac_id: accountant_id,
         },
     };
-    const data = {
-
-    };
     try {
         const res = await http.post(`/api/sale_forecast/create`, null, config);
         return res;
     } catch (e) {
         console.log("Error at Add sale forecast: ", e);
+    }
+};
+
+export const deleteSaleForecast = async (token, id) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token,
+        },
+    };
+    try {
+        const res = await http.del(`/api/sale_forecast/${id}`, config);
+        return res;
+    } catch (e) {
+        console.log("Error at Delete sale forecast: ", e);
     }
 };
