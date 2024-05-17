@@ -23,3 +23,27 @@ export const getBOMDetail = async (token, id) => {
         console.log("Error at BOM Service: ", e);
     }
 };
+
+export const deleteMaterialOfBOM = async (token, bomID, materialID) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.del(`/api/BOMs/${bomID}/deleteMaterialOfBOM/${materialID}`, config);
+        return res;
+    } catch (e) {
+        console.log("Error at BOM Service: ", e);
+    }
+}
+
+export const updateBOM = async (token, bomID, data) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.put(`/api/BOMs/updateBOM/${bomID}`, data, config);
+        return res;
+    } catch (e) {
+        console.log("Error at BOM Service: ", e);
+    }
+}
