@@ -48,8 +48,8 @@ const Welcome = () => {
           </View>
 
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Where Craftsmanship Meets Technology: Embark on a Journey of Boundless
-            Innovation with Manufacturio
+            Optimize Productivity and Quality: Experience the Future of 
+            Manufacturing with Manufacturio
           </Text>
 
           <CustomButton
