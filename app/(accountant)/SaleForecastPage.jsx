@@ -2,8 +2,8 @@ import { Text, View, StyleSheet, Alert } from 'react-native';
 import React, { useState, useRef, useCallback } from 'react';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { getAllSaleForecast, addSaleForecast, deleteSaleForecast } from '../../services/SaleForecastService';
-import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions } from "../../components";
+import { getAllSaleForecast, addSaleForecast, deleteSaleForecast, updateSaleForecast } from '../../services/SaleForecastService';
+import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFModal } from "../../components";
 import { useFocusEffect } from '@react-navigation/native';
 
 
@@ -16,7 +16,10 @@ const SaleForecast = () => {
   const successToastRef = useRef(null);
   const errorToastRef = useRef(null);
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-  const [idDel, setIdDel] = useState(false);
+  const [sfModalVisible, setsfModalVisible] = useState(false);
+  const [id, setId] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -35,10 +38,6 @@ const SaleForecast = () => {
       fetchData();
     }, [fetchData])
   );
-
-  function NoConfirm() {
-    setConfirmationModalVisible(false)
-  }
 
   async function createSaleForecast() {
     try {
@@ -98,14 +97,52 @@ const SaleForecast = () => {
     }
   }
 
-  //if (error) return <Text>Error: {error.message}</Text>;
+  async function upSaleForecast(dateStart, dateEnd) {
+    try {
+      setLoading(true);
+      const up_res = await updateSaleForecast(token,id, dateStart,dateEnd);
+      if (!up_res) {
+        if (errorToastRef.current) {
+          errorToastRef.current.show({
+            type: 'danger',
+            text: 'Error',
+            description: 'Fail to update!'
+          });
+        }
+      } else {
+        if (successToastRef.current) {
+          successToastRef.current.show({
+            type: 'success',
+            text: 'Success',
+            description: 'Update successfully!'
+          });
+        }
+        await fetchData();
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to update sale forecast");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
         <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center">{item.id}</Text>
         <CustomButton
             title="Update"
-            handlePress={createSaleForecast}
+            handlePress={() => {
+              setsfModalVisible(true);
+              setId(item.id);
+              setStartDate(new Date(item.dateStart));
+              if (item.dateEnd === null) {
+                setEndDate(new Date(item.dateStart));
+              }else{
+                setEndDate(new Date(item.dateEnd));
+              }
+              
+            }}
             containerStyles="flex items-center self-center w-20 mr-6 bg-green-500"
             isLoading={false}
           />
@@ -113,7 +150,7 @@ const SaleForecast = () => {
             title="Delete"
             handlePress={() => {
               setConfirmationModalVisible(true);
-              setIdDel(item.id);
+              setId(item.id);
             }}
             containerStyles="flex items-center self-center w-20 mr-6 bg-red-500"
             isLoading={false}
@@ -138,7 +175,7 @@ const SaleForecast = () => {
               {data.length > 0 ? (
                 <View style={{ maxHeight: 6 * 77 }}>
                   <FlatList
-                    data={data}
+                    data={data.slice().sort((a, b) => a.id - b.id)}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                   />
@@ -170,11 +207,22 @@ const SaleForecast = () => {
       visible={confirmationModalVisible}
       message="Are you sure?"
       onYesPress={() => {
-        delSaleForecast(idDel);
+        delSaleForecast(id);
         setConfirmationModalVisible(false);
       }}
       onNoPress={() => setConfirmationModalVisible(false)}/>
-
+    <SFModal
+      visible={sfModalVisible}
+      onClose={() => setsfModalVisible(false)}
+      onSavePress={
+        (dateStart, dateEnd) => {
+          upSaleForecast(dateStart, dateEnd);
+          setsfModalVisible(false)
+        }
+      }
+      initialStartDate={startDate}
+      initialEndDate={endDate}
+    />
     </>
   );
 };
