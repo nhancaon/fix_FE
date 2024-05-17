@@ -40,7 +40,6 @@ const SignIn = () => {
       }
       const authObj = loginResponse.result;
       const token = loginResponse.result.token;
-      console.log("Token: ", token);
       setToken(token);
 
       const userLogin = await getUserInformationById(authObj.token, authObj.id)

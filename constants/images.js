@@ -6,4 +6,5 @@ import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
 import accountant from "../assets/images/accountant.png";
-export default { profile, thumbnail, cards, path, logo, logoSmall, empty, accountant };
+import load from "../assets/images/loading.json";
+export default { profile, thumbnail, cards, path, logo, logoSmall, empty, accountant, load };
