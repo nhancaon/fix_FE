@@ -5,6 +5,7 @@ import SaleForecast from './SaleForecastPage';
 import ProduceOrder from './ProduceOrderPage';
 import SaleOrder from './SaleOrderPage';
 import {TabButton} from '../../components'
+import SaleForecastStack from './Stack/SaleForecastStack'
 
 const AccountantHome = () => {
   const Tab = createBottomTabNavigator()
@@ -21,7 +22,7 @@ const AccountantHome = () => {
             title: 'SaleForecast',
             screen: 'Likes',
             icon: 'chart-timeline-variant',
-            Component: SaleForecast
+            Component: SaleForecastStack
         },
         {
             id: 3,
