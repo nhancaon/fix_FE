@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from "react-native";
 import LottieView from 'lottie-react-native';
+import { images } from "../constants";
 
 const AppLoader = () => {
-    console.log("Rendering AppLoader"); // Add this line for debugging
+    const loadingAnimation = require('../assets/images/loading.json');
     return (
         <View style={[StyleSheet.absoluteFillObject, styles.container]}>
-            <LottieView source={require('../assets/images/loading.json')} autoPlay loop />
+            <LottieView source={loadingAnimation} autoPlay loop style={styles.loading}/>
         </View>
     );
 };
@@ -18,6 +19,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.3)',
         zIndex: 1,
-    }
+    },
+    loading: {
+        width: 130,
+        height: 130,
+    },
 });
 export default AppLoader;
