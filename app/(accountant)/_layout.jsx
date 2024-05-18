@@ -73,7 +73,7 @@ const AccountantLayout = () => {
       <Drawer.Screen
         name="AccountantHome"
         options={{
-          drawerLabel: "AccountantHome",
+          drawerLabel: "Accountant Home",
           title: "AccountantHome",
           headerShadowVisible: false,
           drawerIcon: () => (
@@ -103,7 +103,7 @@ const AccountantLayout = () => {
       <Drawer.Screen
         name="WorkOrder"
         options={{
-          drawerLabel: "WorkOrder",
+          drawerLabel: "Work Order",
           title: "WorkOrder",
           headerShadowVisible: false,
           drawerIcon: () => (
@@ -116,13 +116,19 @@ const AccountantLayout = () => {
         component={WorkOrder} 
       />
       <Drawer.Screen
-        name="logout"
+        name="Log Out"
         component={SignIn} 
         listeners={{
           focus: handleLogout,
         }}
         options={{
           headerShown: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="logout"
+              size={20}
+              color={"#ff9c01"} />
+          ),
         }}
       />
     </Drawer.Navigator>
