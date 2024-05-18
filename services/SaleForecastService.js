@@ -44,3 +44,21 @@ export const deleteSaleForecast = async (token, id) => {
         console.log("Error at Delete sale forecast: ", e);
     }
 };
+
+export const updateSaleForecast = async (token, id, dateStart, dateEnd) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token,
+        },
+    };
+    const data = {
+        dateStart,
+        dateEnd,
+    }
+    try {
+        const res = await http.put(`/api/sale_forecast/${id}`, data, config);
+        return res;
+    } catch (e) {
+        console.log("Error at Update sale forecast: ", e);
+    }
+};

@@ -12,7 +12,7 @@ import CustomAlert from "../../components/CustomAlert";
 
 
 const SignIn = () => {
-  const { setUser, setIsLogged, setUserLogin, setToken  } = useGlobalContext();
+  const { setUser, setIsLogged, setUserLogin, setToken, setUserId  } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,7 +60,10 @@ const SignIn = () => {
       setUser(userLogin);
       setIsLogged(true);
 
+      // Giải mã token
       const decodedToken = await decodeJwtMiddleware(authObj.token);
+      setUserId(decodedToken.userId);
+      console.log("Decoded Token: ", decodedToken.userId); 
       if (decodedToken.role === 'PRODUCT_MANAGER') {
         setSubmitting(false);
         router.push("/ProductManagerHome");

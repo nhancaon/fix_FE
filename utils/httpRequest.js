@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.36:8082";
+const BASE_URL = "http://192.168.1.2:8082";
 
 const httpRequest = axios.create({
     baseURL: `${BASE_URL}`,
@@ -16,8 +16,18 @@ export const post = async (path, data, config = {}) => {
     return response.data;
 };
 
+export const put = async (path, data, config = {}) => {
+    const response = await httpRequest.put(path, data, config);
+    return response.data;
+};
+
 export const del = async (path, config = {}) => {
     const response = await httpRequest.delete(path, config);
+    return response.data;
+};
+
+export const patch = async (path, data, config = {}) => {
+    const response = await httpRequest.patch(path, data, config);
     return response.data;
 };
 
