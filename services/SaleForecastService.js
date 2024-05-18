@@ -1,5 +1,4 @@
 import * as http from "../utils/httpRequest";
-import { format } from 'date-fns';
 
 export const getAllSaleForecast = async (token) => {
     const config = {

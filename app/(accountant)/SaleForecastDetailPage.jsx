@@ -1,12 +1,12 @@
-import { Text, View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Alert } from 'react-native';
 import React, { useState, useRef, useCallback } from 'react';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { getAllSaleForecast, addSaleForecast, deleteSaleForecast, updateSaleForecast } from '../../services/SaleForecastService';
 import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFModal } from "../../components";
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
-const SaleForecast = () => {
+const SaleForecastDetail = () => {
   const { token, userLogin } = useGlobalContext();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +18,6 @@ const SaleForecast = () => {
   const [id, setId] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const navigation = useNavigation();
-
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -38,10 +36,6 @@ const SaleForecast = () => {
       fetchData();
     }, [fetchData])
   );
-
-   const handleNavigate = () => {
-    navigation.navigate('SaleForecastDetailPage');
-  };
 
   async function createSaleForecast() {
     try {
@@ -133,11 +127,7 @@ const SaleForecast = () => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
-        <TouchableOpacity onPress={handleNavigate}>
-  <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center"
-  >{item.id}</Text>
-</TouchableOpacity>
-
+        <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center">{item.id}</Text>
         <CustomButton
             title="Update"
             handlePress={() => {
@@ -165,6 +155,7 @@ const SaleForecast = () => {
         />
         <Text className="flex text-lg font-psemi text-black w-40">{item.dateStart}</Text>
         <Text className="flex text-lg font-psemi text-black w-40">{item.dateEnd}</Text>
+        
       </View>
     )
   }
@@ -273,4 +264,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SaleForecast;
+export default SaleForecastDetail;
