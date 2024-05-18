@@ -8,6 +8,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { login,getUserInformationById } from "../../services/LoginServices";
 import { AuthContext } from "../../store/AuthContext";
 import { decodeJwtMiddleware } from '../../middleware/decode';
+import CustomAlert from "../../components/CustomAlert";
 
 
 const SignIn = () => {
@@ -15,6 +16,11 @@ const SignIn = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginResponse, setLoginResponse] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [alertMessage1, setAlertMessage1] = useState("");
+  const [alertMessage2, setAlertMessage2] = useState("");
 
   const authCtx = useContext(AuthContext);
 
@@ -27,32 +33,40 @@ const SignIn = () => {
   }
 
   async function handleLogin() {
+    if (email === "" || password === "") {
+      setModalVisible(true);
+      setErrorMessage("Please fill in all fields");
+      setAlertMessage1("Close");
+      setAlertMessage2("");
+      return;
+    }
+    setSubmitting(true);
     try {
-      if (email === "" || password === "") {
-        Alert.alert("Error", "Please fill in all fields");
-      }
-      setSubmitting(true);
-      const loginResponse = await login(email, password);
+      const loginResponse = await login(email, password); // Corrected line
       if (!loginResponse) {
-        Alert.alert("Failed", "Password or email is incorrect");
+        setModalVisible(true);
+        setErrorMessage("Password or email is incorrect");
+        setAlertMessage1("Try again");
+        setAlertMessage2("Clear");
         setSubmitting(false);
         return;
       }
+      setLoginResponse(loginResponse);
       const authObj = loginResponse.result;
-      const token = loginResponse.result.token;
+      const token = authObj.token;
       setToken(token);
 
-      const userLogin = await getUserInformationById(authObj.token, authObj.id)
+      const userLogin = await getUserInformationById(authObj.token, authObj.id);
       setUser(userLogin);
       setIsLogged(true);
 
       // Giải mã token
-      const decodedToken = await decodeJwtMiddleware(authObj.token); 
+      const decodedToken = await decodeJwtMiddleware(authObj.token);
       setUserId(decodedToken.userId);
-      console.log("Decoded Token: ", decodedToken.userId);
+      console.log("Decoded Token: ", decodedToken.userId); 
       if (decodedToken.role === 'PRODUCT_MANAGER') {
         setSubmitting(false);
-        router.push("/ProductManagerHome"); 
+        router.push("/ProductManagerHome");
       } else if (decodedToken.role === 'CHAIRMAN') {
         setSubmitting(false);
         router.push("/ChairmanHome");
@@ -76,27 +90,47 @@ const SignIn = () => {
     }
   }
 
+  // Function to try again sign in
+  const handleTryAgain = () => {
+    handleLogin();
+    setModalVisible(false); 
+  };
+
+  // Function to clear email and password fields
+  const handClear = () => {
+    setEmail("");
+    setPassword("");
+    setModalVisible(false); 
+  };
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
         <View
           className="w-full flex justify-center h-full px-4 my-6"
           style={{
-            minHeight: Dimensions.get("window").height - 100,
+            minHeight: Dimensions.get("window").height - 200,
           }}
         >
           <Image
-            source={images.logo}
-            resizeMode="contain"
-            className="w-[115px] h-[34px]"
+            source={images.thumbnail}
+            resizeMode="cover"
+            style={{ width: Dimensions.get("window").width, height: 300}}
           />
 
-          <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
-            Log in to Manufacturio
+          <Image
+            source={images.logo}
+            resizeMode="contain"
+            className="w-[130px] h-[84px]"
+          />
+
+          <Text className="text-2xl font-semibold text-white mt-5 font-psemibold">
+            Welcome to Manufacturio
           </Text>
 
           <FormField
             title="Email"
+            placeholder={"email@gmail.com"}
             value={email}
             handleChangeText={handleChangeEmail}
             otherStyles="mt-7"
@@ -105,6 +139,7 @@ const SignIn = () => {
 
           <FormField
             title="Password"
+            placeholder={"●●●●●●●●"}
             value={password}
             handleChangeText={handleChangePassword}
             otherStyles="mt-7"
@@ -130,6 +165,18 @@ const SignIn = () => {
           </View>
         </View>
       </ScrollView>
+
+      <CustomAlert
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        title="Error"
+        error={errorMessage}
+        message1={alertMessage1}
+        message2={alertMessage2}
+        isSingleButton={email === "" || password === "" || !(loginResponse === null)}
+        onPressButton1={handleTryAgain}
+        onPressButton2={handClear} 
+      />
     </SafeAreaView>
   );
 };
