@@ -2,12 +2,14 @@ import { useState } from "react";
 import React from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Image } from "react-native";
-
+import { useGlobalContext } from '../../../context/GlobalProvider';
 import { images } from "../../../constants";
 import { CustomButton, FormField } from "../../../components";
 import CustomAlert from "../../../components/CustomAlert";
+import { resetPassword } from "../../../services/UserServices";
 
 const ResetPassword = () => {
+  const { setUser, passwordLogin, userLogin, setPasswordLogin } = useGlobalContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -25,22 +27,35 @@ const ResetPassword = () => {
       setAlertMessage2("");
       return;
     }
-
+  
     setSubmitting(true);
+
+    if (!(currentPassword === passwordLogin)){
+      setModalVisible(true);
+      setErrorMessage("Password is incorrect");
+      setAlertMessage1("Try again");
+      setAlertMessage2("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setSubmitting(false);
+      return;
+    }
+    else {
+      handleResetPassword();
+    }
   };
 
-  // Function to try again sign in
-  const handleTryAgain = () => {
-    submit();
-    setModalVisible(false); 
-  };
-
-  // Function to clear 
-  const handClear = () => {
+  async function handleResetPassword() {
+    const updatedPassword = await resetPassword(
+      userLogin.id,
+      newPassword
+    );
+    setUser(updatedPassword);
+    setPasswordLogin(newPassword);
     setCurrentPassword("");
     setNewPassword("");
-    setModalVisible(false); 
-  };
+    setSubmitting(false);
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -106,9 +121,7 @@ const ResetPassword = () => {
         error={errorMessage}
         message1={alertMessage1}
         message2={alertMessage2}
-        isSingleButton={currentPassword === "" || newPassword === "" ? true : false}
-        onPressButton1={handleTryAgain}
-        onPressButton2={handClear}
+        isSingleButton={currentPassword === "" || newPassword === ""  ? true : false}
       />
     </SafeAreaView>
   );

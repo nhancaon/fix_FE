@@ -12,6 +12,7 @@ const GlobalProvider = ({ children }) => {
   const [userLogin, setUserLogin] = useState(null);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
 
   useEffect(() => {
     getCurrentUser()
@@ -46,6 +47,8 @@ const GlobalProvider = ({ children }) => {
         setToken,
         userId,
         setUserId,
+        passwordLogin,
+        setPasswordLogin,
       }}
     >
       {children}
