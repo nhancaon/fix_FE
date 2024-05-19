@@ -39,8 +39,8 @@ const SaleForecast = () => {
     }, [fetchData])
   );
 
-   const handleNavigate = () => {
-    navigation.navigate('SaleForecastDetailPage');
+  const handleNavigate = (id) => {
+    navigation.navigate('SaleForecastDetailPage', { itemId: id });
   };
 
   async function createSaleForecast() {
@@ -133,10 +133,10 @@ const SaleForecast = () => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
-        <TouchableOpacity onPress={handleNavigate}>
-  <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center"
-  >{item.id}</Text>
-</TouchableOpacity>
+        <TouchableOpacity onPress={() => handleNavigate(item.id)}>
+        <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center"
+        >{item.id}</Text>
+      </TouchableOpacity>
 
         <CustomButton
             title="Update"

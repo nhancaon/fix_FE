@@ -3,10 +3,12 @@ import React, { useState, useRef, useCallback } from 'react';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { getAllSaleForecast, addSaleForecast, deleteSaleForecast, updateSaleForecast } from '../../services/SaleForecastService';
+import { getSaleForecastDetail,deleteSaleForecastDetail } from '../../services/SaleForecastDetailService';
 import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFModal } from "../../components";
 import { useFocusEffect } from '@react-navigation/native';
 
-const SaleForecastDetail = () => {
+const SaleForecastDetail = ({ route }) => {
+  const { itemId } = route.params;
   const { token, userLogin } = useGlobalContext();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ const SaleForecastDetail = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getAllSaleForecast(token);
+      const res = await getSaleForecastDetail(token,itemId);
       setData(res.result);
     } catch (err) {
       setError(err);
@@ -66,10 +68,10 @@ const SaleForecastDetail = () => {
     }
   }
 
-  async function delSaleForecast(id) {
+  async function delSaleForecastDetail(id) {
     try {
       setLoading(true);
-      const del_res = await deleteSaleForecast(token, id);
+      const del_res = await deleteSaleForecastDetail(token, id, itemId);
       if (!del_res) {
         if (errorToastRef.current) {
           errorToastRef.current.show({
@@ -127,18 +129,18 @@ const SaleForecastDetail = () => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
-        <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center">{item.id}</Text>
+        <Text className="flex text-lg text-center font-psemibold text-black w-20 items-center">{item.product_id}</Text>
         <CustomButton
             title="Update"
             handlePress={() => {
-              setsfModalVisible(true);
-              setId(item.id);
-              setStartDate(new Date(item.dateStart));
-              if (item.dateEnd === null) {
-                setEndDate(new Date(item.dateStart));
-              }else{
-                setEndDate(new Date(item.dateEnd));
-              }
+              //setsfModalVisible(true);
+              setId(item.product_id);
+              // setStartDate(new Date(item.dateStart));
+              // if (item.dateEnd === null) {
+              //   setEndDate(new Date(item.dateStart));
+              // }else{
+              //   setEndDate(new Date(item.dateEnd));
+              // }
               
             }}
             containerStyles="flex items-center self-center w-20 mr-6 bg-green-500"
@@ -148,13 +150,15 @@ const SaleForecastDetail = () => {
             title="Delete"
             handlePress={() => {
               setConfirmationModalVisible(true);
-              setId(item.id);
+              setId(item.product_id);
             }}
-            containerStyles="flex items-center self-center w-20 mr-6 bg-red-500"
+            containerStyles="flex items-center self-center w-20 mr-10 bg-red-500"
             isLoading={false}
         />
-        <Text className="flex text-lg font-psemi text-black w-40">{item.dateStart}</Text>
-        <Text className="flex text-lg font-psemi text-black w-40">{item.dateEnd}</Text>
+        <Text className="flex text-lg font-psemi text-black w-40 mr-20">{item.name}</Text>
+        <Text className="flex text-lg font-psemi text-black w-40">{item.quantity}</Text>
+        <Text className="flex text-lg font-psemi text-black w-40">{item.totalPrice}</Text>
+        <Text className="flex text-lg font-psemi text-black w-40">{item.totalSalePrice}</Text>
         
       </View>
     )
@@ -167,15 +171,17 @@ const SaleForecastDetail = () => {
           <View className="flex">
             <View style={styles.header}>
               <Text className="flex text-lg text-center font-psemibold text-black w-20">S.No</Text>
-              <Text className="flex text-lg text-center font-psemibold text-black w-40 ml-56">Date Start</Text>
-              <Text className="text-lg text-center font-psemibold text-black w-40">Date End</Text>
+              <Text className="flex text-lg text-center font-psemibold text-black w-40 ml-56">Name</Text>
+              <Text className="text-lg text-center font-psemibold text-black w-40 mr-10">Quantity</Text>
+              <Text className="text-lg text-center font-psemibold text-black w-40">Total Price</Text>
+              <Text className="text-lg text-center font-psemibold text-black w-40">Total Sale Price</Text>
             </View>
               {data.length > 0 ? (
                 <View style={{ maxHeight: 6 * 77 }}>
                   <FlatList
-                    data={data.slice().sort((a, b) => a.id - b.id)}
+                    data={data.slice().sort((a, b) => a.product_id - b.product_id)}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.product_id.toString()}
                   />
                 </View>
               ) : (
@@ -205,22 +211,10 @@ const SaleForecastDetail = () => {
       visible={confirmationModalVisible}
       message="Are you sure?"
       onYesPress={() => {
-        delSaleForecast(id);
+        delSaleForecastDetail(id);
         setConfirmationModalVisible(false);
       }}
       onNoPress={() => setConfirmationModalVisible(false)}/>
-    <SFModal
-      visible={sfModalVisible}
-      onClose={() => setsfModalVisible(false)}
-      onSavePress={
-        (dateStart, dateEnd) => {
-          upSaleForecast(dateStart, dateEnd);
-          setsfModalVisible(false)
-        }
-      }
-      initialStartDate={startDate}
-      initialEndDate={endDate}
-    />
     </>
   );
 };
