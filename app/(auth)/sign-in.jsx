@@ -135,6 +135,7 @@ const SignIn = () => {
             handleChangeText={handleChangeEmail}
             otherStyles="mt-7"
             keyboardType="email-address"
+            edit={true}
           />
 
           <FormField
@@ -143,6 +144,7 @@ const SignIn = () => {
             value={password}
             handleChangeText={handleChangePassword}
             otherStyles="mt-7"
+            edit={true}
           />
 
           <CustomButton
@@ -150,6 +152,7 @@ const SignIn = () => {
             handlePress={handleLogin}
             containerStyles="mt-7"
             isLoading={isSubmitting}
+            unpressable={false}
           />
 
           <View className="flex justify-center pt-5 flex-row gap-2">
@@ -161,6 +164,15 @@ const SignIn = () => {
               className="text-lg font-psemibold text-secondary"
             >
               Signup
+            </Link>
+          </View>
+
+          <View className="flex justify-center pt-3 flex-row gap-2">
+            <Link
+              href="/recover-password"
+              className="text-lg font-psemibold text-secondary"
+            >
+              Forgot your password?
             </Link>
           </View>
         </View>

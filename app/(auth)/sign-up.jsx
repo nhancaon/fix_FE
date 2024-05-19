@@ -99,6 +99,7 @@ const SignUp = () => {
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
             otherStyles="mt-5"
+            edit={true}
           />
 
           <FormField
@@ -108,6 +109,7 @@ const SignUp = () => {
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-5"
             keyboardType="email-address"
+            edit={true}
           />
 
           <FormField
@@ -116,6 +118,7 @@ const SignUp = () => {
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-5"
+            edit={true}
           />
 
           <FormField
@@ -124,6 +127,7 @@ const SignUp = () => {
             value={form.dateOfBirth}
             handleChangeText={(e) => setForm({ ...form, dateOfBirth: e })}
             otherStyles="mt-5"
+            edit={true}
           />
 
           <FormField
@@ -132,6 +136,7 @@ const SignUp = () => {
             value={form.phoneNumber}
             handleChangeText={(e) => setForm({ ...form, phoneNumber: e })}
             otherStyles="mt-5"
+            edit={true}
           />
 
           <FormField
@@ -140,6 +145,7 @@ const SignUp = () => {
             value={form.address}
             handleChangeText={(e) => setForm({ ...form, address: e })}
             otherStyles="mt-5"
+            edit={true}
           />
 
           <CustomButton
@@ -147,6 +153,7 @@ const SignUp = () => {
             handlePress={submit}
             containerStyles="mt-5"
             isLoading={isSubmitting}
+            unpressable={false}
           />
 
           <View className="flex justify-center pt-5 flex-row gap-2">
