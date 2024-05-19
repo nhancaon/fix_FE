@@ -7,7 +7,6 @@ import { images } from "../../constants";
 import { createUser } from "../../lib/appwrite";
 import { CustomButton, FormField } from "../../components";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { signUp } from "../../services/SignupService";
 import CustomAlert from "../../components/CustomAlert";
 
 const SignUp = () => {
