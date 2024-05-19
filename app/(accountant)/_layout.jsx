@@ -19,7 +19,7 @@ import React, { useContext } from 'react';
 const Drawer = createDrawerNavigator();
 
 const AccountantLayout = () => {
-  const { setUser, setIsLogged ,userLogin} = useGlobalContext();
+  const { setUser, setIsLogged , userLogin} = useGlobalContext();
   const authCtx = useContext(AuthContext);
   const handleLogout = () => {
     // Clear user data and token

@@ -9,7 +9,8 @@ import CustomAlert from "../../../components/CustomAlert";
 
 const ResetPassword = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [alertMessage1, setAlertMessage1] = useState("");
   const [alertMessage2, setAlertMessage2] = useState("");
@@ -17,7 +18,7 @@ const ResetPassword = () => {
   const [isSubmitting, setSubmitting] = useState(false);
 
   const submit = async () => {
-    if (email === "") {
+    if (currentPassword === "" || newPassword === "") {
       setModalVisible(true);
       setErrorMessage("Please fill in all fields");
       setAlertMessage1("Close");
@@ -34,9 +35,10 @@ const ResetPassword = () => {
     setModalVisible(false); 
   };
 
-  // Function to clear email and password fields
+  // Function to clear 
   const handClear = () => {
-    setEmail("");
+    setCurrentPassword("");
+    setNewPassword("");
     setModalVisible(false); 
   };
 
@@ -70,17 +72,25 @@ const ResetPassword = () => {
           </Text>
 
           <FormField
-            title="Email"
-            placeholder={"Please enter your email address"}
-            value={email}
-            handleChangeText={setEmail}
+            title="Current password"
+            placeholder={"●●●●●●●●"}
+            value={currentPassword}
+            handleChangeText={setCurrentPassword}
             otherStyles="mt-5"
-            keyboardType="email-address"
+            edit={true}
+          />
+
+          <FormField
+            title="New password"
+            placeholder={"●●●●●●●●"}
+            value={newPassword}
+            handleChangeText={setNewPassword}
+            otherStyles="mt-5"
             edit={true}
           />
 
           <CustomButton
-            title="Recover Password"
+            title="Reset Password"
             handlePress={submit}
             containerStyles="mt-5"
             isLoading={isSubmitting}
@@ -96,7 +106,7 @@ const ResetPassword = () => {
         error={errorMessage}
         message1={alertMessage1}
         message2={alertMessage2}
-        isSingleButton={email === "" ? true : false}
+        isSingleButton={currentPassword === "" || newPassword === "" ? true : false}
         onPressButton1={handleTryAgain}
         onPressButton2={handClear}
       />
