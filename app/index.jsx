@@ -56,6 +56,7 @@ const Welcome = () => {
             title="Continue with Email"
             handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
+            unpressable={false}
           />
         </View>
       </ScrollView>

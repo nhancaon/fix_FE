@@ -22,6 +22,12 @@ const AuthLayout = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="recover-password"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
 
       <Loader isLoading={loading} />
