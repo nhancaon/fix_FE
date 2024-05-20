@@ -6,7 +6,7 @@ import {
 } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from "../../constants";
-import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
+import { DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer'
 import ProfilePage from './Profile/ProfilePage';
 import ChairmanHome from './ChairmanHome';
 import SignIn from '../(auth)/sign-in';
