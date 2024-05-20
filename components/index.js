@@ -9,6 +9,7 @@ import AppLoader from "./AppLoader";
 import ToastMessage from "./ToastMessage";
 import AlertWithTwoOptions from "./AlertWithTwoOptions";
 import SFModal from "./SaleForecastModel/sfModal";
+import SFDModal from "./SaleForecastModel/sfdModal";
 export {
   FormField,
   CustomButton,
@@ -20,5 +21,6 @@ export {
   AppLoader,
   ToastMessage,
   AlertWithTwoOptions,
-  SFModal
+  SFModal,
+  SFDModal
 };

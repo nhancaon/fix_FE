@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import { Text, View, Image } from 'react-native'
 import React, { useContext } from 'react';
 import {
   SimpleLineIcons,
@@ -6,7 +7,10 @@ import {
   MaterialCommunityIcons,
   FontAwesome
 } from '@expo/vector-icons'
-import {createDrawerNavigator } from '@react-navigation/drawer'
+import { images } from "../../constants";
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer'
+import ProfilePage from './Profile/ProfilePage';
 import ProductManagerHome from './ProductManagerHome';
 import ProductionSchedule from './ProductionSchedule';
 import WorkOrder from './WorkOrder';
@@ -25,15 +29,11 @@ const PMBOMStack = () => (
     <Stack.Screen name="BOMDetail" component={BOMDetail} />
   </Stack.Navigator>
 );
+
 const Drawer = createDrawerNavigator()
-const COLORS = {
-    primary: '#13678A',
-    white: "#FFFFFF",
-    gray: "#ECF0F4",
-}
 
 const ProductManagerLayout = () => {
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setUser, setIsLogged, userLogin } = useGlobalContext();
   const authCtx = useContext(AuthContext);
   const handleLogout = () => {
     // Clear user data and token
@@ -43,18 +43,74 @@ const ProductManagerLayout = () => {
     
   };
   return (
-    <Drawer.Navigator >
+    <Drawer.Navigator 
+    drawerContent={
+      (props)=>{
+        return (
+          <SafeAreaView>
+            <View style={{
+              height: 200,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#ff9c01"
+            }}>
+              <Image
+                source={images.accountant}
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 50,
+                  marginBottom: 12
+                }}
+              />
+              <Text className="text-xl text-black font-bold">
+                {userLogin.fullName}
+              </Text>
+              <Text className="text-lg text-black font-bold">
+                Role: Chairman
+              </Text>
+            </View>
+            <DrawerItemList {...props} />
+          </SafeAreaView>
+        )
+      }
+    }
+    screenOptions={{
+      drawerActiveTintColor: '#ff9c01',
+      drawerInactiveTintColor: '#ffffff',
+      drawerStyle: {
+        backgroundColor: '#161622',
+        width: 240,
+      },
+    }}>
+      <Drawer.Screen
+        name="Profile"
+        options={{
+          drawerLabel: "Profile",
+          title: "Profile",
+          headerShadowVisible: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="person"
+              size={20}
+              color={"#ff9c01"} />
+          ),
+        }}
+        component={ProfilePage} 
+      />
+
       <Drawer.Screen
         name="ProductManagerHome"
         options={{
-          drawerLabel: "ProductManagerHome",
-          title: "ProductManagerHome",
+          drawerLabel: "Home",
+          title: "Home",
           headerShadowVisible: false,
           drawerIcon: () => (
             <SimpleLineIcons
               name="home"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={ProductManagerHome} 
@@ -69,7 +125,7 @@ const ProductManagerLayout = () => {
             <MaterialCommunityIcons
               name="calendar-clock"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={ProductionSchedule}  
@@ -77,14 +133,14 @@ const ProductManagerLayout = () => {
       <Drawer.Screen
         name="WorkOrder"
         options={{
-          drawerLabel: "WorkOrder",
-          title: "WorkOrder",
+          drawerLabel: "Work Order",
+          title: "Work Order",
           headerShadowVisible: false,
           drawerIcon: () => (
             <MaterialIcons
               name="work"
               size={20}
-              color={"#808080"} />
+              color={"#ff9c01"} />
           ),
         }}
         component={WorkOrder}
@@ -94,24 +150,30 @@ const ProductManagerLayout = () => {
         component={PMBOMStack} 
         headerShadowVisible={false}
         options={{ 
-          drawerLabel: 'BOM',
+          drawerLabel: 'Bill of material',
           drawerIcon: () => (
             <FontAwesome
               name="list-alt"
               size={20}
-              color={"#808080"} 
+              color={"#ff9c01"} 
             />
           ),
         }}
       />
       <Drawer.Screen
-        name="logout"
+        name="Log Out"
         component={SignIn} 
         listeners={{
           focus: handleLogout,
         }}
         options={{
           headerShown: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="logout"
+              size={20}
+              color={"#ff9c01"} />
+          ),
         }}
       />
     </Drawer.Navigator>

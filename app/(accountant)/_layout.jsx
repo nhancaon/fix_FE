@@ -6,8 +6,9 @@ import {
 } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { DrawerItemList,createDrawerNavigator } from '@react-navigation/drawer'
+import ProfilePage from './Profile/ProfilePage';
 import AccountantHome from './AccountantHome';
-import Inventory from './InventoryPage'
+import Inventory from './InventoryPage';
 import WorkOrder from './WordOrderPage';
 import { images } from "../../constants";
 import SignIn from '../(auth)/sign-in';
@@ -18,62 +19,78 @@ import React, { useContext } from 'react';
 const Drawer = createDrawerNavigator();
 
 const AccountantLayout = () => {
-  const { setUser, setIsLogged ,userLogin} = useGlobalContext();
+  const { setUser, setIsLogged , userLogin} = useGlobalContext();
   const authCtx = useContext(AuthContext);
   const handleLogout = () => {
     // Clear user data and token
     setUser(null);
     setIsLogged(false);
     authCtx.logout();
-    
   };
+
   return (
     <Drawer.Navigator
-    drawerContent={
+      drawerContent={
         (props)=>{
-            return (
-                <SafeAreaView>
-                    <View style={{
-                        height: 200,
-                        width: "100%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#ff9c01"
-                    }}>
-                        <Image
-                          source={images.accountant}
-                          style={{
-                            height: 100,
-                            width: 100,
-                            borderRadius: 50,
-                            marginBottom: 12
-                          }}
-                        />
-                        <Text className="text-xl text-black font-bold">
-                          {userLogin.fullName}
-                        </Text>
-                        <Text className="text-lg text-black font-bold">
-                          Accountant
-                        </Text>
-                    </View>
-                    <DrawerItemList {...props} />
-                </SafeAreaView>
-            )
+          return (
+            <SafeAreaView>
+              <View style={{
+                height: 200,
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#ff9c01"
+              }}>
+                <Image
+                  source={images.accountant}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    borderRadius: 50,
+                    marginBottom: 12
+                  }}
+                />
+                <Text className="text-xl text-black font-bold">
+                  {userLogin.fullName}
+                </Text>
+                <Text className="text-lg text-black font-bold">
+                  Role: Accountant
+                </Text>
+              </View>
+              <DrawerItemList {...props} />
+            </SafeAreaView>
+          )
         }
       }
       screenOptions={{
         drawerActiveTintColor: '#ff9c01',
         drawerInactiveTintColor: '#ffffff',
         drawerStyle: {
-        backgroundColor: '#161622',
-        width: 240,
-    },
-  }}
+          backgroundColor: '#161622',
+          width: 240,
+        },
+      }}
     >
+      <Drawer.Screen
+        name="Profile"
+        options={{
+          drawerLabel: "Profile",
+          title: "Profile",
+          headerShadowVisible: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="person"
+              size={20}
+              color={"#ff9c01"} />
+          ),
+        }}
+        component={ProfilePage} 
+      />
+
       <Drawer.Screen
         name="AccountantHome"
         options={{
-          drawerLabel: "AccountantHome",
+          drawerLabel: "Accountant Home",
           title: "AccountantHome",
           headerShadowVisible: false,
           drawerIcon: () => (
@@ -103,7 +120,7 @@ const AccountantLayout = () => {
       <Drawer.Screen
         name="WorkOrder"
         options={{
-          drawerLabel: "WorkOrder",
+          drawerLabel: "Work Order",
           title: "WorkOrder",
           headerShadowVisible: false,
           drawerIcon: () => (
@@ -116,17 +133,23 @@ const AccountantLayout = () => {
         component={WorkOrder} 
       />
       <Drawer.Screen
-        name="logout"
+        name="Log Out"
         component={SignIn} 
         listeners={{
           focus: handleLogout,
         }}
         options={{
           headerShown: false,
+          drawerIcon: () => (
+            <MaterialIcons
+              name="logout"
+              size={20}
+              color={"#ff9c01"} />
+          ),
         }}
       />
     </Drawer.Navigator>
   )
 }
 
-export default AccountantLayout
+export default AccountantLayout;

@@ -5,7 +5,17 @@ import SaleForecast from './SaleForecastPage';
 import ProduceOrder from './ProduceOrderPage';
 import SaleOrder from './SaleOrderPage';
 import {TabButton} from '../../components'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SaleForecastDetail from './SaleForecastDetailPage';
 
+const Stack = createNativeStackNavigator();
+
+const SaleForecastStack = () => (
+    <Stack.Navigator>
+        <Stack.Screen name="SaleForecastPage" component={SaleForecast} options={{ headerShown: false }} />
+        <Stack.Screen name="SaleForecastDetailPage" component={SaleForecastDetail} options={{ headerShown: false }} />
+    </Stack.Navigator>
+);
 const AccountantHome = () => {
   const Tab = createBottomTabNavigator()
   const tabs = [
@@ -21,7 +31,7 @@ const AccountantHome = () => {
             title: 'SaleForecast',
             screen: 'Likes',
             icon: 'chart-timeline-variant',
-            Component: SaleForecast
+            Component: SaleForecastStack
         },
         {
             id: 3,

@@ -31,3 +31,17 @@ export const getUserInformationById = async (token, id) => {
         console.log("Error at Get user information: ", e);
     }
 };
+
+export const recoverPasswordByEmail = async (email) => {
+    try {
+        const res = await http.put(
+            "/api/auth/recover-password",
+            {
+                email,
+            }
+        );
+        return res;
+    } catch (e) {
+        console.log("Cannot recover password at Login Service: ", e);
+    }
+};
