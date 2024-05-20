@@ -1,9 +1,9 @@
 import { Text, View, StyleSheet, Alert, TextInput } from 'react-native';
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { getSaleForecastDetail,deleteSaleForecastDetail, getProductsForSaleForecast, addSaleForecastDetail } from '../../services/SaleForecastDetailService';
-import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFDUpdateModal } from "../../components";
+import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFDModal } from "../../components";
 import { useFocusEffect } from '@react-navigation/native';
 import { Card } from 'react-native-paper';
 
@@ -20,10 +20,9 @@ const SaleForecastDetail = ({ route }) => {
   const [dataProducts, setDataProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [formUpdate, setFormUpdate] = useState({
-    name: '',
-    price: 0,
-    sellPrice: 0,
-    quantity: 0
+    quantity: 0,
+    totalPrice: 0,
+    totalSalePrice: 0
   });
 
   const fetchData = useCallback(async () => {
@@ -51,6 +50,33 @@ const SaleForecastDetail = ({ route }) => {
     }, [fetchData])
   );
 
+  async function UpdatePress(item) {
+                            console.log("formUpdate",id);
+                            console.log("formUpdate",item.name);
+                            console.log("formUpdate",sfdModalVisible);
+                            setFormUpdate({
+                              quantity: item.quantity,
+                              totalPrice: item.totalPrice,
+                              totalSalePrice: item.totalPrice
+                            });
+                            console.log("formUpdate",formUpdate);
+  }
+//   // Use useEffect to log updated state values
+// useEffect(() => {
+//     console.log("Updated id:", id);
+// }, [id]);
+
+// useEffect(() => {
+//     console.log("Updated formUpdate:", formUpdate);
+// }, [formUpdate]);
+
+// useEffect(() => {
+//     console.log("Updated sfdModalVisible:", sfdModalVisible);
+// }, [sfdModalVisible]);
+
+// useEffect(() => {
+//     console.log("Updated na:", na);
+// }, [na]);
   
   const handleQuantityChange = (id, quantity) => {
     setSelectedProducts(prevState => {
@@ -166,10 +192,16 @@ const SaleForecastDetail = ({ route }) => {
     }
   }
 
-  async function upSaleForecastDetail(updatedName, updatedPrice, updatedSellPrice, updatedQuantity) {
+  async function upSaleForecastDetail(quantity, totalPrice, totalSalePrice) {
     try {
       setLoading(true);
-      const up_res = await updateSaleForecastDetail(token, itemId, id, updatedName, updatedPrice, updatedSellPrice, updatedQuantity);
+      console.log(token);
+      console.log(itemId);
+      console.log(id);
+      console.log(updatedPrice);
+      console.log(updatedSellPrice);
+      console.log(updatedQuantity);
+      const up_res = await updateSaleForecastDetail(token, itemId, id, totalSalePrice, totalSalePrice, quantity);
       if (!up_res) {
         throw new Error('Fail to update!');
       } else {
@@ -220,21 +252,18 @@ const SaleForecastDetail = ({ route }) => {
                           handlePress={() => {
                             setsfdModalVisible(true);
                             setId(item.product_id);
-                            setFormUpdate({
-                              name: item.name,
-                              price: item.price,
-                              sellPrice: item.sellPrice,
-                              quantity: item.quantity
-                            });
+                            UpdatePress(item);
                           }}
-                          containerStyles="flex items-center self-center w-40 mr-6 bg-green-500"
+                          containerStyles="flex items-center self-center w-40 mr-10 bg-green-500"
                           isLoading={false}
-                        />
+                      />
+
                         <CustomButton
                           title="Delete"
                           handlePress={() => {
                             setConfirmationModalVisible(true);
                             setId(item.product_id);
+                            console.log("formUpdate",id);
                           }}
                           containerStyles="flex items-center self-center w-40 mr-10 bg-red-500"
                           isLoading={false}
@@ -312,17 +341,18 @@ const SaleForecastDetail = ({ route }) => {
       }}
       onNoPress={() => setConfirmationModalVisible(false)}/>
 
-    <SFDUpdateModal
+    <SFDModal
       visible={sfdModalVisible}
-      id={id}
-      name={formUpdate.name}
-      price={formUpdate.price}
-      sellPrice={formUpdate.sellPrice}
-      quantity={formUpdate.quantity}
-      onUpdate={(updatedName, updatedPrice, updatedSellPrice, updatedQuantity) => {
-        upSaleForecastDetail(updatedName, updatedPrice, updatedSellPrice, updatedQuantity);
-      }}
       onClose={() => setsfdModalVisible(false)}
+      onSavePress={
+        (quantity, totalPrice, totalSalePrice) => {
+          upSaleForecastDetail(quantity, totalPrice, totalSalePrice);
+          setsfdModalVisible(false)
+        }
+      }
+      initialQuantity={formUpdate.quantity}
+      initialTotalPrice={formUpdate.totalPrice}
+      initialTotalSalePrice={formUpdate.totalSalePrice}
     />
     </>
   );
