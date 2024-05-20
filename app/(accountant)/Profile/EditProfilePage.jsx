@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { images } from '../../../constants';
 import styles from './stylesProfile';
 import { useGlobalContext } from '../../../context/GlobalProvider';
-import { CustomButton, FormField } from '../../../components';
+import { CustomButton, FormField, ToastMessage } from '../../../components';
 import { useNavigation } from '@react-navigation/native';
 import { updateUser } from "../../../services/UserServices";
 
@@ -14,6 +14,8 @@ const EditProfilePage = () => {
   const [edit, setEdit] = useState(false);
   const [disableEdit, setDisableEditing] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
 
   const [username, setUserName] = useState(userLogin.fullName);
   const [fullName, setFullName] = useState(userLogin.fullName);
@@ -47,6 +49,15 @@ const EditProfilePage = () => {
     setEdit(!edit);
     setDisableEditing(!disableEdit);
     setUserName(fullName);
+
+    if (successToastRef.current) {
+      successToastRef.current.show({
+        type: 'success',
+        text: 'Update Profile',
+        description: 'Your profile has been updated.'
+      });
+    }
+
     setSubmitting(false);
   }
 
@@ -126,6 +137,13 @@ const EditProfilePage = () => {
           />
         </View>
       </ScrollView>
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
     </SafeAreaView>
   );
 };

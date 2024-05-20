@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import React from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Image } from "react-native";
 import { useGlobalContext } from '../../../context/GlobalProvider';
 import { images } from "../../../constants";
-import { CustomButton, FormField } from "../../../components";
+import { CustomButton, FormField, ToastMessage } from "../../../components";
 import CustomAlert from "../../../components/CustomAlert";
 import { resetPassword } from "../../../services/UserServices";
 
@@ -18,6 +18,8 @@ const ResetPassword = () => {
   const [alertMessage2, setAlertMessage2] = useState("");
 
   const [isSubmitting, setSubmitting] = useState(false);
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
 
   const submit = async () => {
     if (currentPassword === "" || newPassword === "") {
@@ -52,6 +54,15 @@ const ResetPassword = () => {
     );
     setUser(updatedPassword);
     setPasswordLogin(newPassword);
+
+    if (successToastRef.current) {
+      successToastRef.current.show({
+        type: 'success',
+        text: 'Reset Password',
+        description: 'Your password has been reset.'
+      });
+    }
+
     setCurrentPassword("");
     setNewPassword("");
     setSubmitting(false);
@@ -113,6 +124,14 @@ const ResetPassword = () => {
           />
         </View>
       </ScrollView>
+
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
 
       <CustomAlert
         modalVisible={modalVisible}

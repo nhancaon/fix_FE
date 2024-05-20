@@ -1,19 +1,15 @@
-import { useState } from "react";
-import { Link, router } from "expo-router";
+import { useState, useRef } from "react";
+import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
 import { images } from "../../constants";
-import { createUser } from "../../lib/appwrite";
 import { CustomButton, FormField } from "../../components";
-import { useGlobalContext } from "../../context/GlobalProvider";
 import { recoverPasswordByEmail } from "../../services/LoginServices";
 import CustomAlert from "../../components/CustomAlert";
-import { styles } from "../../components/CustomAlert/styles";
+import { ToastMessage } from "../../components";
 
 
 const RecoverPassword = () => {
-  const { setUser, setIsLogged } = useGlobalContext();
   const [recoverResponse, setRecoverResponse] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,6 +18,8 @@ const RecoverPassword = () => {
   const [alertMessage2, setAlertMessage2] = useState("");
 
   const [isSubmitting, setSubmitting] = useState(false);
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
 
   async function handleRecoverPassword() {
     if (email === "") {
@@ -43,6 +41,15 @@ const RecoverPassword = () => {
         setSubmitting(false);
         return;
       }
+
+      if (successToastRef.current) {
+        successToastRef.current.show({
+          type: 'success',
+          text: 'Recovery Password',
+          description: 'Please check your email for the new recovery password.'
+        });
+      }
+
       setRecoverResponse(recoverResponse);
       setSubmitting(false);
     } 
@@ -63,7 +70,7 @@ const RecoverPassword = () => {
 
   // Function to try again
   const handleTryAgain = () => {
-    handleLogin();
+    handleRecoverPassword();
     setModalVisible(false); 
   };
 
@@ -133,6 +140,14 @@ const RecoverPassword = () => {
           </View>
         </View>
       </ScrollView>
+
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
 
       <CustomAlert
         modalVisible={modalVisible}

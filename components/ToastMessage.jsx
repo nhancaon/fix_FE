@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { FontAwesome5 } from '@expo/vector-icons';
 
-const ToastMessage = forwardRef(({ type, timeout = 1000 }, ref) => {
+const ToastMessage = forwardRef(({ type, timeout = 3000 }, ref) => {
 
     const [isVisible, setIsVisible] = useState(false);
     const [text, setText] = useState('');
