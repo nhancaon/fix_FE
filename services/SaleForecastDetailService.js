@@ -14,22 +14,24 @@ export const getSaleForecastDetail = async (token, sale_forecast_id) => {
     }
 };
 
-// export const addSaleForecast = async (token, accountant_id) => {
-//     const config = {
-//         headers: {
-//             Authorization: "Bearer " + token,
-//         },
-//         params: {
-//             ac_id: accountant_id,
-//         },
-//     };
-//     try {
-//         const res = await http.post(`/api/sale_forecast/create`, null, config);
-//         return res;
-//     } catch (e) {
-//         console.log("Error at Add sale forecast: ", e);
-//     }
-// };
+export const addSaleForecastDetail = async (token, sid, pids, quantities) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token,
+        }
+    };
+    const data = {
+        sid,
+        pids,
+        quantities,
+    }
+    try {
+        const res = await http.post(`/api/sale_forecast_detail/create`, data, config);
+        return res;
+    } catch (e) {
+        console.log("Error at Add sale forecast detail: ", e);
+    }
+};
 
 export const deleteSaleForecastDetail = async (token, pid, sid) => {
     const config = {
@@ -48,20 +50,39 @@ export const deleteSaleForecastDetail = async (token, pid, sid) => {
     }
 };
 
-// export const updateSaleForecast = async (token, id, dateStart, dateEnd) => {
-//     const config = {
-//         headers: {
-//             Authorization: "Bearer " + token,
-//         },
-//     };
-//     const data = {
-//         dateStart,
-//         dateEnd,
-//     }
-//     try {
-//         const res = await http.put(`/api/sale_forecast/${id}`, data, config);
-//         return res;
-//     } catch (e) {
-//         console.log("Error at Update sale forecast: ", e);
-//     }
-// };
+export const updateSaleForecastDetail = async (token, sid, pid, updatedName, updatedPrice, updatedSellPrice, updatedQuantity) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token,
+        },
+    };
+    const data = {
+        sid,
+        pid,
+        updatedName,
+        updatedPrice,
+        updatedSellPrice,
+        updatedQuantity
+    }
+    try {
+        const res = await http.put(`/api/sale_forecast_detail`, data, config);
+        return res;
+    } catch (e) {
+        console.log("Error at Update sale forecast: ", e);
+    }
+};
+
+
+export const getProductsForSaleForecast = async (token, sale_forecast_id) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    try {
+        const res = await http.get(`/api/products/forSaleDetail/${sale_forecast_id}`, config);
+        return res;
+    } catch (e) {
+        console.log("Error at Get products: ", e);
+    }
+};
