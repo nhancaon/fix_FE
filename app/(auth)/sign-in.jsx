@@ -55,6 +55,8 @@ const SignIn = () => {
         return;
       }
       setLoginResponse(loginResponse);
+      setEmail("");
+      setPassword("");
       const authObj = loginResponse.result;
       const token = authObj.token;
       setToken(token);
@@ -69,9 +71,11 @@ const SignIn = () => {
       console.log("Decoded Token: ", decodedToken.userId); 
       if (decodedToken.role === 'PRODUCT_MANAGER') {
         setSubmitting(false);
+        setUserLogin(userLogin.result);
         router.push("/ProductManagerHome");
       } else if (decodedToken.role === 'CHAIRMAN') {
         setSubmitting(false);
+        setUserLogin(userLogin.result);
         router.push("/ChairmanHome");
       } else if (decodedToken.role === 'ACCOUNTANT') {
         setSubmitting(false);
