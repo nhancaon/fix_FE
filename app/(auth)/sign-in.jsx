@@ -12,7 +12,7 @@ import CustomAlert from "../../components/CustomAlert";
 
 
 const SignIn = () => {
-  const { setUser, setIsLogged, setUserLogin, setToken, setUserId  } = useGlobalContext();
+  const { setUser, setIsLogged, setUserLogin, setToken, setUserId, setPasswordLogin } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +41,9 @@ const SignIn = () => {
       return;
     }
     setSubmitting(true);
+    console.log("Password: ", password);  // Equal password in login and reset 
+    setPasswordLogin(password);
+
     try {
       const loginResponse = await login(email, password); // Corrected line
       if (!loginResponse) {

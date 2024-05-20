@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import React from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Image } from "react-native";
-
+import { useGlobalContext } from '../../../context/GlobalProvider';
 import { images } from "../../../constants";
-import { CustomButton, FormField } from "../../../components";
+import { CustomButton, FormField, ToastMessage } from "../../../components";
 import CustomAlert from "../../../components/CustomAlert";
+import { resetPassword } from "../../../services/UserServices";
 
 const ResetPassword = () => {
+  const { setUser, passwordLogin, userLogin, setPasswordLogin } = useGlobalContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -16,6 +18,8 @@ const ResetPassword = () => {
   const [alertMessage2, setAlertMessage2] = useState("");
 
   const [isSubmitting, setSubmitting] = useState(false);
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
 
   const submit = async () => {
     if (currentPassword === "" || newPassword === "") {
@@ -25,22 +29,44 @@ const ResetPassword = () => {
       setAlertMessage2("");
       return;
     }
-
+  
     setSubmitting(true);
+
+    if (!(currentPassword === passwordLogin)){
+      setModalVisible(true);
+      setErrorMessage("Password is incorrect");
+      setAlertMessage1("Try again");
+      setAlertMessage2("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setSubmitting(false);
+      return;
+    }
+    else {
+      handleResetPassword();
+    }
   };
 
-  // Function to try again sign in
-  const handleTryAgain = () => {
-    submit();
-    setModalVisible(false); 
-  };
+  async function handleResetPassword() {
+    const updatedPassword = await resetPassword(
+      userLogin.id,
+      newPassword
+    );
+    setUser(updatedPassword);
+    setPasswordLogin(newPassword);
 
-  // Function to clear 
-  const handClear = () => {
+    if (successToastRef.current) {
+      successToastRef.current.show({
+        type: 'success',
+        text: 'Reset Password',
+        description: 'Your password has been reset.'
+      });
+    }
+
     setCurrentPassword("");
     setNewPassword("");
-    setModalVisible(false); 
-  };
+    setSubmitting(false);
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -99,6 +125,14 @@ const ResetPassword = () => {
         </View>
       </ScrollView>
 
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
+
       <CustomAlert
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -106,9 +140,7 @@ const ResetPassword = () => {
         error={errorMessage}
         message1={alertMessage1}
         message2={alertMessage2}
-        isSingleButton={currentPassword === "" || newPassword === "" ? true : false}
-        onPressButton1={handleTryAgain}
-        onPressButton2={handClear}
+        isSingleButton={currentPassword === "" || newPassword === ""  ? true : false}
       />
     </SafeAreaView>
   );

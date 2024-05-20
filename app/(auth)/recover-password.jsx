@@ -1,17 +1,16 @@
-import { useState } from "react";
-import { Link, router } from "expo-router";
+import { useState, useRef } from "react";
+import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
 import { images } from "../../constants";
-import { createUser } from "../../lib/appwrite";
 import { CustomButton, FormField } from "../../components";
-import { useGlobalContext } from "../../context/GlobalProvider";
+import { recoverPasswordByEmail } from "../../services/LoginServices";
 import CustomAlert from "../../components/CustomAlert";
-import { styles } from "../../components/CustomAlert/styles";
+import { ToastMessage } from "../../components";
+
 
 const RecoverPassword = () => {
-  const { setUser, setIsLogged } = useGlobalContext();
+  const [recoverResponse, setRecoverResponse] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -19,45 +18,59 @@ const RecoverPassword = () => {
   const [alertMessage2, setAlertMessage2] = useState("");
 
   const [isSubmitting, setSubmitting] = useState(false);
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
 
-  const submit = async () => {
+  async function handleRecoverPassword() {
     if (email === "") {
       setModalVisible(true);
-      setErrorMessage("Please fill in all fields");
+      setErrorMessage("Please enter your email");
       setAlertMessage1("Close");
       setAlertMessage2("");
       return;
     }
-
     setSubmitting(true);
 
-    // try {
-    //   const res = await signUp(form.username, form.email, form.password);
-    //   if (!res) {
-    //     setModalVisible(true);
-    //     setErrorMessage("Password or email is incorrect");
-    //     setAlertMessage1("Try again");
-    //     setAlertMessage2("Clear");
-    //     setSubmitting(false);
-    //     return;
-    //   }
+    try {
+      const recoverResponse = await recoverPasswordByEmail(email);
+      if (!recoverResponse) {
+        setModalVisible(true);
+        setErrorMessage("Email is incorrect");
+        setAlertMessage1("Try again");
+        setAlertMessage2("Clear");
+        setSubmitting(false);
+        return;
+      }
 
+      if (successToastRef.current) {
+        successToastRef.current.show({
+          type: 'success',
+          text: 'Recovery Password',
+          description: 'Please check your email for the new recovery password.'
+        });
+      }
 
-    //   // Old Code
-    //   const result = await createUser(form.email, form.password, form.username);
-    //   setUser(result);
-    //   setIsLogged(true);
-    //   router.replace("/home");
-    // } catch (error) {
-    //   console.log("Error", error.message);
-    // } finally {
-    //   setSubmitting(false);
-    // }
+      setRecoverResponse(recoverResponse);
+      setSubmitting(false);
+    } 
+    catch (error) {
+      console.error(error);
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+      setSubmitting(false);
+    }
   };
 
-  // Function to try again sign in
+  // Function to try again
   const handleTryAgain = () => {
-    submit();
+    handleRecoverPassword();
     setModalVisible(false); 
   };
 
@@ -108,7 +121,7 @@ const RecoverPassword = () => {
 
           <CustomButton
             title="Recover Password"
-            handlePress={submit}
+            handlePress={handleRecoverPassword}
             containerStyles="mt-5"
             isLoading={isSubmitting}
             unpressable={false}
@@ -127,6 +140,14 @@ const RecoverPassword = () => {
           </View>
         </View>
       </ScrollView>
+
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
 
       <CustomAlert
         modalVisible={modalVisible}
