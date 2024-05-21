@@ -1,55 +1,46 @@
 import React, { useState } from 'react';
-import { View, Modal, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 
-const SFDUpdateModal = ({ name, price, sellPrice, quantity, visible, onUpdate, onClose }) => {
-  const [updatedName, setUpdatedName] = useState(name);
-  const [updatedPrice, setUpdatedPrice] = useState(price.toString());
-  const [updatedSellPrice, setUpdatedSellPrice] = useState(sellPrice.toString());
-  const [updatedQuantity, setUpdatedQuantity] = useState(quantity.toString());
+const SFDModal = ({ initialQuantity, initialTotalPrice, initialTotalSalePrice, visible, onSavePress, onClose }) => {
+  const [quantity, setQuantity] = useState(initialQuantity.toString());
+  const [totalPrice, setTotalPrice] = useState(initialTotalPrice.toString());
+  const [totalSalePrice, setTotalSalePrice] = useState(initialTotalSalePrice.toString());
 
-  const handleUpdatePress = () => {
-    onUpdate(updatedName, parseFloat(updatedPrice), parseFloat(updatedSellPrice), parseInt(updatedQuantity));
-    onClose();
+  const handleSave = () => {
+    onSavePress(parseInt(quantity), parseFloat(totalPrice), parseFloat(totalSalePrice));
   };
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose} transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Update Sale Forecast Detail</Text>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedName}
-            onChangeText={setUpdatedName}
-          />
-          <Text style={styles.label}>Price:</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedPrice}
-            onChangeText={setUpdatedPrice}
-            keyboardType="numeric"
-          />
-          <Text style={styles.label}>Sell Price:</Text>
-          <TextInput
-            style={styles.input}
-            value={updatedSellPrice}
-            onChangeText={setUpdatedSellPrice}
-            keyboardType="numeric"
-          />
           <Text style={styles.label}>Quantity:</Text>
           <TextInput
             style={styles.input}
-            value={updatedQuantity}
-            onChangeText={setUpdatedQuantity}
+            value={quantity}
+            onChangeText={setQuantity}
+            keyboardType="numeric"
+          />
+          <Text style={styles.label}>Total Price:</Text>
+          <TextInput
+            style={styles.input}
+            value={totalPrice}
+            onChangeText={setTotalPrice}
+            keyboardType="numeric"
+          />
+          <Text style={styles.label}>Total Sale Price:</Text>
+          <TextInput
+            style={styles.input}
+            value={totalSalePrice}
+            onChangeText={setTotalSalePrice}
             keyboardType="numeric"
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleUpdatePress} style={[styles.button, { backgroundColor: 'rgb(34, 197, 94)' }]}>
-              <Text style={styles.buttonText}>Update</Text>
+            <TouchableOpacity onPress={handleSave} style={[styles.button, { backgroundColor: 'rgb(34, 197, 94)' }]}>
+              <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onClose} style={[styles.button, { backgroundColor: 'rgb(239, 68, 68)' }]}>
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={styles.buttonText}>Exit</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -70,12 +61,6 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '80%',
     borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ff9c01',
-    marginBottom: 10,
   },
   label: {
     color: '#ff9c01',
@@ -107,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SFDUpdateModal;
+export default SFDModal;

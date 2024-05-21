@@ -50,7 +50,7 @@ export const deleteSaleForecastDetail = async (token, pid, sid) => {
     }
 };
 
-export const updateSaleForecastDetail = async (token, sid, pid, updatedName, updatedPrice, updatedSellPrice, updatedQuantity) => {
+export const updateSaleForecastDetail = async (token, sid, pid, updatedQuantity, updatedTotalPrice, updatedTotalSalePrice) => {
     const config = {
         headers: {
             Authorization: "Bearer " + token,
@@ -59,11 +59,15 @@ export const updateSaleForecastDetail = async (token, sid, pid, updatedName, upd
     const data = {
         sid,
         pid,
-        updatedName,
-        updatedPrice,
-        updatedSellPrice,
-        updatedQuantity
+        updatedQuantity,
+        updatedTotalPrice,
+        updatedTotalSalePrice
     }
+    console.log(sid);
+    console.log(pid);
+    console.log(updatedQuantity);
+    console.log(updatedTotalPrice);
+    console.log(updatedTotalSalePrice);
     try {
         const res = await http.put(`/api/sale_forecast_detail`, data, config);
         return res;
