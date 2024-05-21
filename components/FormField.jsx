@@ -15,9 +15,15 @@ const FormField = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
 
+  const formatDateString = (dateString) => {
+    const [year, month, day] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleDateChange = (selectedDate) => {
     setShowCalendar(false);
-    handleChangeText(selectedDate);
+    const formattedDate = formatDateString(selectedDate);
+    handleChangeText(formattedDate);
   };
 
   const handleModalClose = () => {

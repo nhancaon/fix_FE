@@ -1,13 +1,11 @@
 import { useState, useRef } from "react";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, Text, ScrollView, Dimensions, Image } from "react-native";
 import { images } from "../../constants";
-import { CustomButton, FormField } from "../../components";
+import { CustomButton, FormField, ToastMessage } from "../../components";
 import { recoverPasswordByEmail } from "../../services/LoginServices";
 import CustomAlert from "../../components/CustomAlert";
-import { ToastMessage } from "../../components";
-
 
 const RecoverPassword = () => {
   const [recoverResponse, setRecoverResponse] = useState(null);

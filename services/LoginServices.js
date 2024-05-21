@@ -16,6 +16,26 @@ export const login = async (email, password) => {
     }
 };
 
+export const signUpOrInsertUser = async (fullName, email, password, dateOfBirth, phoneNumber, address, roleName) => {
+    try {
+        const res = await http.post(
+            "/api/auth/create",
+            {
+                fullName,
+                email,
+                password,
+                dateOfBirth,
+                phoneNumber,
+                address,
+                roleName
+            }
+        );
+        return res;
+    } catch (e) {
+        console.log("Error at Sign Up in Login Service: ", e);
+    }
+};
+
 export const getUserInformationById = async (token, id) => {
     const config = {
         headers: {

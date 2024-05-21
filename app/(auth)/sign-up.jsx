@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
+import { View, Text, ScrollView, Dimensions, Image } from "react-native";
 import { images } from "../../constants";
-import { createUser } from "../../lib/appwrite";
-import { CustomButton, FormField } from "../../components";
+import { CustomButton, FormField, ToastMessage } from "../../components";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import { signUpOrInsertUser } from "../../services/LoginServices";
 import CustomAlert from "../../components/CustomAlert";
 
 const SignUp = () => {
@@ -16,9 +15,12 @@ const SignUp = () => {
   const [alertMessage1, setAlertMessage1] = useState("");
   const [alertMessage2, setAlertMessage2] = useState("");
 
+  const successToastRef = useRef(null);
+  const errorToastRef = useRef(null);
+
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
-    username: "",
+    fullName: "",
     email: "",
     password: "",
     dateOfBirth: "",
@@ -26,8 +28,9 @@ const SignUp = () => {
     address: "",
   });
 
-  const submit = async () => {
-    if (form.username === "" || form.email === "" || form.password === "") {
+  async function handleSignUp() {
+    if (form.fullName === "" || form.email === "" || form.password === ""
+        || form.dateOfBirth === "" || form.phoneNumber === "" || form.address === "") {
       setModalVisible(true);
       setErrorMessage("Please fill in all fields");
       setAlertMessage1("Close");
@@ -38,38 +41,48 @@ const SignUp = () => {
     setSubmitting(true);
 
     try {
-      const res = await signUp(form.username, form.email, form.password);
-      if (!res) {
+      const SignUpRequest = await signUpOrInsertUser(form.fullName, form.email, form.password, form.dateOfBirth, form.phoneNumber, form.address, "");
+      if (!SignUpRequest) {
         setModalVisible(true);
         setErrorMessage("Password or email is incorrect");
         setAlertMessage1("Try again");
         setAlertMessage2("Clear");
         setSubmitting(false);
         return;
+      }      
+
+      setSubmitting(false);
+      if (successToastRef.current) {
+        successToastRef.current.show({
+          type: 'success',
+          text: 'Successfully sent sign-up request',
+          description: 'Please wait for the admin to approve your request.'
+        });
       }
-
-
-      // Old Code
-      const result = await createUser(form.email, form.password, form.username);
-      setUser(result);
-      setIsLogged(true);
-      router.replace("/home");
+      handClear();
+      setTimeout(() => {
+        router.push('/sign-in');
+      }, 4000);
     } catch (error) {
       console.log("Error", error.message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   // Function to try again sign in
   const handleTryAgain = () => {
-    submit();
+    handleSignUp();
     setModalVisible(false); 
   };
 
   // Function to clear email and password fields
   const handClear = () => {
-    setForm({ ...form, username: "", email: "", password: "" });
+    setForm({ ...form, 
+      fullName: "", 
+      email: "", 
+      password: "", 
+      dateOfBirth: "",
+      phoneNumber: "",
+      address: "",});
     setModalVisible(false); 
   };
 
@@ -95,8 +108,8 @@ const SignUp = () => {
           <FormField
             title="Username"
             placeholder={"Username"}
-            value={form.username}
-            handleChangeText={(e) => setForm({ ...form, username: e })}
+            value={form.fullName}
+            handleChangeText={(e) => setForm({ ...form, fullName: e })}
             otherStyles="mt-5"
             edit={true}
           />
@@ -149,7 +162,7 @@ const SignUp = () => {
 
           <CustomButton
             title="Sign Up"
-            handlePress={submit}
+            handlePress={handleSignUp}
             containerStyles="mt-5"
             isLoading={isSubmitting}
             unpressable={false}
@@ -169,6 +182,14 @@ const SignUp = () => {
         </View>
       </ScrollView>
 
+      <ToastMessage
+        type={"success"}
+        ref={successToastRef}></ToastMessage>
+    
+      <ToastMessage
+        type="danger"
+        ref={errorToastRef}/>
+
       <CustomAlert
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -176,7 +197,7 @@ const SignUp = () => {
         error={errorMessage}
         message1={alertMessage1}
         message2={alertMessage2}
-        isSingleButton={form.username === ""|| form.email === "" || form.password === ""
+        isSingleButton={form.fullName === "" || form.email === "" || form.password === ""
         || form.dateOfBirth === "" || form.phoneNumber === "" || form.address === "" ? true : false
         }
         onPressButton1={handleTryAgain}
