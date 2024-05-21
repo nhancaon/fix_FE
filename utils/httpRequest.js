@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.53:8082";
+const BASE_URL = "http://172.18.180.32:8082";
 
 const httpRequest = axios.create({
     baseURL: `${BASE_URL}`,
