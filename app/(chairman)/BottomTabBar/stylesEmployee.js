@@ -8,13 +8,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#161622',
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+    marginBottom: 230
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10, // Add margin for spacing between header and dropdown
+    marginBottom: 10,
   },
   header: {
     color: '#FFA500',
@@ -22,10 +21,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 10,
     marginRight: 10,
-  },
-  dropdownContainer: {
-    flex: 1,
-    alignItems: 'flex-start', // Align dropdown to the left
   },
   card: {
     margin: 10,
@@ -64,10 +59,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
   },
-  acceptButton: {
+  updateButton: {
     backgroundColor: '#4CAF50', // Green color
   },
-  denyButton: {
+  deleteButton: {
     backgroundColor: '#F44336', // Red color
   },
   buttonText: {
