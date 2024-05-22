@@ -45,12 +45,6 @@ export const LeftSwipe = ({ onPressItem }) => (
 export const RightSwipe = ({ onPressItem }) => (
   <>
     <SwipeItem
-      color="blue"
-      title="Import"
-      icon="file-import"
-      onPress={() => onPressItem("Import")}
-    />
-    <SwipeItem
       color="#FFA500"
       title="Export"
       icon="file-export"

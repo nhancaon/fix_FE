@@ -1,8 +1,11 @@
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const CustomButton = ({
   title,
   handlePress,
+  icon,
+  iconSize,
   containerStyles,
   textStyles,
   isLoading,
@@ -12,13 +15,20 @@ const CustomButton = ({
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.7}
-      className={`w-full h-16 px-4 bg-secondary rounded-xl flex flex-row justify-center items-center ${containerStyles} ${isLoading ? "opacity-50" : ""}`}
+      className={`w-full h-16 px-4 bg-secondary rounded-xl flex flex-row justify-center items-center ${containerStyles} ${
+        isLoading ? "opacity-50" : ""
+      }`}
       disabled={unpressable}
     >
-      <Text className={`text-white font-psemibold text-lg ${textStyles}`}>
-        {title}
-      </Text>
+      {title && (
+        <Text className={`text-white font-psemibold text-lg ${textStyles}`}>
+          {title}
+        </Text>
+      )}
 
+      {icon && (
+        <MaterialCommunityIcons name={icon} size={iconSize} color="white" />
+      )}
       {isLoading && (
         <ActivityIndicator
           animating={isLoading}
