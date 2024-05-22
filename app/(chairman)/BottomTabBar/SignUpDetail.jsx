@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons'; // Make sure you have rea
 const SignUpDetail = ({ route }) => {
   const navigation = useNavigation();
   const { data } = route.params;
-  const dateOfBirth = new Date(data.dateOfBirth).toLocaleDateString('en-CA'); // Format to "YYYY-MM-DD"
+  const dateOfBirth = new Date(data.dateOfBirth).toLocaleDateString('en-CA'); 
 
   return (
     <View style={styles.container}>

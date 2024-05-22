@@ -132,12 +132,13 @@ const EmployeeCreate = () => {
             edit={edit} // Always editable for creation
             handleChangeText={(text) => setEmail(text)}
           />
-
+          
           <FormField
-            title="Date of birth"
+            title="Date of Birth"
+            value={dateOfBirth}
             placeholder="YYYY-MM-DD"
             otherStyles="mt-5"
-            edit={edit} // Always editable for creation
+            edit={edit}
             handleChangeText={(text) => setDateOfBirth(text)}
           />
 
