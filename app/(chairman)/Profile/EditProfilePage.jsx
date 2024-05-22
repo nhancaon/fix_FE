@@ -24,6 +24,9 @@ const EditProfilePage = () => {
   const [phoneNumber, setPhoneNumber] = useState(userLogin.phoneNumber);
   const [address, setAddress] = useState(userLogin.address);
 
+  // Remove time -> 'YYYY-MM-DD'
+  const dateOfBirthFormatted = new Date(dateOfBirth).toLocaleDateString('en-CA'); 
+
   function handleEdit() {
     setEdit(!edit);
     setDisableEditing(!disableEdit); 
@@ -102,9 +105,9 @@ const EditProfilePage = () => {
           />
 
           <FormField
-            title="Date of birth"
-            value={dateOfBirth}
-            placeholder="Date of birth"
+            title="Date of Birth"
+            value={dateOfBirthFormatted}
+            placeholder="YYYY-MM-DD"
             otherStyles="mt-5"
             edit={edit}
             handleChangeText={(text) => setDateOfBirth(text)}
