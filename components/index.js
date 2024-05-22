@@ -4,6 +4,7 @@ import Loader from "./Loader";
 import EmptyState from "./EmptyState";
 import TabButton from "./TabButton";
 import SearchBar from "./SearchBar";
+import { SwipeItem, LeftSwipe, RightSwipe } from "./SwipeItem";
 import IconButton from "./IconButton";
 import AppLoader from "./AppLoader";
 import ToastMessage from "./ToastMessage";
@@ -17,10 +18,13 @@ export {
   EmptyState,
   TabButton,
   SearchBar,
+  SwipeItem,
+  LeftSwipe,
+  RightSwipe,
   IconButton,
   AppLoader,
   ToastMessage,
   AlertWithTwoOptions,
   SFModal,
-  SFDModal
+  SFDModal,
 };

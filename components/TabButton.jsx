@@ -1,11 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-  Text,
-  View,
-} from "react-native";
+import { StyleSheet, Animated, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default ({ item, accessibilityState, onPress }) => {
