@@ -1,12 +1,72 @@
-import {Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { TabButton } from "../../components";
+import InventoryMaterial from "./InventoryMaterial";
+import InventoryProduct from "./InventoryProduct";
+import Inventory from "./Inventory";
 
-const Inventory = () => {
+const InventoryPages = () => {
+  const Tab = createBottomTabNavigator();
+  const tabs = [
+    {
+      id: 1,
+      title: "Inventories",
+      screen: "Inventories",
+      icon: "alpha-i-box",
+      Component: Inventory,
+    },
+    {
+      id: 1,
+      title: "Inventory Materials",
+      screen: "Chat",
+      icon: "material-design",
+      Component: InventoryMaterial,
+    },
+    {
+      id: 2,
+      title: "Inventory Products",
+      screen: "Likes",
+      icon: "cart-outline",
+      Component: InventoryProduct,
+    },
+  ];
   return (
-    <View styles={{flex: 1,alignItems: "center",justifyContent: "center"}}>
-      <Text>Inventory</Text>
-    </View>
-  )
-}
+    <Tab.Navigator
+      initialRouteName={"SaleForecast"}
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: styles.tabBar,
+      }}
+    >
+      {tabs.map((item, index) => (
+        <Tab.Screen
+          key={item.id}
+          name={item.screen}
+          component={item.Component}
+          options={{
+            tabBarShowLabel: false,
+            tabBarButton: (props) => <TabButton item={item} {...props} />,
+          }}
+        />
+      ))}
+    </Tab.Navigator>
+  );
+};
 
-export default Inventory
+const styles = StyleSheet.create({
+  tabBar: {
+    height: 70,
+    position: "absolute",
+    bottom: 25,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0.5,
+    borderColor: "#ffffff",
+    backgroundColor: "#ff9c01",
+  },
+});
+
+export default InventoryPages;
