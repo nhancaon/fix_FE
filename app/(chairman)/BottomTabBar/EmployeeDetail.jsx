@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { images } from '../../../constants';
-import { useGlobalContext } from '../../../context/GlobalProvider';
 import { CustomButton, FormField, ToastMessage } from '../../../components';
 import DropDownField from '../../../components/DropDownField'; 
 import { useNavigation } from '@react-navigation/native';
