@@ -77,7 +77,7 @@ const FormField = ({
         )}
 
         {title === "Date of Birth" && (
-          <TouchableOpacity onPress={() => setShowCalendar(!showCalendar)}>
+          <TouchableOpacity disabled={!edit} onPress={() => setShowCalendar(!showCalendar)}>
             <Image
               source={icons.calendar}
               className="w-6 h-6"
