@@ -3,7 +3,9 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { TabButton } from '../../components'
-import Employee from './BottomTabBar/Employee';
+import Employee from './BottomTabBar/EmployeePage';
+import EmployeeDetail from './BottomTabBar/EmployeeDetail';
+import EmployeeCreate from './BottomTabBar/EmployeeCreate';
 import SignUpRequest from './BottomTabBar/SignUpRequest';
 import SignUpDetail from './BottomTabBar/SignUpDetail';
 
@@ -16,6 +18,14 @@ const SignUpStack = () => (
   </Stack.Navigator>
 );
 
+const EmployeeStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Employee" component={Employee} options={{ headerShown: false }} />
+    <Stack.Screen name="EmployeeDetail" component={EmployeeDetail} options={{ headerShown: false }} />
+    <Stack.Screen name="EmployeeCreate" component={EmployeeCreate} options={{ headerShown: false }} />
+  </Stack.Navigator>
+);
+
 const ChairmanHome = () => {
   const Tab = createBottomTabNavigator()
   const tabs = [
@@ -24,7 +34,7 @@ const ChairmanHome = () => {
       title: 'Employee',
       screen: 'Chat',
       icon: 'human-male-female',
-      Component: Employee
+      Component: EmployeeStack
     },
     {
       id: 2,
