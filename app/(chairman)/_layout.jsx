@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   searchText: {
     height: 40,
-    width: 480, // Adjust the width as needed
+    width: 270, // Adjust the width as needed
     borderColor: '#000',
     borderWidth: 1,
     marginRight: 8,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import IconButton from '../../components/IconButton';
@@ -67,11 +67,13 @@ const PMBOM = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <SearchBar
+      {/* Xem trong chairman/BottomTabBar/EmployeePage method getFilteredData -> cahc filter va map data */}
+      {/* Ko xai search bar vi chiem cho lam */}
+      {/* <SearchBar
         value={search}
         onChangeText={setSearch}
         onSearch={handleSearch}
-      />
+      /> */}
       {/* fillter */}
       <DropDownPicker
               open={open}
