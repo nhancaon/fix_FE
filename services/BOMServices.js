@@ -24,12 +24,12 @@ export const getBOMDetail = async (token, id) => {
     }
 };
 
-export const deleteMaterialOfBOM = async (token, bomID, materialID) => {
+export const deleteBOM = async (token, bomID) => {
     try {
         const config = {
             headers: { Authorization: `Bearer ${token}` }
         };
-        const res = await http.del(`/api/BOMs/${bomID}/deleteMaterialOfBOM/${materialID}`, config);
+        const res = await http.del(`/api/BOMs/delete/${bomID}`, config);
         return res;
     } catch (e) {
         console.log("Error at BOM Service: ", e);
@@ -42,6 +42,18 @@ export const updateBOM = async (token, bomID, data) => {
             headers: { Authorization: `Bearer ${token}` }
         };
         const res = await http.put(`/api/BOMs/updateBOM/${bomID}`, data, config);
+        return res;
+    } catch (e) {
+        console.log("Error at BOM Service: ", e);
+    }
+}
+
+export const createBOM = async (token, data) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.post("/api/BOMs/createBOMs", data, config);
         return res;
     } catch (e) {
         console.log("Error at BOM Service: ", e);
