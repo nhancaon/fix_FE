@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './stylesSignUp';
@@ -9,7 +9,7 @@ import { getSignUpRequest, acceptSignUpRequest, deleteUser } from '../../../serv
 import RNPickerSelect from 'react-native-picker-select';
 
 const SignUpRequest = () => {
-  const { setUser, setIsLogged, userLogin } = useGlobalContext();
+  const { userLogin, searchText, setSearchText } = useGlobalContext();
   const navigation = useNavigation();
   const [dataResponse, setDataResponse] = useState([]);
   const successToastRef = useRef(null);
@@ -24,12 +24,10 @@ const SignUpRequest = () => {
       if (data && data.data) {
         setDataResponse(data.data);
       }
-      
-    } catch (err) {
+    } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
-      // console.log(loading)
     }
   }, [userLogin.id]);
 
@@ -51,102 +49,144 @@ const SignUpRequest = () => {
   };
 
   const removeCard = (index) => {
-    setDataResponse((prevData) => prevData.filter((_, i) => i !== index));
+    console.log('This card order: ', index);
+    setDataResponse((prevData) => {
+      const remainingData = prevData.filter((_, i) => i !== index);
+      const updatedData = remainingData.map((item, i) => {
+        item.index = i; // Assigning the index property
+        return item;
+      });
+      console.log('Updated card indices:', updatedData.map(item => item.index));
+      return updatedData;
+    });
   };
-
-  const handleDeny = (index) => {
-    deleteUser(dataResponse[index].id);
+  
+  const handleDeny = async (index) => {
+    try {
+      await deleteUser(dataResponse[index].id);
       if (successToastRef.current) {
         successToastRef.current.show({
           type: 'success',
           text: 'Deny signup request',
-          description: 'User has been denied.'
+          description: 'User has been denied.',
         });
       }
-    removeCard(index);
+      removeCard(index);
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      if (errorToastRef.current) {
+        errorToastRef.current.show({
+          type: 'danger',
+          text: 'Error',
+          description: 'Failed to deny user.',
+        });
+      }
+    }
   };
 
-  const handleAccept = (index, option) => {
+  const handleAccept = async (index, option) => {
     if (!option) {
       if (errorToastRef.current) {
         errorToastRef.current.show({
           type: 'danger',
           text: 'Error',
-          description: 'Please select a role before accepting.'
+          description: 'Please select a role before accepting.',
         });
       }
       return;
     }
-    else{
-      acceptSignUpRequest(dataResponse[index].email, option);
+    try {
+      await acceptSignUpRequest(dataResponse[index].email, option);
       if (successToastRef.current) {
         successToastRef.current.show({
           type: 'success',
           text: 'Accept signup request',
-          description: 'User has been accepted.'
+          description: 'User has been accepted.',
+        });
+      }
+      setSelectedOption((prev) => ({
+        ...prev,
+        [index]: null,
+      }));
+      removeCard(index);
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      if (errorToastRef.current) {
+        errorToastRef.current.show({
+          type: 'danger',
+          text: 'Error',
+          description: 'Failed to accept user.',
         });
       }
     }
-    removeCard(index);
   };
+
+  const getFilteredData = () => {
+    if (searchText.trim() === '') {
+      return dataResponse;
+    }
+    return dataResponse.filter((item) =>
+      item.fullName.toLowerCase().includes(searchText.toLowerCase())
+    );
+  };
+
+  const filteredData = getFilteredData();
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <View style={styles.container}>
         <ScrollView>
-          {dataResponse.map((item, index) => (
+          {filteredData.map((item, index) => (
             <TouchableOpacity key={index} onPress={() => handleCardPress(item)}>
-            <View style={styles.card}>
-              <View style={styles.headerContainer}>
-                <Text style={styles.header}>New employee</Text>
-                <View style={styles.dropdownContainer}>
-                  <RNPickerSelect
-                    placeholder={{ label: 'Select a role...', value: null }}
-                    onValueChange={(option) => handleOptionChange(index, option)}
-                    items={[
-                      { label: 'Chairman', value: 'CHAIRMAN' },
-                      { label: 'Accountant', value: 'ACCOUNTANT' },
-                      { label: 'Product Manager', value: 'PRODUCT_MANAGER' },
-                    ]}
-                  />
+              <View style={styles.card}>
+                <View style={styles.headerContainer}>
+                  <Text style={styles.header}>New employee</Text>
+                  <View style={styles.dropdownContainer}>
+                    <RNPickerSelect
+                      placeholder={{ label: 'Select a role...', value: null }}
+                      onValueChange={(option) => handleOptionChange(index, option)}
+                      items={[
+                        { label: 'Chairman', value: 'CHAIRMAN' },
+                        { label: 'Accountant', value: 'ACCOUNTANT' },
+                        { label: 'Product Manager', value: 'PRODUCT_MANAGER' },
+                      ]}
+                      value={selectedOption[index]}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.cardContentRow}>
+                  <Text style={styles.title}>Fullname: {item.fullName}</Text>
+                </View>
+                <View style={styles.cardContentRow}>
+                  <Text style={styles.title}>Email: {item.email}</Text>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.denyButton]}
+                    onPress={() => handleDeny(index)}
+                  >
+                    <Text style={styles.buttonText}>Deny</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.acceptButton]}
+                    onPress={() => handleAccept(index, selectedOption[index])}
+                  >
+                    <Text style={styles.buttonText}>Accept</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+      {loading && <AppLoader />}
 
-              <View style={styles.cardContentRow}>
-                <Text style={styles.title}>Fullname: {item.fullName}</Text>
-              </View>
-              <View style={styles.cardContentRow}>
-                <Text style={styles.title}>Email: {item.email}</Text>
-              </View>
-
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={[styles.button, styles.denyButton]}
-                  onPress={() => handleDeny(index)}
-                >
-                  <Text style={styles.buttonText}>Deny</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, styles.acceptButton]}
-                  onPress={() => handleAccept(index, selectedOption[index])}
-                >
-                  <Text style={styles.buttonText}>Accept</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-    {loading ? <AppLoader/>: null}
-
-    <ToastMessage
-        type={"success"}
-        ref={successToastRef}></ToastMessage>
-    
-      <ToastMessage
-        type="danger"
-        ref={errorToastRef}/>
+      <ToastMessage type="success" ref={successToastRef} />
+      <ToastMessage type="danger" ref={errorToastRef} />
     </SafeAreaView>
   );
 };
