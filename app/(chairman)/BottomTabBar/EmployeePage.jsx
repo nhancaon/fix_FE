@@ -122,7 +122,7 @@ const Employee = () => {
       <CustomButton
         title="Add"
         handlePress={navigateEmployeeCreate}
-        containerStyles="absolute bottom-32 self-center w-20"
+        containerStyles="absolute bottom-24 self-center w-20"
         isLoading={false}
       />
       {loading ? <AppLoader /> : null}

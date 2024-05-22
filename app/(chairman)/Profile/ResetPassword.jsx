@@ -6,9 +6,11 @@ import { useGlobalContext } from '../../../context/GlobalProvider';
 import { images } from "../../../constants";
 import { CustomButton, FormField, ToastMessage } from "../../../components";
 import CustomAlert from "../../../components/CustomAlert";
+import { useNavigation } from '@react-navigation/native';
 import { resetPassword } from "../../../services/UserServices";
 
 const ResetPassword = () => {
+  const navigation = useNavigation();
   const { setUser, passwordLogin, userLogin, setPasswordLogin } = useGlobalContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -66,6 +68,9 @@ const ResetPassword = () => {
     setCurrentPassword("");
     setNewPassword("");
     setSubmitting(false);
+    setTimeout(() => {
+      navigation.goBack();
+    }, 3500);
   }
 
   return (
@@ -81,19 +86,19 @@ const ResetPassword = () => {
                 source={images.forgotPassword}
                 resizeMode="cover"
                 style={{ 
-                    width: Dimensions.get("window").width, 
-                    height: 300,
+                    width: Dimensions.get("window").width-500, 
+                    height: 200,
                 }}
             />
 
             <Image
                 source={images.logo}
                 resizeMode="contain"
-                style={{marginTop:10}}
-                className="w-[150px] h-[104px]"
+                style={{marginTop:5}}
+                className="w-[130px] h-[84px]"
             />
 
-          <Text className="text-2xl font-semibold text-white mt-5 font-psemibold">
+          <Text className="text-2xl font-semibold text-white mt-2 font-psemibold">
             Reset your password
           </Text>
 
@@ -102,7 +107,7 @@ const ResetPassword = () => {
             placeholder={"●●●●●●●●"}
             value={currentPassword}
             handleChangeText={setCurrentPassword}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -111,14 +116,14 @@ const ResetPassword = () => {
             placeholder={"●●●●●●●●"}
             value={newPassword}
             handleChangeText={setNewPassword}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
           <CustomButton
             title="Reset Password"
             handlePress={submit}
-            containerStyles="mt-5"
+            containerStyles="mt-3"
             isLoading={isSubmitting}
             unpressable={false}
           />

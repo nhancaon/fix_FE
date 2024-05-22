@@ -11,30 +11,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   avatar: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: 130,
+    height: 130,
+    borderRadius: 65,
     borderWidth: 4,
     borderColor: '#ff9c01',
   },
   headingContainer: {
     flex: 1,
-    marginLeft: 40, 
+    marginLeft: 20, 
   },
   first_heading: {
-    fontSize: 21,
+    fontSize: 18,
     color: '#ff9c01',
     fontWeight: 'bold',
     marginBottom: 10,
   },
   editIcon: {
     position: 'absolute',
-    top: 10,
+    top: 15,
     right: 10,
   },
   passwordResetIcon:{
     position: 'absolute',
-    top: 50,
+    top: 55,
     right: 10,
   }
 });

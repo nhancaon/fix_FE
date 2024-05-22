@@ -91,8 +91,8 @@ const EmployeeCreate = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <ScrollView>
-        <View className="w-full flex justify-center h-full px-4" style={styles.container}>
+      <View style={styles.container}>
+        <ScrollView>
           <View style={styles.headerContainer}>
             <View style={styles.headingContainer}>
               <Text style={styles.first_heading}>New Employee</Text>
@@ -157,15 +157,16 @@ const EmployeeCreate = () => {
             edit={edit} // Always editable for creation
             handleChangeText={(text) => setAddress(text)}
           />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
       <CustomButton
         title="SAVE"
         handlePress={handleCreateUser}
-        containerStyles="absolute bottom-32 self-center w-20"
+        containerStyles="mt-5"
         isLoading={isSubmitting}
         unpressable={disableEdit}
       />
+
       <ToastMessage
         type={"success"}
         ref={successToastRef}></ToastMessage>
@@ -180,7 +181,12 @@ const EmployeeCreate = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     backgroundColor: '#161622',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 210
   },
   headerContainer: {
     justifyContent: 'center', 

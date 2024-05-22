@@ -91,8 +91,8 @@ const RecoverPassword = () => {
                 source={images.forgotPassword}
                 resizeMode="cover"
                 style={{ 
-                    width: Dimensions.get("window").width, 
-                    height: 370,
+                    width: Dimensions.get("window").width-500, 
+                    height: 250,
                 }}
             />
 
@@ -100,10 +100,10 @@ const RecoverPassword = () => {
                 source={images.logo}
                 resizeMode="contain"
                 style={{marginTop:10}}
-                className="w-[150px] h-[104px]"
+                className="w-[130px] h-[84px]"
             />
 
-          <Text className="text-2xl font-semibold text-white mt-5 font-psemibold">
+          <Text className="text-2xl font-semibold text-white mt-2 font-psemibold">
             Forgot your password?
           </Text>
 
@@ -125,7 +125,7 @@ const RecoverPassword = () => {
             unpressable={false}
           />
 
-          <View className="flex justify-center pt-5 flex-row gap-2">
+          <View className="flex justify-center pt-1 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
               Have an account already?
             </Text>

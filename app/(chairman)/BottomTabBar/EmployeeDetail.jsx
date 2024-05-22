@@ -84,7 +84,7 @@ const EmployeeDetail = ({ route }) => {
             title="Full name"
             value={fullName}
             placeholder="Full name"
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={edit}
             handleChangeText={(text) => setFullName(text)}
           />
@@ -102,7 +102,7 @@ const EmployeeDetail = ({ route }) => {
             title="Email"
             value={email}
             placeholder="Email"
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             keyboardType="email-address"
             edit={edit}
             handleChangeText={(text) => setEmail(text)}
@@ -112,7 +112,7 @@ const EmployeeDetail = ({ route }) => {
             title="Date of Birth"
             value={dateOfBirthFormatted}
             placeholder="YYYY-MM-DD"
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={edit}
             handleChangeText={(text) => setDateOfBirth(text)}
           />
@@ -121,7 +121,7 @@ const EmployeeDetail = ({ route }) => {
             title="Phone number"
             value={phoneNumber}
             placeholder="Phone number"
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={edit}
             handleChangeText={(text) => setPhoneNumber(text)}
           />
@@ -130,19 +130,21 @@ const EmployeeDetail = ({ route }) => {
             title="Address"
             value={address}
             placeholder="Address"
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={edit}
             handleChangeText={(text) => setAddress(text)}
           />
+
+          <CustomButton
+            title="SAVE"
+            handlePress={handleUpdateInfo}
+            containerStyles="mt-5"
+            isLoading={isSubmitting}
+            unpressable={disableEdit}
+          />
         </View>
       </ScrollView>
-      <CustomButton
-        title="SAVE"
-        handlePress={handleUpdateInfo}
-        containerStyles="absolute bottom-32 self-center w-20"
-        isLoading={isSubmitting}
-        unpressable={disableEdit}
-      />
+
       <ToastMessage
         type={"success"}
         ref={successToastRef}></ToastMessage>
@@ -157,29 +159,32 @@ const EmployeeDetail = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     backgroundColor: '#161622',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 210
   },
   headerContainer: {
     justifyContent: 'center', 
     alignItems: 'center',
-    marginBottom: 5,
   },
   headingContainer: {
     alignItems: 'center',
   },
   first_heading: {
-    fontSize: 21,
+    fontSize: 18,
     color: '#ff9c01',
     fontWeight: 'bold',
     marginTop: 10, 
   },
   backIcon: {
     position: 'absolute',
-    right: 10,
+    left: 10,
   },
   editIcon: {
     position: 'absolute',
-    top: 40,
     right: 10,
   }
 });
