@@ -3,109 +3,66 @@ import { View, Text, TextInput, StyleSheet, FlatList, Alert } from 'react-native
 import {  useNavigation } from '@react-navigation/native';
 import IconButton from '../../components/IconButton';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { getBOMDetail, updateBOM, deleteBOM  } from '../../services/BOMServices';
 import { Picker } from '@react-native-picker/picker';
 import { Card, Title, Paragraph, List, DataTable } from 'react-native-paper';
+import BOMDetail from './BOMDetail';
+import { createBOM } from '../../services/BOMServices';
 
-function BOMDetail({ route }) {
+function CreateBOM ({ route }) {
   
-  const navigation = useNavigation();
+    const navigation = useNavigation();
+    const { token, userId  } = useGlobalContext();
+    const [bomDetail, setBomDetail] = useState({
+        productManagerId: null,
+        BOMName: "",
+        BOMStatus: 'PENDING',
+        timeProduction: null,
+        unit: 'g',
+        totalPrice: null,
+        sellPrice: null,
+        dateCreation: new Date().toISOString(),
+        bomDetails: [
+          
+        ]
+      });
+    const [materials, setMaterials] = useState([]);
+    const [newMaterialName, setNewMaterialName] = useState('');
+    const [newMaterialUnit, setNewMaterialUnit] = useState('');
+    const [newMaterialPrice, setNewMaterialPrice] = useState('');
+    const [newMaterialQuantity, setNewMaterialQuantity] = useState('');
+    const [tempDeletedMaterials, setTempDeletedMaterials] = useState([]);
 
-  const { token, userId  } = useGlobalContext();
-  const { id } = route.params;
-  const [bomDetail, setBomDetail] = useState([]);
-  const [unit, setUnit] = useState(bomDetail.unit);
-  const[materialUnit, setMaterialUnit] = useState([]);
-  const [status, setStatus] = useState(bomDetail.bomstatus);
-  const [materials, setMaterials] = useState(bomDetail.materials || []);
-  const [newMaterialName, setNewMaterialName] = useState('');
-  const [newMaterialUnit, setNewMaterialUnit] = useState('');
-  const [newMaterialPrice, setNewMaterialPrice] = useState('');
-  const [newMaterialQuantity, setNewMaterialQuantity] = useState('');
-  const [tempDeletedMaterials, setTempDeletedMaterials] = useState([]);
-
-
-  useEffect(() => {
-    setNewMaterialUnit('g');
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const data = await getBOMDetail( token, id);
-            setBomDetail(data.result);
-            setUnit(data.result.unit);
-            setStatus(data.result.bomstatus);
-            setMaterials(data.result.materials);
-        }
-        catch (error) {
-            console.error(error);
-        }
-    };
-  
-    fetchData();
-  }, [token]);
-
-  const [BOMUpdate, setBOMUpdate] = useState({
-    
-    productManagerId: userId,
-    BOMName: bomDetail.bomname,
-    BOMStatus: status,
-    timeProduction: bomDetail.timeProduction,
-    unit: unit,
-    totalPrice: bomDetail.totalPrice,
-    sellPrice: bomDetail.sellPrice,
-    dateCreation: bomDetail.dateCreation,
-    bomDetails: [
-        {
-            material: {
-                materialName: '',
-                materialPrice: '',
-                materialUnit: '',
-                materialVolume: ''
-            },
-            quantity: '',
-            totalUnitPrice: ''
-        }
-    ]
-    });
-
- const handleInputChange = (name, value) => {
-        setBOMUpdate(prevState => ({ ...prevState, [name]: value }));
-        console.log("BOMUpdate: ", BOMUpdate);
-    };
-
-    const handleAddMaterial = () => {
+    useEffect(() => {
+        setNewMaterialUnit('g');
         
-        if (!newMaterialName || !newMaterialPrice || !newMaterialQuantity) {
-            alert('All fields must be filled out to add a new material.');
-            return;
-          }
-
-        const newMaterial = {
-          materialId: Date.now(),
-          materialName: newMaterialName,
-          materialUnit: newMaterialUnit,
-          materialPrice: newMaterialPrice,
-          materialQuantity: newMaterialQuantity,
+      }, []);
+    
+      const createRequestBody = (bomDetail) => {
+        const requestBody = {
+          productManagerId: userId,
+          BOMName: bomDetail.BOMName,
+          BOMStatus: bomDetail.BOMStatus,
+          timeProduction: parseFloat(bomDetail.timeProduction),
+          unit: bomDetail.unit,
+          totalPrice: parseFloat(bomDetail.totalPrice),
+          sellPrice: parseFloat(bomDetail.sellPrice),
+          bomDetails: bomDetail.bomDetails.map(detail => ({
+            BOMId: detail.BOMId || 0, // default value if null
+            material: {
+              materialName: detail.material.materialName,
+              materialUnit: detail.material.materialUnit,
+              materialPrice: parseFloat(detail.material.materialPrice),
+              materialVolume: parseFloat(detail.material.materialVolume) || 0 
+            },
+            quantity: parseInt(detail.quantity, 10),
+            totalUnitPrice: parseFloat(detail.totalUnitPrice) || 0 // default value if null
+          }))
         };
       
-        setMaterials([...materials, newMaterial]);
-        setBomDetail(prevState => ({
-            ...prevState,
-            materials: [...prevState.materials, newMaterial]
-          }));
-
-        console.log("materials: ", materials);
-        // Clear the input fields
-        setNewMaterialName('');
-        setNewMaterialUnit('');
-        setNewMaterialPrice('');
-        setNewMaterialQuantity('');
+        return requestBody; 
       };
 
-
-      const handleDeleteMaterial = (materialId) => {
+    const handleDeleteMaterial = (index) => {
         Alert.alert(
           "Delete Material",
           "Are you sure you want to delete this material?",
@@ -117,94 +74,108 @@ function BOMDetail({ route }) {
             { 
               text: "OK", 
               onPress: () => {
-                // Add the material to the tempDeletedMaterials state
-                setTempDeletedMaterials([...tempDeletedMaterials, materialId]);
-                // Remove the material from the materials array
-                setMaterials(materials.filter(material => material.materialId !== materialId));
-
-                // Remove the material from the bomDetail.materials array
+                // Remove the material from the bomDetail.bomDetails array
                 setBomDetail(prevState => ({
                   ...prevState,
-                  materials: prevState.materials.filter(material => material.materialId !== materialId)
+                  bomDetails: prevState.bomDetails.filter((material, i) => i !== index)
                 }));
               } 
             }
           ]
         );
-      };
+    };
 
-      const createRequestBody = (bomDetail) => {
-        const requestBody = {
-          productManagerId: userId,
-          BOMName: bomDetail.bomname,
-          BOMStatus: bomDetail.bomstatus,
-          timeProduction: bomDetail.timeProduction,
-          unit: bomDetail.unit,
-          totalPrice: bomDetail.totalPrice,
-          sellPrice: bomDetail.sellPrice,
-          bomDetails: bomDetail.materials.map(material => ({
-            material: {
-              materialName: material.materialName,
-              materialPrice: material.materialPrice,
-              materialUnit: material.materialUnit,
-              materialVolume: material.materialVolume,
-            },
-            quantity: material.materialQuantity,
-            totalUnitPrice: material.materialPrice * material.materialQuantity,
-          })),
-        };
-      
-        return requestBody;
-      };
-
-      const handleSave = async () => {
+    const handleInputChange = (name, value) => {
+        setBomDetail(prevState => ({ ...prevState, [name]: value }));
+        console.log("BOMUpdate: ", BOMDetail);
+    };
+    
+    const handleSave = async () => {
         try {
           const requestBody = createRequestBody(bomDetail);
-          const updatedBOM = await updateBOM(token, id, requestBody);
-          console.log('Updated BOM:', updatedBOM);
-          Alert.alert(
-            "Success",
-            "BOM saved successfully",
-            [
-              { text: "OK" }
-            ]
-          );
+          console.log('requestBody:', requestBody);
+        //   console.log('detail',requestBody.bomDetails);
+        //   console.log('materials',requestBody.bomDetails.material);
+          const res = await createBOM(token,requestBody);
+          if (res.result === null) {
+            Alert.alert(
+              "Success",
+              "BOM saved successfully",
+              [
+                { text: "OK" }
+              ]
+            );
+          } else {
+            Alert.alert(
+              "Error",
+              "Failed to save BOM",
+              [
+                { text: "OK" }
+              ]
+            );
+          }
+          
         } catch (error) {
           console.log('Failed to save BOM:', error);
         }
 
         setTempDeletedMaterials([]);
-      };
+    };
 
-  const handleDelete = () => {
-    try{
-      const deletedBOM = deleteBOM(token, id);
-      console.log('Deleted BOM:', deletedBOM);
-      navigation.navigate('PMBOM');
-    }
-    catch (error) {
-      console.log('Failed to delete BOM:', error);
-    }
-  };
-  
-  if (!bomDetail) {
-    return <Text>Loading...</Text>;
-  }
+    const handleAddMaterial = () => {
+        console.log('newMaterialName:', newMaterialName);
+        console.log('newMaterialPrice:', newMaterialPrice);
+        console.log('newMaterialQuantity:', newMaterialQuantity);
 
-  return (
-    <View style={{ flex: 1 }}>
-        
-        <View>
+        if (!newMaterialName || !newMaterialPrice || !newMaterialQuantity) {
+            alert('All fields must be filled out to add a new material.');
+            return;
+          }
+
+        const newMaterial = {
+          materialId: Date.now(),
+          BOMId: null, // You can replace this with the appropriate value
+          material: {
+           materialName: newMaterialName,
+           materialUnit: newMaterialUnit,
+           materialPrice: newMaterialPrice,
+           materialVolume: 0
+          },
+            quantity:newMaterialQuantity, // You can replace this with the appropriate value
+            totalUnitPrice: null,
+        };
+      
+        // setMaterials([...materials, newMaterial]);
+        setBomDetail(prevState => ({
+            ...prevState,
+            bomDetails: [...prevState.bomDetails, newMaterial]
+        }));
+
+        console.log("materials: ", materials);
+        // Clear the input fields
+        setNewMaterialName('');
+        setNewMaterialPrice('');
+        setNewMaterialQuantity('');
+    };
+
+    return (
+        <View style={{ flex: 1 }}>
+            <View>
             <FlatList
                 ListHeaderComponent={
                     <>
                     
                     <Card style={{ padding: 10, margin: 10 }}>
                         <Card.Content>
-                            <Title>ID: {bomDetail.id}</Title>
                             <Paragraph>Product Manager:</Paragraph>
                             <Title>{bomDetail.productManager?.fullName}</Title>
-                            <Title>BOM Name: {bomDetail.bomname}</Title>
+                            <Paragraph>BOM Name:</Paragraph>
+                            <TextInput
+                                style={{ backgroundColor: '#fff', marginBottom: 10 }}
+                                value={bomDetail.BOMName}
+                                defaultValue={bomDetail.BOMName ? bomDetail.BOMName: ''}
+                                onChangeText={(text) => setBomDetail(prevState => ({...prevState, BOMName: text}))}
+                            />
                         </Card.Content>
                     </Card>
 
@@ -238,7 +209,7 @@ function BOMDetail({ route }) {
                             <TextInput
                             label="Date Creation"
                             defaultValue={bomDetail.dateCreation ? bomDetail.dateCreation.toString() : ''}
-                            onChangeText={(value) => handleInputChange('dateCreation', value)}
+                            editable={false}
                             style={{ backgroundColor: '#fff', marginBottom: 10 }}
                             />
                         </Card.Content>
@@ -250,8 +221,8 @@ function BOMDetail({ route }) {
                             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                 <Title>Unit:</Title>
                                 <Picker
-                                selectedValue={unit}
-                                onValueChange={(itemValue) => setUnit(itemValue)}
+                                selectedValue={bomDetail.unit}
+                                onValueChange={(itemValue) => setBomDetail(prevState => ({...prevState, unit: itemValue}))}
                                 style={{ flex: 1 }}
                                 >
                                 <Picker.Item label="g" value="g" />
@@ -265,8 +236,8 @@ function BOMDetail({ route }) {
                             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                 <Title>Status:</Title>
                                 <Picker
-                                selectedValue={status}
-                                onValueChange={(itemValue) => setStatus(itemValue)}
+                                selectedValue={bomDetail.BOMStatus}
+                                onValueChange={(itemValue) => setBomDetail(prevState => ({...prevState, BOMStatus: itemValue}))}
                                 style={{ flex: 1 }}
                                 >
                                 <Picker.Item label="Pending" value="PENDING" />
@@ -287,14 +258,14 @@ function BOMDetail({ route }) {
                                     <DataTable.Title><View style={{ flex: 2 }}><Text>Quantity</Text></View></DataTable.Title>
                                 </DataTable.Header>
 
-                                {Array.isArray(bomDetail.materials) && bomDetail.materials.map((item, index) => (
-                                    <DataTable.Row key={index}>
-                                        <DataTable.Cell><View style={{ flex: 2 }}><Text>{item.materialName}</Text></View></DataTable.Cell>
-                                        <DataTable.Cell><View style={{ flex: 4 }}><Text>{item.materialUnit}</Text></View></DataTable.Cell>
-                                        <DataTable.Cell><View style={{ flex: 3 }}><Text>{item.materialPrice}</Text></View></DataTable.Cell>
-                                        <DataTable.Cell><View style={{ flex: 2 }}><Text>{item.materialQuantity}</Text></View></DataTable.Cell>
-                                        <DataTable.Cell><View style={{ flex: 0.1 }}><IconButton iconName="trash" onPress={() => handleDeleteMaterial(item.materialId)}/></View></DataTable.Cell>
-                                    </DataTable.Row>
+                                {Array.isArray(bomDetail.bomDetails) && bomDetail.bomDetails.length > 0 && bomDetail.bomDetails.map((item, index) => (
+                                  <DataTable.Row key={index}>
+                                    <DataTable.Cell><View style={{ flex: 2 }}><Text>{item.material.materialName}</Text></View></DataTable.Cell>
+                                    <DataTable.Cell><View style={{ flex: 4 }}><Text>{item.material.materialUnit}</Text></View></DataTable.Cell>
+                                    <DataTable.Cell><View style={{ flex: 3 }}><Text>{item.material.materialPrice}</Text></View></DataTable.Cell>
+                                    <DataTable.Cell><View style={{ flex: 2 }}><Text>{item.quantity}</Text></View></DataTable.Cell>
+                                    <DataTable.Cell><View style={{ flex: 0.1 }}><IconButton iconName="trash" onPress={() => handleDeleteMaterial(index)}/></View></DataTable.Cell>
+                                  </DataTable.Row>
                                 ))}
 
                                 <DataTable.Row>
@@ -325,15 +296,13 @@ function BOMDetail({ route }) {
                 }
             />
         </View>
-       
-        <View style={styles.buttonContainer}>
-            <IconButton onPress={() => navigation.navigate('PMBOM')} iconName="arrow-left" />
-            <IconButton onPress={handleSave} iconName="save" />
-            <IconButton onPress={handleDelete} iconName="trash" />
+            <View style={styles.buttonContainer}>
+                <IconButton onPress={() => navigation.navigate('PMBOM')} iconName="arrow-left" />
+                <IconButton onPress={handleSave} iconName="save" />
+            </View>
+
         </View>
-    </View>
-    
-  );
+      );
 }
 
 const styles = StyleSheet.create({
@@ -349,4 +318,4 @@ const styles = StyleSheet.create({
     },
  });
 
-export default BOMDetail;
+export default CreateBOM;

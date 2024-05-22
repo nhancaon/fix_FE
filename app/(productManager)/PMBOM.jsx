@@ -25,16 +25,26 @@ const PMBOM = () => {
       const data = await getAllBOMs(token);
       setBoms(data.result);
     };
-  
+
+    // Call fetchData when the screen is focused
+    const unsubscribe = navigation.addListener('focus', fetchData);
+
     fetchData();
-  }, [token]);
+
+    // Unsubscribe to the event when the component is unmounted
+    return unsubscribe;
+  }, [token, navigation]);
 
   const handleSearch = () => {
     // Implement search functionality here
   };
 
   const handleInsert = () => {
-    // Implement insert functionality here
+    try {
+      navigation.navigate('CreateBOM');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleUpdate = () => {

@@ -19,6 +19,7 @@ import SignIn from '../(auth)/sign-in';
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { AuthContext } from "../../store/AuthContext";
 import BOMDetail from '../../components/BOM/BOMDetail';
+import CreateBOM from '../../components/BOM/CreateBOM';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
@@ -27,6 +28,7 @@ const PMBOMStack = () => (
   <Stack.Navigator initialRouteName="PMBOM" screenOptions={{ headerShown: false }}>
     <Stack.Screen name="PMBOM" component={PMBOM} />
     <Stack.Screen name="BOMDetail" component={BOMDetail} />
+    <Stack.Screen name="CreateBOM" component={CreateBOM} />
   </Stack.Navigator>
 );
 

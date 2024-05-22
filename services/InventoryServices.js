@@ -43,3 +43,23 @@ export const getAllInventoryProducts = async (token) => {
     console.log("Error at Get Inventory Products: ", e);
   }
 };
+
+
+export const deleteInventoryProduct = async (token, productId, inventoryId) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      productId,
+      inventoryId,
+  },
+  };
+  try {
+    const res = await http.get(`/api/inventory-product/delete`, config);
+    return res;
+  } catch (e) {
+    console.log("Error at Get Inventory Products: ", e);
+  }
+};
+
