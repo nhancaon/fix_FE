@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { Text, View, StyleSheet, FlatList } from "react-native";
-import { getAllInventoryProducts } from "../../services/InventoryServices";
+import {
+  deleteInventoryProduct,
+  getAllInventoryProducts,
+} from "../../services/InventoryServices";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import { Swipeable } from "react-native-gesture-handler";
@@ -17,7 +20,8 @@ const InventoryProduct = () => {
   const [inventoryProducts, setInventoryProducts] = useState([]);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
-  const [sfdModalVisible, setsfdModalVisible] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedInventoryId, setSelectedInventoryId] = useState(null);
   const { token } = useGlobalContext();
   const [loading, setLoading] = useState(true);
 
@@ -52,9 +56,10 @@ const InventoryProduct = () => {
 
   const groupedProducts = groupByInventoryId(inventoryProducts);
 
-  const handleSwipeItemPress = (title) => {
-    console.log(title);
+  const handleSwipeItemPress = (title, productId, inventoryId) => {
     if (title === "Delete") {
+      setSelectedProductId(productId);
+      setSelectedInventoryId(inventoryId);
       setConfirmationModalVisible(true);
     }
   };
@@ -69,10 +74,18 @@ const InventoryProduct = () => {
         <Swipeable
           key={product.id.productId}
           renderLeftActions={() => (
-            <LeftSwipe onPressItem={handleSwipeItemPress} />
+            <LeftSwipe
+              onPressItem={(title) =>
+                handleSwipeItemPress(title, product.id.productId, inventoryId)
+              }
+            />
           )}
           renderRightActions={() => (
-            <RightSwipe onPressItem={handleSwipeItemPress} />
+            <RightSwipe
+              onPressItem={(title) =>
+                handleSwipeItemPress(title, product.id.productId, inventoryId)
+              }
+            />
           )}
         >
           <Card style={styles.card}>
@@ -111,16 +124,6 @@ const InventoryProduct = () => {
             </Text>
           </View>
         )}
-        
-        <AlertWithTwoOptions
-          visible={confirmationModalVisible}
-          message="Are you sure want to delete?"
-          onYesPress={() => {
-            // delSaleForecastDetail(id);
-            setConfirmationModalVisible(false);
-          }}
-          onNoPress={() => setConfirmationModalVisible(false)}
-        />
 
         <CustomButton
           icon={"plus"}
@@ -130,6 +133,16 @@ const InventoryProduct = () => {
         />
       </View>
       {loading ? <AppLoader /> : null}
+
+      <AlertWithTwoOptions
+        visible={confirmationModalVisible}
+        message="Are you sure want to delete?"
+        onYesPress={() => {
+          deleteInventoryProduct(token, selectedProductId, selectedInventoryId);
+          setConfirmationModalVisible(false);
+        }}
+        onNoPress={() => setConfirmationModalVisible(false)}
+      />
     </>
   );
 };
