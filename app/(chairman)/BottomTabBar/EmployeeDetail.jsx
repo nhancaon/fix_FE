@@ -24,6 +24,9 @@ const EmployeeDetail = ({ route }) => {
   const [phoneNumber, setPhoneNumber] = useState(data.phoneNumber);
   const [address, setAddress] = useState(data.address);
 
+  // Remove time -> 'YYYY-MM-DD'
+  const dateOfBirthFormatted = new Date(dateOfBirth).toLocaleDateString('en-CA');
+
   const dropdownItems = [
     { label: 'Chairman', value: 'CHAIRMAN' },
     { label: 'Accountant', value: 'ACCOUNTANT' },
@@ -106,9 +109,9 @@ const EmployeeDetail = ({ route }) => {
           />
 
           <FormField
-            title="Date of birth"
-            value={dateOfBirth}
-            placeholder="Date of birth"
+            title="Date of Birth"
+            value={dateOfBirthFormatted}
+            placeholder="YYYY-MM-DD"
             otherStyles="mt-5"
             edit={edit}
             handleChangeText={(text) => setDateOfBirth(text)}
