@@ -12,7 +12,7 @@ import {
   deleteInventoryProduct,
   getAllInventoryProducts,
   createInventoryProduct,
-  updateInventoryProduct, // Import the function to update a product
+  updateInventoryProduct, 
 } from "../../services/InventoryServices";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { useFocusEffect } from "@react-navigation/native";
@@ -239,7 +239,7 @@ const InventoryProduct = () => {
               productId: "",
               quantity: "",
               safetyStockAmount: "",
-            }); // Clear the form state when opening the modal for creation
+            }); 
             setFormModalVisible(true);
           }}
         />
@@ -266,13 +266,13 @@ const InventoryProduct = () => {
             </Text>
             {!isEditMode && (
               <>
-                <Text style={styles.label}>Inventory Id:</Text>
+                <Text style={styles.label}>Inventory Id</Text>
                 <TextInput
                   value={form.inventoryId}
                   onChangeText={(text) => handleFormChange("inventoryId", text)}
                   style={styles.input}
                 />
-                <Text style={styles.label}>Product Id:</Text>
+                <Text style={styles.label}>Product Id</Text>
                 <TextInput
                   value={form.productId}
                   onChangeText={(text) => handleFormChange("productId", text)}
@@ -280,13 +280,13 @@ const InventoryProduct = () => {
                 />
               </>
             )}
-            <Text style={styles.label}>Quantity:</Text>
+            <Text style={styles.label}>Quantity</Text>
             <TextInput
               value={form.quantity}
               onChangeText={(text) => handleFormChange("quantity", text)}
               style={styles.input}
             />
-            <Text style={styles.label}>Safety Stock Amount:</Text>
+            <Text style={styles.label}>Safety Stock Amount</Text>
             <TextInput
               value={form.safetyStockAmount}
               onChangeText={(text) =>
