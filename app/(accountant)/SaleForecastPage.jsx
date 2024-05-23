@@ -20,6 +20,7 @@ import {
 } from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
+import dateUtilsInstance from "../../utils/DateUtils";
 
 const SaleForecast = () => {
 	const { token, userLogin } = useGlobalContext();
@@ -195,12 +196,26 @@ const SaleForecast = () => {
 														titleStyle={styles.title}
 													/>
 													<Card.Content>
-														<Text className="flex text-lg font-psemi text-black">
-															Date Start: {item.dateStart}
-														</Text>
-														<Text className="flex text-lg font-psemi text-black">
-															Date End: {item.dateEnd}
-														</Text>
+														<View className="flex-row mb-2">
+															<Text className="text-lg font-semibold text-black mr-2">
+																Date Start:
+															</Text>
+															<Text className="text-lg text-black">
+																{dateUtilsInstance.formatDateString(
+																	item.dateStart
+																)}
+															</Text>
+														</View>
+														<View className="flex-row mb-2">
+															<Text className="text-lg font-semibold text-black mr-2">
+																Date End:
+															</Text>
+															<Text className="text-lg text-black">
+																{dateUtilsInstance.formatDateString(
+																	item.dateEnd
+																)}
+															</Text>
+														</View>
 													</Card.Content>
 												</Card>
 											</Swipeable>
@@ -289,6 +304,7 @@ const styles = StyleSheet.create({
 		margin: 10,
 		padding: 10,
 		backgroundColor: "#fff",
+		width: 390,
 	},
 });
 

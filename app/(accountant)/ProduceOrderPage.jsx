@@ -21,6 +21,7 @@ import {
 } from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
+import dateUtilsInstance from "../../utils/DateUtils";
 
 const ProduceOrder = () => {
 	const { token, userLogin } = useGlobalContext();
@@ -251,7 +252,9 @@ const ProduceOrder = () => {
 															Date Start:
 														</Text>
 														<Text className="text-lg text-black">
-															{item.dateStart}
+															{dateUtilsInstance.formatDateString(
+																item.dateStart
+															)}
 														</Text>
 													</View>
 													<View className="flex-row mb-2">
@@ -259,7 +262,7 @@ const ProduceOrder = () => {
 															Date End:
 														</Text>
 														<Text className="text-lg text-black">
-															{item.dateEnd}
+															{dateUtilsInstance.formatDateString(item.dateEnd)}
 														</Text>
 													</View>
 													<View className="flex-row mb-2">

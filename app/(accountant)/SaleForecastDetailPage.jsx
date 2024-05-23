@@ -284,18 +284,36 @@ const SaleForecastDetail = ({ route }) => {
 											titleStyle={styles.title}
 										/>
 										<Card.Content>
-											<Text className="flex text-lg font-psemi text-black">
-												Name: {item.name}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Quantity: {item.quantity}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Price: {item.totalPrice}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Sale Price: {item.totalSalePrice}
-											</Text>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Name:
+												</Text>
+												<Text className="text-lg text-black">{item.name}</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Quantity:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.quantity}
+												</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Total Price:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.totalPrice}
+												</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Total Sale Price:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.totalSalePrice}
+												</Text>
+											</View>
 										</Card.Content>
 									</Card>
 								</Swipeable>
