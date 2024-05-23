@@ -162,7 +162,7 @@ const EmployeeCreate = () => {
       <CustomButton
         title="SAVE"
         handlePress={handleCreateUser}
-        containerStyles="mt-5"
+        containerStyles="absolute bottom-24 self-center w-20"
         isLoading={isSubmitting}
         unpressable={disableEdit}
       />
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#161622',
     justifyContent: 'center',
     paddingHorizontal: 12,
-    marginBottom: 210
+    marginBottom: 180
   },
   headerContainer: {
     justifyContent: 'center', 
