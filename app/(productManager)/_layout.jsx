@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
-import { Text, View, Image } from 'react-native'
-import React, { useContext } from 'react';
+import { Text, View, Image, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import React, { useContext, useState } from 'react';
 import {
   SimpleLineIcons,
   MaterialIcons,
@@ -45,8 +45,11 @@ const MPSStack = () => (
 const Drawer = createDrawerNavigator()
 
 const ProductManagerLayout = () => {
-  const { setUser, setIsLogged, userLogin } = useGlobalContext();
+  const { setUser, setIsLogged, userLogin, searchText, setSearchText } = useGlobalContext();
   const authCtx = useContext(AuthContext);
+
+  const [searchMode, setSearchMode] = useState(false);
+
   const handleLogout = () => {
     // Clear user data and token
     setUser(null);
@@ -54,6 +57,19 @@ const ProductManagerLayout = () => {
     authCtx.logout();
     
   };
+
+  const handleCancelSearch = () => {
+    setSearchMode(false);
+    setSearchText('');
+  };
+
+  const handleSearchIconClick = () => {
+    setSearchMode(!searchMode);
+    if (!searchMode) {
+      setSearchText('');
+    }
+  };
+
   return (
     <Drawer.Navigator 
     drawerContent={
@@ -164,6 +180,26 @@ const ProductManagerLayout = () => {
         headerShadowVisible={false}
         options={{ 
           drawerLabel: 'Bill of material',
+          title: searchMode ? null : 'Bill of material',
+          headerRight: () => (
+            searchMode ? (
+              <View style={styles.searchContainer}>
+                <TextInput
+                  style={styles.searchText}
+                  placeholder="Search BOMs..."
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
+                <TouchableOpacity onPress={handleCancelSearch}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handleSearchIconClick}>
+                <MaterialIcons name="search" size={30} color="#000" style={styles.searchIcon} />
+              </TouchableOpacity>
+            )
+          ),
           drawerIcon: () => (
             <FontAwesome
               name="list-alt"
@@ -193,4 +229,30 @@ const ProductManagerLayout = () => {
     
   )
 }
+
+const styles = StyleSheet.create({
+  searchContainer:{
+    flexDirection: 'row', 
+    alignItems: 'center'
+  },
+  searchText: {
+    height: 40,
+    width: 270, // Adjust the width as needed
+    borderColor: '#000',
+    borderWidth: 1,
+    marginRight: 8,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  cancelText: {
+    color: '#ff9c01',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10
+  },
+  searchIcon: {
+    marginRight: 16
+  }
+});
+
 export default ProductManagerLayout

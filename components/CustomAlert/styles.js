@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     },
     modal: {
         backgroundColor: '#102d66',
-        width: 430,
+        width: 330,
         height: 270,
         padding: 15,
         borderRadius: 15,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     text: {
         color: '#FFFFFF',
         textAlign: 'center',
-        fontSize: 21,
+        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
     },

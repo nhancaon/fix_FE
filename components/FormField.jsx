@@ -102,8 +102,8 @@ const FormField = ({
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
               }}>
                 <View style={{
-                  width: 450,
-                  height: 200,
+                  width: 350,
+                  height: 90,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
