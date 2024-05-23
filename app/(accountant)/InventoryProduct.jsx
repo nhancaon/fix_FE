@@ -1,8 +1,18 @@
 import React, { useState, useCallback } from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import {
   deleteInventoryProduct,
   getAllInventoryProducts,
+  createInventoryProduct,
+  updateInventoryProduct, // Import the function to update a product
 } from "../../services/InventoryServices";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { useFocusEffect } from "@react-navigation/native";
@@ -20,6 +30,15 @@ const InventoryProduct = () => {
   const [inventoryProducts, setInventoryProducts] = useState([]);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
+  const [formModalVisible, setFormModalVisible] = useState(false);
+  const [form, setForm] = useState({
+    inventoryId: "",
+    productId: "",
+    quantity: "",
+    safetyStockAmount: "",
+  });
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedInventoryId, setSelectedInventoryId] = useState(null);
   const { token } = useGlobalContext();
@@ -56,12 +75,99 @@ const InventoryProduct = () => {
 
   const groupedProducts = groupByInventoryId(inventoryProducts);
 
-  const handleSwipeItemPress = (title, productId, inventoryId) => {
+  const handleSwipeItemPress = (title, product) => {
     if (title === "Delete") {
-      setSelectedProductId(productId);
-      setSelectedInventoryId(inventoryId);
+      setSelectedProductId(product.id.productId);
+      setSelectedInventoryId(product.id.inventoryId);
       setConfirmationModalVisible(true);
+    } else if (title === "Edit") {
+      handleEditPress(product);
     }
+  };
+
+  const handleDeleteProduct = async () => {
+    try {
+      await deleteInventoryProduct(
+        token,
+        selectedProductId,
+        selectedInventoryId
+      );
+      setInventoryProducts((prevProducts) =>
+        prevProducts.filter(
+          (product) => product.id.productId !== selectedProductId
+        )
+      );
+    } catch (err) {
+      // handle error, e.g., show a message to the user
+    } finally {
+      setConfirmationModalVisible(false);
+    }
+  };
+
+  const handleFormChange = (name, value) => {
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleFormSubmit = async () => {
+    if (isEditMode) {
+      try {
+        const updatedProduct = {
+          inventoryId: selectedProduct.id.inventoryId,
+          productId: selectedProduct.id.productId,
+          quantity: form.quantity,
+          safetyStockAmount: form.safetyStockAmount,
+        };
+        await updateInventoryProduct(token, updatedProduct);
+        setInventoryProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id.productId === selectedProduct.id.productId
+              ? { ...product, ...updatedProduct }
+              : product
+          )
+        );
+        setFormModalVisible(false);
+        setForm({
+          inventoryId: "",
+          productId: "",
+          quantity: "",
+          safetyStockAmount: "",
+        });
+      } catch (err) {
+        // handle error, e.g., show a message to the user
+      }
+    } else {
+      try {
+        const newProduct = {
+          inventoryId: form.inventoryId,
+          productId: form.productId,
+          quantity: form.quantity,
+          safetyStockAmount: form.safetyStockAmount,
+        };
+        const res = await createInventoryProduct(token, newProduct);
+        setInventoryProducts([...inventoryProducts, res.result]);
+        setFormModalVisible(false);
+        setForm({
+          inventoryId: "",
+          productId: "",
+          quantity: "",
+          safetyStockAmount: "",
+        });
+      } catch (err) {
+        // handle error, e.g., show a message to the user
+      }
+    }
+  };
+
+  const handleEditPress = (product) => {
+    setSelectedProduct(product);
+    setForm({
+      inventoryId: product.id.inventoryId,
+      productId: product.id.productId,
+      quantity: product.quantity.toString(),
+      safetyStockAmount: product.safetyStockAmount.toString(),
+    });
+    setIsEditMode(true);
+    setFormModalVisible(true);
   };
 
   const renderGroup = ({ item: [inventoryId, products] }) => (
@@ -75,16 +181,12 @@ const InventoryProduct = () => {
           key={product.id.productId}
           renderLeftActions={() => (
             <LeftSwipe
-              onPressItem={(title) =>
-                handleSwipeItemPress(title, product.id.productId, inventoryId)
-              }
+              onPressItem={(title) => handleSwipeItemPress(title, product)}
             />
           )}
           renderRightActions={() => (
             <RightSwipe
-              onPressItem={(title) =>
-                handleSwipeItemPress(title, product.id.productId, inventoryId)
-              }
+              onPressItem={(title) => handleSwipeItemPress(title, product)}
             />
           )}
         >
@@ -130,6 +232,16 @@ const InventoryProduct = () => {
           iconSize={28}
           containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
           isLoading={false}
+          handlePress={() => {
+            setIsEditMode(false);
+            setForm({
+              inventoryId: "",
+              productId: "",
+              quantity: "",
+              safetyStockAmount: "",
+            }); // Clear the form state when opening the modal for creation
+            setFormModalVisible(true);
+          }}
         />
       </View>
       {loading ? <AppLoader /> : null}
@@ -137,12 +249,68 @@ const InventoryProduct = () => {
       <AlertWithTwoOptions
         visible={confirmationModalVisible}
         message="Are you sure want to delete?"
-        onYesPress={() => {
-          deleteInventoryProduct(token, selectedProductId, selectedInventoryId);
-          setConfirmationModalVisible(false);
-        }}
+        onYesPress={handleDeleteProduct}
         onNoPress={() => setConfirmationModalVisible(false)}
       />
+
+      <Modal
+        visible={formModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setFormModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {isEditMode ? "Edit Product" : "Create New Product"}
+            </Text>
+            {!isEditMode && (
+              <>
+                <Text style={styles.label}>Inventory Id:</Text>
+                <TextInput
+                  value={form.inventoryId}
+                  onChangeText={(text) => handleFormChange("inventoryId", text)}
+                  style={styles.input}
+                />
+                <Text style={styles.label}>Product Id:</Text>
+                <TextInput
+                  value={form.productId}
+                  onChangeText={(text) => handleFormChange("productId", text)}
+                  style={styles.input}
+                />
+              </>
+            )}
+            <Text style={styles.label}>Quantity:</Text>
+            <TextInput
+              value={form.quantity}
+              onChangeText={(text) => handleFormChange("quantity", text)}
+              style={styles.input}
+            />
+            <Text style={styles.label}>Safety Stock Amount:</Text>
+            <TextInput
+              value={form.safetyStockAmount}
+              onChangeText={(text) =>
+                handleFormChange("safetyStockAmount", text)
+              }
+              style={styles.input}
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.submitButton]}
+                onPress={handleFormSubmit}
+              >
+                <Text style={styles.buttonText}>Submit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={() => setFormModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -188,6 +356,56 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#fff",
     fontSize: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+    color: "#ff9c01",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#161622",
+    padding: 20,
+    width: "80%",
+    borderRadius: 10,
+  },
+  label: {
+    color: "#ff9c01",
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#fff",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    color: "#fff",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "45%",
+  },
+  submitButton: {
+    backgroundColor: "rgb(34, 197, 94)",
+  },
+  cancelButton: {
+    backgroundColor: "rgb(239, 68, 68)",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
