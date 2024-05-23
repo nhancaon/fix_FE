@@ -12,41 +12,46 @@ import {
 } from "react-native";
 
 const dropdownItems = [
-	{ label: "PO", value: "PO" },
-	{ label: "SO", value: "SO" },
+	{ label: "PENDING", value: "PENDING" },
+	{ label: "PROCESSING", value: "PROCESSING" },
+	{ label: "DONE", value: "DONE" },
 ];
 
-const OCModal = ({
-	initialName,
-	initialContact,
-	initialKindOrder,
+const OUModal = ({
+	initialDateStart,
+	initialDateEnd,
+	initialOrderStatus,
 	visible,
 	onSavePress,
 	onClose,
 }) => {
-	const [name, setName] = useState("");
-	const [contact, setContact] = useState("");
-	const [kindOrder, setKindOrder] = useState("");
+	const [orderStatus, setOrderStatus] = useState("");
+	const [dateStart, setDateStart] = useState(new Date());
 	const [dateEnd, setDateEnd] = useState(new Date());
 	const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+	const [showStartDatePicker, setShowStartDatePicker] = useState(false);
 
 	useEffect(() => {
 		if (visible) {
-			setName(initialName.toString());
-			setContact(initialContact.toString());
-			setKindOrder(initialKindOrder.toString());
-			setDateEnd(new Date());
+			setDateStart(initialDateStart ? new Date(initialDateStart) : new Date());
+			setOrderStatus(initialOrderStatus.toString());
+			setDateEnd(initialDateEnd ? new Date(initialDateEnd) : new Date());
 		}
-	}, [visible, initialName, initialContact, initialKindOrder]);
+	}, [visible, initialDateStart, initialDateEnd, initialOrderStatus]);
 
 	const handleEndDateSelect = (event, selectedDate) => {
 		const currentDate = selectedDate || dateEnd;
 		setShowEndDatePicker(Platform.OS === "ios");
 		setDateEnd(currentDate);
 	};
+	const handleStartDateSelect = (event, selectedDate) => {
+		const currentDate = selectedDate || dateEnd;
+		setShowStartDatePicker(Platform.OS === "ios");
+		setDateStart(currentDate);
+	};
 
 	const handleSave = () => {
-		onSavePress(dateEnd.toISOString(), name, contact, kindOrder);
+		onSavePress(dateStart.toISOString(), dateEnd.toISOString(), orderStatus);
 	};
 
 	return (
@@ -58,21 +63,31 @@ const OCModal = ({
 		>
 			<View style={styles.modalContainer}>
 				<View style={styles.modalContent}>
-					<Text style={styles.label}>Name Customer:</Text>
-					<TextInput style={styles.input} value={name} onChangeText={setName} />
-					<Text style={styles.label}>Contact:</Text>
-					<TextInput
-						style={styles.input}
-						value={contact}
-						onChangeText={setContact}
-					/>
 					<DD
-						title="Kind Order"
-						value={kindOrder}
-						placeholder="Choose kind order"
-						setValue={setKindOrder}
+						title="Order Status"
+						value={orderStatus}
+						placeholder="Choose order status"
+						setValue={setOrderStatus}
 						items={dropdownItems}
 					/>
+					<Text style={styles.label}>Select Start Date:</Text>
+					<TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+						<TextInput
+							style={styles.input}
+							editable={false}
+							value={dateStart.toDateString()}
+						/>
+					</TouchableOpacity>
+					{showStartDatePicker && (
+						<DateTimePicker
+							testID="dateTimePicker"
+							value={dateStart}
+							mode="date"
+							is24Hour={true}
+							display="default"
+							onChange={handleStartDateSelect}
+						/>
+					)}
 					<Text style={styles.label}>Select End Date:</Text>
 					<TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
 						<TextInput
@@ -154,4 +169,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default OCModal;
+export default OUModal;

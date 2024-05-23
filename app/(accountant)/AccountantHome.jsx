@@ -3,7 +3,6 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SaleForecast from "./SaleForecastPage";
 import ProduceOrder from "./ProduceOrderPage";
-import SaleOrder from "./SaleOrderPage";
 import { TabButton } from "../../components";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SaleForecastDetail from "./SaleForecastDetailPage";
@@ -57,13 +56,6 @@ const AccountantHome = () => {
 			screen: "Likes",
 			icon: "chart-timeline-variant",
 			Component: SaleForecastStack,
-		},
-		{
-			id: 3,
-			title: "SaleOrder",
-			screen: "Home",
-			icon: "hexagon-multiple",
-			Component: SaleOrder,
 		},
 	];
 	return (

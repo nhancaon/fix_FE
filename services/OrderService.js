@@ -55,6 +55,9 @@ export const updateOrder = async (token, id, dateStart, dateEnd, orderStatus) =>
             Authorization: "Bearer " + token,
         },
     };
+    console.log("dateStart: ", dateStart);
+    console.log("dateEnd: ", dateEnd);
+    console.log("orderStatus: ", orderStatus);
     const data = {
         id,
         dateStart,

@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
-const DropDownField = ({
-	title,
-	value,
-	setValue,
-	items,
-	placeholder,
-	edit,
-}) => {
+const DD = ({ title, value, setValue, items, placeholder, edit }) => {
 	const [open, setOpen] = useState(false);
 	const [disable, setDisable] = useState(true);
 
@@ -49,13 +42,14 @@ const DropDownField = ({
 
 const styles = StyleSheet.create({
 	container: {
-		marginTop: 18,
+		marginTop: 0,
+		marginBottom: 5,
 	},
 	title: {
 		textAlign: "left",
-		fontSize: 16,
-		color: "#fff",
-		marginBottom: 8,
+		fontSize: 14,
+		color: "#ff9c01",
+		marginBottom: 5,
 	},
 	dropdownContainer: {
 		width: "100%",
@@ -73,8 +67,8 @@ const styles = StyleSheet.create({
 	},
 	picker: {
 		width: "100%",
-		backgroundColor: "#000",
-		borderColor: "#2c2c34",
+		backgroundColor: "#161622",
+		borderColor: "#fff",
 		height: 64,
 		borderRadius: 16,
 	},
@@ -97,4 +91,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default DropDownField;
+export default DD;
