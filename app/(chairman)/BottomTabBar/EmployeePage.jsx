@@ -120,11 +120,12 @@ const Employee = () => {
         </ScrollView>
       </View>
       <CustomButton
-        title="Add"
-        handlePress={navigateEmployeeCreate}
-        containerStyles="absolute bottom-28 self-center w-20"
-        isLoading={false}
-      />
+          icon={"plus"}
+          iconSize={28}
+          containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          isLoading={false}
+          handlePress={navigateEmployeeCreate}
+        />
       {loading ? <AppLoader /> : null}
       <ToastMessage type={"success"} ref={successToastRef} />
       <ToastMessage type="danger" ref={errorToastRef} />

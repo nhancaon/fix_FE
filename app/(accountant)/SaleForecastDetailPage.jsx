@@ -256,7 +256,7 @@ const SaleForecastDetail = ({ route }) => {
 							renderItem={({ item }) => (
 								<Card style={styles.card}>
 									<Card.Title
-										title={"Sale Forecast.No: " + item.product_id}
+										title={"Product.No: " + item.product_id}
 										titleStyle={styles.title}
 									/>
 									<Card.Content>
