@@ -68,26 +68,27 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 40,
+    top: 30,
     right: 20,
     zIndex: 1,
   },
   rectangle: {
     backgroundColor: '#FFF',
-    padding: 20,
     borderRadius: 10,
-    width: '80%',
-    height: '60%',
+    width: '90%',
+    height: '70%',
     alignItems: 'center',
+    marginBottom: 30,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
+    marginTop: 20,
     marginBottom: 20,
-    borderRadius: 100,
+    borderRadius: 75,
   },
   header: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#FFA500',
@@ -103,12 +104,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 18,
     marginRight: 5,
   },
   value: {
     marginRight: 5,
-    fontSize: 24,
+    fontSize: 18,
   },
 });
 

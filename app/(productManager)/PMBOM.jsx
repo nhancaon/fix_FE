@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getAllBOMs } from '../../services/BOMServices';
+import { getAllBOMs, getBOMlikeName } from '../../services/BOMServices';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const PMBOM = () => {
   const { token  } = useGlobalContext();
@@ -20,23 +20,29 @@ const PMBOM = () => {
     { label: 'Finish', value: 'FINISH' },
   ]);
  
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllBOMs(token);
-      setBoms(data.result);
-    };
-
-    // Call fetchData when the screen is focused
-    const unsubscribe = navigation.addListener('focus', fetchData);
-
-    fetchData();
-
-    // Unsubscribe to the event when the component is unmounted
-    return unsubscribe;
-  }, [token, navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const data = await getAllBOMs(token);
+        setBoms(data.result);
+      };
+  
+      fetchData();
+    }, [token])
+  );
 
   const handleSearch = () => {
-    // Implement search functionality here
+    console.log(`Search for ${search}`);
+    console.log(`token ${token}`)
+    try {
+      const fetchData = async () => {
+        const data = await getBOMlikeName(token, search);
+        setBoms(data.result);
+      };
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleInsert = () => {
@@ -67,11 +73,13 @@ const PMBOM = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <SearchBar
+      {/* Xem trong chairman/BottomTabBar/EmployeePage method getFilteredData -> cahc filter va map data */}
+      {/* Ko xai search bar vi chiem cho lam */}
+      {/* <SearchBar
         value={search}
         onChangeText={setSearch}
         onSearch={handleSearch}
-      />
+      /> */}
       {/* fillter */}
       <DropDownPicker
               open={open}

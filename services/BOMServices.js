@@ -12,6 +12,21 @@ export const getAllBOMs = async (token) => {
     }
 };
 
+export const getBOMlikeName = async (token, name) => {
+    console.log("name: ", name);
+    console.log("token 2 : ", token);
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` },
+        };
+        const res = await http.get(`/api/BOMs/getBOMsByLikeName?nameRequest=${encodeURIComponent(name)}`, config);
+        console.log("res: ", res);
+        return res;
+    } catch (e) {
+        console.log("Error at BOM Service: ", e);
+    }
+};
+
 export const getBOMDetail = async (token, id) => {
     try {
         const config = {

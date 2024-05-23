@@ -1,7 +1,5 @@
 import * as http from "../utils/httpRequest";
 
-
-
 export const getAllInventories = async (token) => {
   const config = {
     headers: {
@@ -41,5 +39,37 @@ export const getAllInventoryProducts = async (token) => {
     return res;
   } catch (e) {
     console.log("Error at Get Inventory Products: ", e);
+  }
+};
+
+export const createInventoryProduct = async (token, product) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const res = await http.post(`/api/inventory-product/create`, product, config);
+    return res;
+  } catch (e) {
+    console.log("Error at Create Inventory Products: ", e);
+  }
+};
+
+export const deleteInventoryProduct = async (token, productId, inventoryId) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const res = await http.del(
+      `/api/inventory-product/delete?productId=${productId}&inventoryId=${inventoryId}`,
+      config
+    );
+    return res;
+  } catch (e) {
+    console.log("Error at Delete Inventory Products: ", e.message);
   }
 };

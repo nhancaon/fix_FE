@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
   tabBar: {
     height: 70,
     position: 'absolute',
-    bottom: 25,
-    marginHorizontal: 16,
+    marginBottom: 10,
+    marginHorizontal: 10,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 0.5,
     borderColor: '#ffffff',
-    backgroundColor: '#ff9c01'
+    backgroundColor: '#ff9c01',
   }
 })
 

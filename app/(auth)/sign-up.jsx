@@ -98,10 +98,10 @@ const SignUp = () => {
           <Image
             source={images.logo}
             resizeMode="contain"
-            className="w-[130px] h-[84px]"
+            className="w-[115px] h-[69px]"
           />
 
-          <Text className="text-2xl font-semibold text-white mt-5 font-psemibold">
+          <Text className="text-2xl font-semibold text-white mt-2 font-psemibold">
             Sign up to Manufacturio
           </Text>
 
@@ -110,7 +110,7 @@ const SignUp = () => {
             placeholder={"Username"}
             value={form.fullName}
             handleChangeText={(e) => setForm({ ...form, fullName: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -119,7 +119,7 @@ const SignUp = () => {
             placeholder={"email@gmail.com"}
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             keyboardType="email-address"
             edit={true}
           />
@@ -129,7 +129,7 @@ const SignUp = () => {
             placeholder={"●●●●●●●●"}
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -138,7 +138,7 @@ const SignUp = () => {
             placeholder={"YYYY-MM-DD"}
             value={form.dateOfBirth}
             handleChangeText={(e) => setForm({ ...form, dateOfBirth: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -147,7 +147,7 @@ const SignUp = () => {
             placeholder={"123-456-7890"}
             value={form.phoneNumber}
             handleChangeText={(e) => setForm({ ...form, phoneNumber: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -156,7 +156,7 @@ const SignUp = () => {
             placeholder={"1 Vo Van Ngan"}
             value={form.address}
             handleChangeText={(e) => setForm({ ...form, address: e })}
-            otherStyles="mt-5"
+            otherStyles="mt-3"
             edit={true}
           />
 
@@ -168,7 +168,7 @@ const SignUp = () => {
             unpressable={false}
           />
 
-          <View className="flex justify-center pt-5 flex-row gap-2">
+          <View className="flex justify-center flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
               Have an account already?
             </Text>

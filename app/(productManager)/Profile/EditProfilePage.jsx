@@ -82,7 +82,7 @@ const EditProfilePage = () => {
 
 						<View style={styles.headingContainer}>
 							<Text style={styles.first_heading}>{username}</Text>
-							<Text style={styles.first_heading}>Role: Accountant</Text>
+							<Text style={styles.first_heading}>Role: Product Manager</Text>
 						</View>
 
 						<TouchableOpacity style={styles.editIcon} onPress={handleEdit}>
@@ -101,7 +101,7 @@ const EditProfilePage = () => {
 						title="Full name"
 						value={fullName}
 						placeholder="Full name"
-						otherStyles="mt-5"
+						otherStyles="mt-3"
 						edit={edit}
 						handleChangeText={(text) => setFullName(text)}
 					/>
@@ -110,7 +110,7 @@ const EditProfilePage = () => {
 						title="Email"
 						value={email}
 						placeholder="Email"
-						otherStyles="mt-5"
+						otherStyles="mt-3"
 						keyboardType="email-address"
 						edit={edit}
 						handleChangeText={(text) => setEmail(text)}
@@ -120,7 +120,7 @@ const EditProfilePage = () => {
 						title="Date of Birth"
 						value={dateOfBirthFormatted}
 						placeholder="YYYY-MM-DD"
-						otherStyles="mt-5"
+						otherStyles="mt-3"
 						edit={edit}
 						handleChangeText={(text) => setDateOfBirth(text)}
 					/>
@@ -129,7 +129,7 @@ const EditProfilePage = () => {
 						title="Phone number"
 						value={phoneNumber}
 						placeholder="Phone number"
-						otherStyles="mt-5"
+						otherStyles="mt-3"
 						edit={edit}
 						handleChangeText={(text) => setPhoneNumber(text)}
 					/>
@@ -138,7 +138,7 @@ const EditProfilePage = () => {
 						title="Address"
 						value={address}
 						placeholder="Address"
-						otherStyles="mt-5"
+						otherStyles="mt-3"
 						edit={edit}
 						handleChangeText={(text) => setAddress(text)}
 					/>
@@ -146,7 +146,7 @@ const EditProfilePage = () => {
 					<CustomButton
 						title="SAVE"
 						handlePress={handleUpdateInfo}
-						containerStyles="mt-7"
+						containerStyles="mt-5"
 						isLoading={isSubmitting}
 						unpressable={disableEdit}
 					/>

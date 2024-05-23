@@ -122,16 +122,16 @@ const SignIn = () => {
           <Image
             source={images.thumbnail}
             resizeMode="cover"
-            style={{ width: Dimensions.get("window").width, height: 300}}
+            style={{ width: Dimensions.get("window").width-500, height: 200}}
           />
 
           <Image
             source={images.logo}
             resizeMode="contain"
-            className="w-[130px] h-[84px]"
+            className="w-[120px] h-[74px]"
           />
 
-          <Text className="text-2xl font-semibold text-white mt-5 font-psemibold">
+          <Text className="text-2xl font-semibold text-white mt-2 font-psemibold">
             Welcome to Manufacturio
           </Text>
 
@@ -140,7 +140,7 @@ const SignIn = () => {
             placeholder={"email@gmail.com"}
             value={email}
             handleChangeText={handleChangeEmail}
-            otherStyles="mt-7"
+            otherStyles="mt-3"
             keyboardType="email-address"
             edit={true}
           />
@@ -150,19 +150,19 @@ const SignIn = () => {
             placeholder={"●●●●●●●●"}
             value={password}
             handleChangeText={handleChangePassword}
-            otherStyles="mt-7"
+            otherStyles="mt-3"
             edit={true}
           />
 
           <CustomButton
             title="Sign In"
             handlePress={handleLogin}
-            containerStyles="mt-7"
+            containerStyles="mt-5"
             isLoading={isSubmitting}
             unpressable={false}
           />
 
-          <View className="flex justify-center pt-5 flex-row gap-2">
+          <View className="flex justify-center pt-2 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
               Don't have an account?
             </Text>
@@ -174,7 +174,7 @@ const SignIn = () => {
             </Link>
           </View>
 
-          <View className="flex justify-center pt-3 flex-row gap-2">
+          <View className="flex justify-center pt-2 flex-row gap-2">
             <Link
               href="/recover-password"
               className="text-lg font-psemibold text-secondary"
