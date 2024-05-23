@@ -23,6 +23,8 @@ import CreateBOM from '../../components/BOM/CreateBOM';
 import { createStackNavigator } from '@react-navigation/stack';
 import ProductionScheduleDetail from '../../components/MPS/MPSDetail';
 import MPSCreateForm from '../../components/MPS/MPSCreateForm';
+import CreateWorkOrder from '../../components/WorkOrder/CreateWO';
+import WorkOrderDetail from '../../components/WorkOrder/WorkOrderDetail';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +41,14 @@ const MPSStack = () => (
     <Stack.Screen name="ProductionScheduleHome" component={ProductionSchedule} />
     <Stack.Screen name="ProductionScheduleDetail" component={ProductionScheduleDetail} />
     <Stack.Screen name="MPSCreateForm" component={MPSCreateForm} />
+  </Stack.Navigator>
+);
+
+const WorkOrderStack = () => (
+  <Stack.Navigator initialRouteName="WorkOrder" screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="WorkOrderHome" component={WorkOrder} />
+    <Stack.Screen name="CreateWorkOrder" component={CreateWorkOrder} />
+    <Stack.Screen name="WorkOrderDetail" component={WorkOrderDetail} />
   </Stack.Navigator>
 );
 
@@ -172,7 +182,7 @@ const ProductManagerLayout = () => {
               color={"#ff9c01"} />
           ),
         }}
-        component={WorkOrder}
+        component={WorkOrderStack}
       />
       <Drawer.Screen 
         name="BOM" 

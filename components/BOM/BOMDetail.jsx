@@ -71,8 +71,8 @@ function BOMDetail({ route }) {
     });
 
  const handleInputChange = (name, value) => {
-        setBOMUpdate(prevState => ({ ...prevState, [name]: value }));
-        console.log("BOMUpdate: ", BOMUpdate);
+        setBomDetail(prevState => ({ ...prevState, [name]: value }));
+        console.log("BOMUpdate: ",bomDetail);
     };
 
     const handleAddMaterial = () => {
@@ -137,7 +137,7 @@ function BOMDetail({ route }) {
         const requestBody = {
           productManagerId: userId,
           BOMName: bomDetail.bomname,
-          BOMStatus: bomDetail.bomstatus,
+          BOMStatus: status,
           timeProduction: bomDetail.timeProduction,
           unit: bomDetail.unit,
           totalPrice: bomDetail.totalPrice,
@@ -160,6 +160,7 @@ function BOMDetail({ route }) {
       const handleSave = async () => {
         try {
           const requestBody = createRequestBody(bomDetail);
+          console.log('Request body:', requestBody);
           const updatedBOM = await updateBOM(token, id, requestBody);
           console.log('Updated BOM:', updatedBOM);
           Alert.alert(
@@ -176,13 +177,15 @@ function BOMDetail({ route }) {
         setTempDeletedMaterials([]);
       };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     try{
-      const deletedBOM = deleteBOM(token, id);
-      console.log('Deleted BOM:', deletedBOM);
-      Alert.alert('deleted BOM successfully')[{text: 'OK',
-          onPress: () => navigation.navigate('PMBOM')
-      }]
+      const deletedBOM = await  deleteBOM(token, id);
+      Alert.alert('Success', 'deleted BOM successfully', [
+        {
+            text: 'OK',
+            onPress: () => navigation.navigate('PMBOM')
+        }
+    ]);
       
     }
     catch (error) {
