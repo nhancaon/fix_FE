@@ -14,6 +14,22 @@ export const getAllInventories = async (token) => {
   }
 };
 
+
+export const createInventory = async (token, inventory) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const res = await http.post(`/api/inventory/create`, inventory, config);
+    return res;
+  } catch (e) {
+    console.log("Error at Get Inventory: ", e);
+  }
+};
+
+
 export const getAllInventoryMaterials = async (token) => {
   const config = {
     headers: {
@@ -28,6 +44,61 @@ export const getAllInventoryMaterials = async (token) => {
   }
 };
 
+export const createInventoryMaterial = async (token, material) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const res = await http.post(
+      `/api/inventory-material/create`,
+      material,
+      config
+    );
+    return res;
+  } catch (e) {
+    console.log("Error at Create Inventory Materials: ", e);
+  }
+};
+
+export const updateInventoryMaterial = async (token, material) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const res = await http.put(`/api/inventory-material`, material, config);
+    return res;
+  } catch (e) {
+    console.log("Error at update Inventory Materials: ", e);
+  }
+};
+
+export const deleteInventoryMaterial = async (token, materialId, inventoryId) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const res = await http.del(
+      `/api/inventory-material/delete?materialId=${materialId}&inventoryId=${inventoryId}`,
+      config
+    );
+    return res;
+  } catch (e) {
+    console.log("Error at Delete Inventory Materials: ", e.message);
+  }
+};
+
+
+
+
+//Inventory Products APIs
 export const getAllInventoryProducts = async (token) => {
   const config = {
     headers: {
@@ -50,10 +121,29 @@ export const createInventoryProduct = async (token, product) => {
   };
 
   try {
-    const res = await http.post(`/api/inventory-product/create`, product, config);
+    const res = await http.post(
+      `/api/inventory-product/create`,
+      product,
+      config
+    );
     return res;
   } catch (e) {
     console.log("Error at Create Inventory Products: ", e);
+  }
+};
+
+export const updateInventoryProduct = async (token, product) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const res = await http.put(`/api/inventory-product`, product, config);
+    return res;
+  } catch (e) {
+    console.log("Error at update Inventory Products: ", e);
   }
 };
 
