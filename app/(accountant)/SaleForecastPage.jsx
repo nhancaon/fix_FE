@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback } from "react";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Swipeable } from "react-native-gesture-handler";
 import {
 	getAllSaleForecast,
 	addSaleForecast,
@@ -15,6 +16,7 @@ import {
 	ToastMessage,
 	AlertWithTwoOptions,
 	SFModal,
+	LeftSwipe,
 } from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
