@@ -11,26 +11,26 @@ import { FlatList } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { Swipeable } from "react-native-gesture-handler";
 import {
-	getSaleForecastDetail,
-	deleteSaleForecastDetail,
-	getProductsForSaleForecast,
-	addSaleForecastDetail,
-	updateSaleForecastDetail,
-} from "../../services/SaleForecastDetailService";
+	getOrderMaterialDetail,
+	getMaterialForOrderMaterial,
+	deleteOrderMaterialDetail,
+	addOrderMaterialDetail,
+	updateOrderMaterialDetail,
+} from "../../services/OrderMaterialService";
 import {
 	CustomButton,
 	AppLoader,
 	ToastMessage,
 	AlertWithTwoOptions,
-	SFDModal,
 	LeftSwipe,
+	ODModal,
 } from "../../components";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "react-native-paper";
 
-const SaleForecastDetail = ({ route }) => {
-	const { itemId } = route.params;
+const OrderMaterialDetail = ({ route }) => {
+	const { order } = route.params;
 	const { token, userLogin } = useGlobalContext();
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -38,23 +38,21 @@ const SaleForecastDetail = ({ route }) => {
 	const errorToastRef = useRef(null);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
-	const [sfdModalVisible, setsfdModalVisible] = useState(false);
+	const [odModalVisible, setodModalVisible] = useState(false);
 	const [id, setId] = useState(false);
-	const [dataProducts, setDataProducts] = useState([]);
+	const [dataMaterials, setDataMaterials] = useState([]);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 	const [formUpdate, setFormUpdate] = useState({
 		quantity: 0,
-		totalPrice: 0,
-		totalSalePrice: 0,
 	});
 
 	const fetchData = useCallback(async () => {
 		setLoading(true);
 		try {
-			const res = await getSaleForecastDetail(token, itemId);
-			const resp = await getProductsForSaleForecast(token, itemId);
+			const res = await getOrderMaterialDetail(token, order.id);
+			const resp = await getMaterialForOrderMaterial(token, order.id);
 			setData(res.result);
-			setDataProducts(resp.result);
+			setDataMaterials(resp.result);
 		} catch (err) {
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
@@ -75,28 +73,30 @@ const SaleForecastDetail = ({ route }) => {
 	);
 
 	const UpdatePress = (item) => {
-		setId(item.product_id);
+		setId(item.material_id);
 		setFormUpdate({
 			quantity: item.quantity,
 			totalPrice: item.totalPrice,
 			totalSalePrice: item.totalSalePrice,
 		});
-		setsfdModalVisible(true);
+		setodModalVisible(true);
 	};
 
 	const handleSwipeItemPress = (title, item) => {
 		if (title === "Delete") {
 			setConfirmationModalVisible(true);
-			setId(item.product_id);
+			setId(item.material_id);
 		} else if (title === "Edit") {
 			handleEditPress(item);
 		}
 	};
 
 	const handleEditPress = (item) => {
-		setsfdModalVisible(true);
-		setId(item.product_id);
-		UpdatePress(item);
+		setFormUpdate({
+			quantity: item.quantity,
+		});
+		setodModalVisible(true);
+		setId(item.material_id);
 	};
 
 	const handleQuantityChange = (id, quantity) => {
@@ -135,7 +135,7 @@ const SaleForecastDetail = ({ route }) => {
 		});
 	};
 
-	async function createSaleForecastDetail() {
+	async function createOrderMaterialDetail() {
 		try {
 			setLoading(true);
 			if (selectedProducts.some((item) => item.quantity === 0)) {
@@ -151,9 +151,9 @@ const SaleForecastDetail = ({ route }) => {
 				pids.push(item.id);
 				quantities.push(item.quantity);
 			});
-			const add_res = await addSaleForecastDetail(
+			const add_res = await addOrderMaterialDetail(
 				token,
-				itemId,
+				order.id,
 				pids,
 				quantities
 			);
@@ -189,10 +189,10 @@ const SaleForecastDetail = ({ route }) => {
 		}
 	}
 
-	async function delSaleForecastDetail(id) {
+	async function delOrderMaterialDetail(id) {
 		try {
 			setLoading(true);
-			const del_res = await deleteSaleForecastDetail(token, id, itemId);
+			const del_res = await deleteOrderMaterialDetail(token, order.id, id);
 			if (!del_res) {
 				throw new Error("Fail to delete!");
 			} else {
@@ -218,17 +218,15 @@ const SaleForecastDetail = ({ route }) => {
 		}
 	}
 
-	async function upSaleForecastDetail(quantity, totalPrice, totalSalePrice) {
+	async function upOrderMaterialDetail(quantity) {
 		try {
 			setLoading(true);
 
-			const up_res = await updateSaleForecastDetail(
+			const up_res = await updateOrderMaterialDetail(
 				token,
-				itemId,
+				order.id,
 				id,
-				quantity,
-				totalPrice,
-				totalSalePrice
+				quantity
 			);
 
 			console.log(up_res);
@@ -260,15 +258,15 @@ const SaleForecastDetail = ({ route }) => {
 		<SafeAreaView style={styles.backgroundColor}>
 			<View style={{ paddingLeft: 10 }}>
 				<Text style={{ fontSize: 20, color: "#fff" }}>
-					Sale Forecast Detail
+					Order Product Detail
 				</Text>
 			</View>
 			<View style={styles.container}>
 				{data.length > 0 ? (
 					<View style={{ maxHeight: 4 * 77 }}>
 						<FlatList
-							data={data.slice().sort((a, b) => a.product_id - b.product_id)}
-							keyExtractor={(item) => item.product_id.toString()}
+							data={data.slice().sort((a, b) => a.material_id - b.material_id)}
+							keyExtractor={(item) => item.material_id.toString()}
 							renderItem={({ item }) => (
 								<Swipeable
 									key={item.id}
@@ -280,23 +278,56 @@ const SaleForecastDetail = ({ route }) => {
 								>
 									<Card style={styles.card}>
 										<Card.Title
-											title={"Sale Forecast.No: " + item.product_id}
+											title={"Product.No: " + item.material_id}
 											titleStyle={styles.title}
 										/>
 										<Card.Content>
-											<Text className="flex text-lg font-psemi text-black">
-												Name: {item.name}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Quantity: {item.quantity}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Price: {item.totalPrice}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Sale Price: {item.totalSalePrice}
-											</Text>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Name:
+												</Text>
+												<Text className="text-lg text-black">{item.name}</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Quantity:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.quantity}
+												</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Total Unit Price:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.totalUnitPrice}
+												</Text>
+											</View>
 										</Card.Content>
+
+										<View style={styles.row}>
+											<CustomButton
+												title="Update"
+												handlePress={() => {
+													setodModalVisible(true);
+													setId(item.material_id);
+													UpdatePress(item);
+												}}
+												containerStyles="flex items-center self-center w-40 mr-2 bg-green-500"
+												isLoading={false}
+											/>
+
+											<CustomButton
+												title="Delete"
+												handlePress={() => {
+													setConfirmationModalVisible(true);
+													setId(item.material_id);
+												}}
+												containerStyles="flex items-center self-center w-40 bg-red-500"
+												isLoading={false}
+											/>
+										</View>
 									</Card>
 								</Swipeable>
 							)}
@@ -312,26 +343,23 @@ const SaleForecastDetail = ({ route }) => {
 			</View>
 			<View style={{ marginBottom: 210 }}>
 				<View style={styles.header}>
-					<Text className="flex text-base text-center font-psemibold text-black py-1 pr-7">
+					<Text className="flex text-base text-center font-psemibold text-black py-1 pr-16">
 						ID
 					</Text>
 					<Text className="flex text-base text-center font-psemibold text-black py-1 pr-16">
 						Name
 					</Text>
-					<Text className="text-base text-center font-psemibold text-black py-1 pr-5">
+					<Text className="text-base text-center font-psemibold text-black py-1 pr-16">
 						Price
-					</Text>
-					<Text className="text-base text-center font-psemibold text-black p-1">
-						Sell Price
 					</Text>
 					<Text className="text-base text-center font-psemibold text-black p-1">
 						Quantity
 					</Text>
 				</View>
-				{dataProducts.length > 0 ? (
+				{dataMaterials.length > 0 ? (
 					<View style={{ maxHeight: 3 * 75 }}>
 						<FlatList
-							data={dataProducts.slice().sort((a, b) => a.id - b.id)}
+							data={dataMaterials.slice().sort((a, b) => a.id - b.id)}
 							keyExtractor={(item) => item.id.toString()}
 							renderItem={({ item }) => (
 								<Card
@@ -351,17 +379,14 @@ const SaleForecastDetail = ({ route }) => {
 												: null,
 										]}
 									>
-										<Text className="flex text-lg text-center font-psemibold text-black p-1">
+										<Text className="flex text-lg text-center font-psemibold text-black p-1 mr-8">
 											{item.id}
 										</Text>
-										<Text className="flex text-lg font-psemi text-black w-28 m-2">
+										<Text className="flex text-lg font-psemi text-black w-28 m-4">
 											{item.name}
 										</Text>
-										<Text className="flex text-lg font-psemi text-black mr-3">
+										<Text className="flex text-lg font-psemi text-black mr-20">
 											{item.price}
-										</Text>
-										<Text className="flex text-lg font-psemi text-black mr-5">
-											{item.sellPrice}
 										</Text>
 										{selectedProducts.some(
 											(product) => product.id === item.id
@@ -393,7 +418,7 @@ const SaleForecastDetail = ({ route }) => {
 				icon={"plus"}
 				iconSize={28}
 				containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center mb-64"
-				handlePress={createSaleForecastDetail}
+				handlePress={createOrderMaterialDetail}
 				isLoading={false}
 			/>
 			{loading ? <AppLoader /> : null}
@@ -406,23 +431,20 @@ const SaleForecastDetail = ({ route }) => {
 				visible={confirmationModalVisible}
 				message="Are you sure?"
 				onYesPress={() => {
-					delSaleForecastDetail(id);
+					delOrderMaterialDetail(id);
 					setConfirmationModalVisible(false);
 				}}
 				onNoPress={() => setConfirmationModalVisible(false)}
 			/>
-			{/* {console.log(formUpdate)} */}
 			{formUpdate.quantity !== 0 && (
-				<SFDModal
-					visible={sfdModalVisible}
-					onClose={() => setsfdModalVisible(false)}
-					onSavePress={(quantity, totalPrice, totalSalePrice) => {
-						upSaleForecastDetail(quantity, totalPrice, totalSalePrice);
-						setsfdModalVisible(false);
+				<ODModal
+					visible={odModalVisible}
+					onClose={() => setodModalVisible(false)}
+					onSavePress={(quantity) => {
+						upOrderMaterialDetail(quantity);
+						setodModalVisible(false);
 					}}
 					initialQuantity={formUpdate.quantity}
-					initialTotalPrice={formUpdate.totalPrice}
-					initialTotalSalePrice={formUpdate.totalSalePrice}
 				/>
 			)}
 		</SafeAreaView>
@@ -498,4 +520,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default SaleForecastDetail;
+export default OrderMaterialDetail;
