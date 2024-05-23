@@ -73,7 +73,7 @@ const EditProfilePage = () => {
 
             <View style={styles.headingContainer}>
               <Text style={styles.first_heading}>{username}</Text>
-              <Text style={styles.first_heading}>Role: Accountant</Text>
+              <Text style={styles.first_heading}>Role: Chairman</Text>
             </View>
 
             <TouchableOpacity style={styles.editIcon} onPress={handleEdit}>
