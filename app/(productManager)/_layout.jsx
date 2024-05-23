@@ -21,6 +21,8 @@ import { AuthContext } from "../../store/AuthContext";
 import BOMDetail from '../../components/BOM/BOMDetail';
 import CreateBOM from '../../components/BOM/CreateBOM';
 import { createStackNavigator } from '@react-navigation/stack';
+import ProductionScheduleDetail from '../../components/MPS/MPSDetail';
+import MPSCreateForm from '../../components/MPS/MPSCreateForm';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +31,14 @@ const PMBOMStack = () => (
     <Stack.Screen name="PMBOM" component={PMBOM} />
     <Stack.Screen name="BOMDetail" component={BOMDetail} />
     <Stack.Screen name="CreateBOM" component={CreateBOM} />
+  </Stack.Navigator>
+);
+
+const MPSStack = () => (
+  <Stack.Navigator initialRouteName="ProductionSchedule" screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProductionScheduleHome" component={ProductionSchedule} />
+    <Stack.Screen name="ProductionScheduleDetail" component={ProductionScheduleDetail} />
+    <Stack.Screen name="MPSCreateForm" component={MPSCreateForm} />
   </Stack.Navigator>
 );
 
@@ -119,6 +129,8 @@ const ProductManagerLayout = () => {
       />
       <Drawer.Screen
         name="ProductionSchedule"
+        component={MPSStack} 
+        headerShadowVisible={false}
         options={{
           drawerLabel: "ProductionSchedule",
           title: "ProductionSchedule",
@@ -129,8 +141,7 @@ const ProductManagerLayout = () => {
               size={20}
               color={"#ff9c01"} />
           ),
-        }}
-        component={ProductionSchedule}  
+        }} 
       />
       <Drawer.Screen
         name="WorkOrder"

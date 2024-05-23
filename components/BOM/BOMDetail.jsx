@@ -180,7 +180,10 @@ function BOMDetail({ route }) {
     try{
       const deletedBOM = deleteBOM(token, id);
       console.log('Deleted BOM:', deletedBOM);
-      navigation.navigate('PMBOM');
+      Alert.alert('deleted BOM successfully')[{text: 'OK',
+          onPress: () => navigation.navigate('PMBOM')
+      }]
+      
     }
     catch (error) {
       console.log('Failed to delete BOM:', error);
