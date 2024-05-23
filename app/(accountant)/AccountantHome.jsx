@@ -6,7 +6,8 @@ import ProduceOrder from "./ProduceOrderPage";
 import { TabButton } from "../../components";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SaleForecastDetail from "./SaleForecastDetailPage";
-import OrderDetail from "./OrderDetailPage";
+import OrderProductDetail from "./OrderProductDetailPage";
+import OrderMaterialDetail from "./OrderMaterialDetailPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,8 +34,13 @@ const OrderStack = () => (
 			options={{ headerShown: false }}
 		/>
 		<Stack.Screen
-			name="OrderDetailPage"
-			component={OrderDetail}
+			name="OrderProductDetailPage"
+			component={OrderProductDetail}
+			options={{ headerShown: false }}
+		/>
+		<Stack.Screen
+			name="OrderMaterialDetailPage"
+			component={OrderMaterialDetail}
 			options={{ headerShown: false }}
 		/>
 	</Stack.Navigator>

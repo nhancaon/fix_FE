@@ -87,7 +87,10 @@ const ProduceOrder = () => {
 	};
 
 	const handleNavigate = (item) => {
-		navigation.navigate("OrderDetailPage", { order: item });
+		if (item.kindOrder === "PO")
+			navigation.navigate("OrderProductDetailPage", { order: item });
+		if (item.kindOrder === "SO")
+			navigation.navigate("OrderMaterialDetailPage", { order: item });
 	};
 
 	async function createOrder(name, contact, kindOrder, dateEnd) {

@@ -14,6 +14,7 @@ import SFDModal from "./SaleForecastModal/sfdModal";
 import OCModal from "./OrderModal/ocModal";
 import OUModal from "./OrderModal/ouModal";
 import DD from "./DD";
+import ODModal from "./OrderModal/odModal";
 export {
   FormField,
   CustomButton,
@@ -33,4 +34,5 @@ export {
   OCModal,
   OUModal,
   DD,
+  ODModal
 };
