@@ -11,26 +11,26 @@ import { FlatList } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { Swipeable } from "react-native-gesture-handler";
 import {
-	getSaleForecastDetail,
-	deleteSaleForecastDetail,
-	getProductsForSaleForecast,
-	addSaleForecastDetail,
-	updateSaleForecastDetail,
-} from "../../services/SaleForecastDetailService";
+	getOrderProductDetail,
+	getProductsForOrderProduct,
+	deleteOtherProductDetail,
+	addOrderProductDetail,
+	updateOrderProductDetail,
+} from "../../services/OrderProductService";
 import {
 	CustomButton,
 	AppLoader,
 	ToastMessage,
 	AlertWithTwoOptions,
-	SFDModal,
 	LeftSwipe,
+	ODModal,
 } from "../../components";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "react-native-paper";
 
-const SaleForecastDetail = ({ route }) => {
-	const { itemId } = route.params;
+const OrderProductDetail = ({ route }) => {
+	const { order } = route.params;
 	const { token, userLogin } = useGlobalContext();
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -38,21 +38,19 @@ const SaleForecastDetail = ({ route }) => {
 	const errorToastRef = useRef(null);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
-	const [sfdModalVisible, setsfdModalVisible] = useState(false);
+	const [odModalVisible, setodModalVisible] = useState(false);
 	const [id, setId] = useState(false);
 	const [dataProducts, setDataProducts] = useState([]);
 	const [selectedProducts, setSelectedProducts] = useState([]);
 	const [formUpdate, setFormUpdate] = useState({
 		quantity: 0,
-		totalPrice: 0,
-		totalSalePrice: 0,
 	});
 
 	const fetchData = useCallback(async () => {
 		setLoading(true);
 		try {
-			const res = await getSaleForecastDetail(token, itemId);
-			const resp = await getProductsForSaleForecast(token, itemId);
+			const res = await getOrderProductDetail(token, order.id);
+			const resp = await getProductsForOrderProduct(token, order.id);
 			setData(res.result);
 			setDataProducts(resp.result);
 		} catch (err) {
@@ -81,7 +79,7 @@ const SaleForecastDetail = ({ route }) => {
 			totalPrice: item.totalPrice,
 			totalSalePrice: item.totalSalePrice,
 		});
-		setsfdModalVisible(true);
+		setodModalVisible(true);
 	};
 
 	const handleSwipeItemPress = (title, item) => {
@@ -94,9 +92,11 @@ const SaleForecastDetail = ({ route }) => {
 	};
 
 	const handleEditPress = (item) => {
-		setsfdModalVisible(true);
+		setFormUpdate({
+			quantity: item.quantity,
+		});
+		setodModalVisible(true);
 		setId(item.product_id);
-		UpdatePress(item);
 	};
 
 	const handleQuantityChange = (id, quantity) => {
@@ -135,7 +135,7 @@ const SaleForecastDetail = ({ route }) => {
 		});
 	};
 
-	async function createSaleForecastDetail() {
+	async function createOrderProductDetail() {
 		try {
 			setLoading(true);
 			if (selectedProducts.some((item) => item.quantity === 0)) {
@@ -151,9 +151,9 @@ const SaleForecastDetail = ({ route }) => {
 				pids.push(item.id);
 				quantities.push(item.quantity);
 			});
-			const add_res = await addSaleForecastDetail(
+			const add_res = await addOrderProductDetail(
 				token,
-				itemId,
+				order.id,
 				pids,
 				quantities
 			);
@@ -189,10 +189,10 @@ const SaleForecastDetail = ({ route }) => {
 		}
 	}
 
-	async function delSaleForecastDetail(id) {
+	async function delOrderProductDetail(id) {
 		try {
 			setLoading(true);
-			const del_res = await deleteSaleForecastDetail(token, id, itemId);
+			const del_res = await deleteOtherProductDetail(token, order.id, id);
 			if (!del_res) {
 				throw new Error("Fail to delete!");
 			} else {
@@ -218,17 +218,15 @@ const SaleForecastDetail = ({ route }) => {
 		}
 	}
 
-	async function upSaleForecastDetail(quantity, totalPrice, totalSalePrice) {
+	async function upOrderProductDetail(quantity) {
 		try {
 			setLoading(true);
 
-			const up_res = await updateSaleForecastDetail(
+			const up_res = await updateOrderProductDetail(
 				token,
-				itemId,
+				order.id,
 				id,
-				quantity,
-				totalPrice,
-				totalSalePrice
+				quantity
 			);
 
 			console.log(up_res);
@@ -260,7 +258,7 @@ const SaleForecastDetail = ({ route }) => {
 		<SafeAreaView style={styles.backgroundColor}>
 			<View style={{ paddingLeft: 10 }}>
 				<Text style={{ fontSize: 20, color: "#fff" }}>
-					Sale Forecast Detail
+					Order Product Detail
 				</Text>
 			</View>
 			<View style={styles.container}>
@@ -280,22 +278,32 @@ const SaleForecastDetail = ({ route }) => {
 								>
 									<Card style={styles.card}>
 										<Card.Title
-											title={"Sale Forecast.No: " + item.product_id}
+											title={"Product.No: " + item.product_id}
 											titleStyle={styles.title}
 										/>
 										<Card.Content>
-											<Text className="flex text-lg font-psemi text-black">
-												Name: {item.name}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Quantity: {item.quantity}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Price: {item.totalPrice}
-											</Text>
-											<Text className="flex text-lg font-psemi text-black">
-												Total Sale Price: {item.totalSalePrice}
-											</Text>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Name:
+												</Text>
+												<Text className="text-lg text-black">{item.name}</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Quantity:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.quantity}
+												</Text>
+											</View>
+											<View className="flex-row mb-2">
+												<Text className="text-lg font-semibold text-black mr-2">
+													Total Unit Price:
+												</Text>
+												<Text className="text-lg text-black">
+													{item.totalUnitPrice}
+												</Text>
+											</View>
 										</Card.Content>
 									</Card>
 								</Swipeable>
@@ -393,7 +401,7 @@ const SaleForecastDetail = ({ route }) => {
 				icon={"plus"}
 				iconSize={28}
 				containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center mb-64"
-				handlePress={createSaleForecastDetail}
+				handlePress={createOrderProductDetail}
 				isLoading={false}
 			/>
 			{loading ? <AppLoader /> : null}
@@ -406,23 +414,20 @@ const SaleForecastDetail = ({ route }) => {
 				visible={confirmationModalVisible}
 				message="Are you sure?"
 				onYesPress={() => {
-					delSaleForecastDetail(id);
+					delOrderProductDetail(id);
 					setConfirmationModalVisible(false);
 				}}
 				onNoPress={() => setConfirmationModalVisible(false)}
 			/>
-			{/* {console.log(formUpdate)} */}
 			{formUpdate.quantity !== 0 && (
-				<SFDModal
-					visible={sfdModalVisible}
-					onClose={() => setsfdModalVisible(false)}
-					onSavePress={(quantity, totalPrice, totalSalePrice) => {
-						upSaleForecastDetail(quantity, totalPrice, totalSalePrice);
-						setsfdModalVisible(false);
+				<ODModal
+					visible={odModalVisible}
+					onClose={() => setodModalVisible(false)}
+					onSavePress={(quantity) => {
+						upOrderProductDetail(quantity);
+						setodModalVisible(false);
 					}}
 					initialQuantity={formUpdate.quantity}
-					initialTotalPrice={formUpdate.totalPrice}
-					initialTotalSalePrice={formUpdate.totalSalePrice}
 				/>
 			)}
 		</SafeAreaView>
@@ -498,4 +503,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default SaleForecastDetail;
+export default OrderProductDetail;

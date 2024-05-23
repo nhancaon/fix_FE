@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getAllBOMs, getBOMlikeName } from '../../services/BOMServices';
+import { getAllBOMs, getBOMlikeName, getBOMsByStatus } from '../../services/BOMServices';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -62,6 +62,7 @@ const PMBOM = () => {
   };
 
   const navigation = useNavigation();
+  
   const handleCardPress = async (id) => {
     console.log(`Card with id ${id} was pressed.`);
     try {
@@ -75,11 +76,11 @@ const PMBOM = () => {
     <View style={{ flex: 1 }}>
       {/* Xem trong chairman/BottomTabBar/EmployeePage method getFilteredData -> cahc filter va map data */}
       {/* Ko xai search bar vi chiem cho lam */}
-      {/* <SearchBar
+      <SearchBar
         value={search}
         onChangeText={setSearch}
         onSearch={handleSearch}
-      /> */}
+      />
       {/* fillter */}
       <DropDownPicker
               open={open}
@@ -92,9 +93,18 @@ const PMBOM = () => {
               style={{ backgroundColor: '#fafafa' }}
               itemStyle={{ justifyContent: 'flex-start' }}
               dropDownStyle={{ backgroundColor: '#fafafa' }}
-              onChangeValue={(value) => {
+              onChangeValue={async (value) => {
                 console.log('onChangeValue called with:', value);
                 setValue(value);
+                try {
+                  const data = await getBOMsByStatus(token, value);
+                  if (data) {
+                    console.log('data:', data.result);
+                    setBoms(data.result);
+                  }
+                } catch (error) {
+                  console.error(error);
+                }
               }}
             />
       {/* get All */}
