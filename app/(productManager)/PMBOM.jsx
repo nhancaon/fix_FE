@@ -102,7 +102,7 @@ const PMBOM = () => {
         <CustomButton
           icon={"plus"}
           iconSize={28}
-          containerStyles="p-0 absolute bottom-12 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          containerStyles="p-0 absolute bottom-20 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
           isLoading={false}
           handlePress={handleInsert}
         />
@@ -140,6 +140,5 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
-
 
 export default PMBOM;

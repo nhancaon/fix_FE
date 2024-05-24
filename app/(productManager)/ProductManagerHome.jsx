@@ -4,8 +4,6 @@ import { getWorkOrderToday } from '../../services/WorkOrderServices';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
-import IconButton from '../../components/IconButton';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 
 const ProductManagerHome = () => {
@@ -33,39 +31,41 @@ const ProductManagerHome = () => {
   }
 
   return (
-    <View style={{ padding: 10}}>
-    <FlatList
+    <View className="bg-primary h-full" style={{ padding: 10}}>
+      <FlatList
         data={workOrders}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-        <Card style={{margin: 1}} onPress={() => handleCardPress(item.id)}>
+          <Card style={styles.card} onPress={() => handleCardPress(item.id)}>
+            <Card.Title title={`ID: ${item.id}`} titleStyle={styles.title} />
             <Card.Content>
-            <Text>{`ID: ${item.id}`}</Text>
-            <Text>{`Start Date: ${item.dateStart}`}</Text>
-            <Text>{`End Date: ${item.dateEnd}`}</Text>
-            <Text>{`Status: ${item.workOrderStatus}`}</Text>
+              <Text style={styles.text}>{`Start Date: ${item.dateStart}`}</Text>
+              <Text style={styles.text}>{`End Date: ${item.dateEnd}`}</Text>
+              <Text style={styles.text}>{`Status: ${item.workOrderStatus}`}</Text>
             </Card.Content>
-        </Card>
+          </Card>
         )}
-    />
-</View>
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  sidebar: {
-    flex: 2,
-    backgroundColor: '#f5f5f5',
+  card: {
+    margin: 10,
     padding: 10,
   },
-  mainContent: {
-    flex: 8,
-    backgroundColor: '#fff',
-    padding: 10,
+  title: {
+    color: '#FFA500', // Orange color
+    fontSize: 20, // Font size
+    fontWeight: 'bold', // Bold font
+  },
+  cardContent: {
+    
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
 
