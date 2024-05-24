@@ -110,7 +110,7 @@ const ChairmanLayout = () => {
 			<Drawer.Screen
 				name="ChairmanHome"
 				options={{
-					drawerLabel: "Chairman Home",
+					drawerLabel: "Home",
 					title: searchMode ? null : "Chairman Home",
 					headerShadowVisible: false,
 					headerRight: () =>
@@ -149,7 +149,7 @@ const ChairmanLayout = () => {
 					title: "SaleForecast Report",
 					headerShadowVisible: false,
 					drawerIcon: () => (
-						<MaterialIcons name="person" size={20} color={"#ff9c01"} />
+						<MaterialIcons name="edit-calendar" size={20} color={"#ff9c01"} />
 					),
 				}}
 				component={SaleForecastReport}

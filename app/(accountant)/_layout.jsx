@@ -90,8 +90,8 @@ const AccountantLayout = () => {
       <Drawer.Screen
         name="AccountantHome"
         options={{
-          drawerLabel: "Accountant Home",
-          title: "AccountantHome",
+          drawerLabel: "Home",
+          title: "Accountant Home",
           headerShadowVisible: false,
           drawerIcon: () => (
             <SimpleLineIcons
