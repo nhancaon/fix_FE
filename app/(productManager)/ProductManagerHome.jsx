@@ -26,7 +26,7 @@ const ProductManagerHome = () => {
 
   const handleCardPress = (id) => {
     try {
-        navigation.navigate('WorkOrderDetail', { id });
+        navigation.navigate('ProductManagerHomeDetail', { id });
     } catch (error) {
         console.error(error);
     }
