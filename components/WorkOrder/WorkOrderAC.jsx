@@ -34,7 +34,7 @@ import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
 import { set } from "date-fns";
 
-const WorkOrderDetail = ({ route }) => {
+const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
 	const { id } = route.params;
@@ -49,7 +49,7 @@ const WorkOrderDetail = ({ route }) => {
 	const [items, setItems] = useState([
 		{ label: "Pending", value: "pending" },
 		{ label: "Processing", value: "processing" },
-		{ label: "Finish", value: "PMcheck" },
+		{ label: "Finish", value: "ACcheck" },
 	]);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
@@ -120,7 +120,7 @@ const WorkOrderDetail = ({ route }) => {
 				});
 			}
 			const timer = setTimeout(() => {
-				navigation.navigate("WorkOrderHome");
+				navigation.navigate("WorkOrderPage");
 			}, 4000);
 		} catch (error) {
 			if (errorToastRef.current) {
@@ -441,7 +441,7 @@ const WorkOrderDetail = ({ route }) => {
 
 			<View style={styles.buttonContainer}>
 				<IconButton
-					onPress={() => navigation.navigate("WorkOrderHome")}
+					onPress={() => navigation.navigate("WorkOrderPage")}
 					iconName="arrow-left"
 				/>
 				<IconButton
@@ -520,4 +520,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default WorkOrderDetail;
+export default WorkOrderAC;
