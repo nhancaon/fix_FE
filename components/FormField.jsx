@@ -9,6 +9,7 @@ const FormField = ({
   placeholder,
   handleChangeText,
   otherStyles,
+  onPress,
   edit,
   ...props
 }) => {
@@ -23,7 +24,10 @@ const FormField = ({
   const handleDateChange = (selectedDate) => {
     setShowCalendar(false);
     const formattedDate = formatDateString(selectedDate);
-    handleChangeText(formattedDate);
+    if (onPress){
+      onPress(formattedDate);
+    } 
+    else{handleChangeText(formattedDate);} 
   };
 
   const handleModalClose = () => {
@@ -77,6 +81,26 @@ const FormField = ({
         )}
 
         {title === "Date of Birth" && (
+          <TouchableOpacity disabled={!edit} onPress={() => setShowCalendar(!showCalendar) }>
+            <Image
+              source={icons.calendar}
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+
+        {title === "Start Date" && (
+          <TouchableOpacity disabled={!edit} onPress={() => setShowCalendar(!showCalendar)}>
+            <Image
+              source={icons.calendar}
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+
+        {title === "End Date" && (
           <TouchableOpacity disabled={!edit} onPress={() => setShowCalendar(!showCalendar)}>
             <Image
               source={icons.calendar}

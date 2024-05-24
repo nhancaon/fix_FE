@@ -66,64 +66,58 @@ const PMBOM = () => {
 		}
 	};
 
-	return (
-		<View className="bg-primary h-full" style={{ flex: 1 }}>
-			<DropDownPicker
-				open={open}
-				value={value}
-				items={items}
-				setOpen={setOpen}
-				setValue={setValue}
-				setItems={setItems}
-				containerStyle={[styles.dropDownContainer, open && { zIndex: 1000 }]}
-				style={styles.dropDown}
-				itemStyle={{ justifyContent: "flex-start" }}
-				dropDownStyle={styles.dropDown}
-				onChangeValue={async (value) => {
-					console.log("onChangeValue called with:", value);
-					setValue(value);
-					try {
-						const data = await getBOMsByStatus(token, value);
-						if (data) {
-							console.log("data:", data.result);
-							setBoms(data.result);
-						}
-					} catch (error) {
-						console.error(error);
-					}
-				}}
-			/>
-			<FlatList
-				data={filteredData}
-				keyExtractor={(item) => item.id.toString()}
-				renderItem={({ item }) => (
-					<Card style={styles.card} onPress={() => handleCardPress(item.id)}>
-						<Card.Title title={item.bomname} titleStyle={styles.title} />
-						<Card.Content style={styles.cardContent}>
-							<Text style={styles.text}>Total Price: {item.totalPrice}</Text>
-							<Text style={styles.text}>Sell Price: {item.sellPrice}</Text>
-							<Text style={styles.text}>
-								Date Creation: {item.dateCreation}
-							</Text>
-						</Card.Content>
-					</Card>
-				)}
-			/>
-			<View>
-				<CustomButton
-					icon={"plus"}
-					iconSize={28}
-					containerStyles="p-0 absolute bottom-12 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
-					isLoading={false}
-					handlePress={handleInsert}
-				/>
-			</View>
-			{loading ? <AppLoader /> : null}
-			<ToastMessage type={"success"} ref={successToastRef}></ToastMessage>
-
-			<ToastMessage type="danger" ref={errorToastRef} />
-		</View>
-	);
+  return (
+    <View className="bg-primary h-full" style={{ flex: 1 }}>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        containerStyle={[styles.dropDownContainer, open && { zIndex: 1000 }]}
+        style={styles.dropDown}
+        itemStyle={{ justifyContent: 'flex-start' }}
+        dropDownStyle={styles.dropDown}
+        onChangeValue={async (value) => {
+          console.log('onChangeValue called with:', value);
+          setValue(value);
+          try {
+            const data = await getBOMsByStatus(token, value);
+            if (data) {
+              console.log('data:', data.result);
+              setBoms(data.result);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+      />
+      <FlatList
+        data={filteredData}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <Card style={styles.card} onPress={() => handleCardPress(item.id)}>
+            <Card.Title title={item.bomname} titleStyle={styles.title} />
+            <Card.Content style={styles.cardContent}>
+              <Text style={styles.text}>Total Price: {item.totalPrice}</Text>
+              <Text style={styles.text}>Sell Price: {item.sellPrice}</Text>
+              <Text style={styles.text}>Date Creation: {item.dateCreation}</Text>
+            </Card.Content>
+          </Card>
+        )}
+      />
+      <View>
+        <CustomButton
+          icon={"plus"}
+          iconSize={28}
+          containerStyles="p-0 absolute bottom-20 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          isLoading={false}
+          handlePress={handleInsert}
+        />
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
