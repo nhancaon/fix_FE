@@ -309,7 +309,7 @@ function BOMDetail({ route }) {
 											handleInputChange("dateCreation", value)
 										}
 										otherStyles="mt-2"
-										edit={false}
+										edit={true}
 									/>
 								</Card.Content>
 							</Card>

@@ -30,6 +30,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { icons } from "../../constants";
 import { AppLoader, ToastMessage, AlertWithTwoOptions } from "../../components";
 import { set } from "date-fns";
+import { Picker } from "@react-native-picker/picker";
 
 const ProductManagerHomeDetail = ({ route }) => {
 	const { token, userId } = useGlobalContext();
@@ -54,6 +55,11 @@ const ProductManagerHomeDetail = ({ route }) => {
 	const errorToastRef = useRef(null);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
+	const initialLabel = items.find(
+		(item) => item.value === workOrder.workOrderStatus
+	)?.label;
+
+	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
@@ -255,6 +261,57 @@ const ProductManagerHomeDetail = ({ route }) => {
 								/>
 							</View>
 						</TouchableOpacity>
+					</Card>
+					{mps.map((item, index) => (
+						<TouchableOpacity
+							key={index.toString()}
+							style={styles.itemContainer}
+							onPress={() => {
+								setWorkOrderDetails((prevDetails) => {
+									if (prevDetails.length === 0) {
+										// If there are no details yet, just return the previous state
+										return prevDetails;
+									}
+									const newDetails = [...prevDetails];
+									newDetails[newDetails.length - 1].masterProductionScheduleId =
+										item.mpsID;
+									return newDetails;
+								});
+							}}
+						>
+							<View style={styles.row}>
+								<Text style={styles.column}>{item.productName}</Text>
+								<Text style={styles.column}>{item.dateStart}</Text>
+								<Text style={styles.column}>{item.dateEnd}</Text>
+								<Text style={styles.column}>{item.quantity}</Text>
+							</View>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
+			</View>
+
+			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
+				<ScrollView>
+					<Card style={styles.card}>
+						<View style={{ flexDirection: "row", alignItems: "center" }}>
+							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
+							<Picker
+								selectedValue={selectedValue}
+								onValueChange={(itemValue) => {
+									console.log("onChangeValue called with:", itemValue);
+									setSelectedValue(itemValue);
+								}}
+								style={{ flex: 1 }}
+							>
+								{items.map((item, index) => (
+									<Picker.Item
+										key={index}
+										label={item.label}
+										value={item.label}
+									/>
+								))}
+							</Picker>
+						</View>
 
 						{showEndPicker && (
 							<DateTimePicker

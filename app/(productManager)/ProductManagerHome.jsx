@@ -22,6 +22,11 @@ const ProductManagerHome = () => {
 	const navigation = useNavigation();
 	const [workOrders, setWorkOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [items, setItems] = useState([
+		{ label: "Pending", value: "pending" },
+		{ label: "Processing", value: "processing" },
+		{ label: "Finish", value: "PMcheck" },
+	]);
 
 	useFocusEffect(
 		React.useCallback(() => {
@@ -71,7 +76,8 @@ const ProductManagerHome = () => {
 										Status:
 									</Text>
 									<Text className="text-lg text-black">
-										{item.workOrderStatus}
+										{items.find((i) => i.value === item.workOrderStatus)
+											?.label || item.workOrderStatus}
 									</Text>
 								</View>
 							</Card.Content>

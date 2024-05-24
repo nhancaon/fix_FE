@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import {  getAllMPSofPM, createMPS, updateMPS, deleteMPS } from '../../services/MPSServices'
+import React, { useState } from 'react';
+import {  getAllMPSofPM } from '../../services/MPSServices'
 import { useGlobalContext } from '../../context/GlobalProvider';
-import IconButton from '../../components/IconButton';
 import { Card } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { CustomButton } from '../../components';
-import ProductionScheduleDetail from '../../components/MPS/MPSDetail';
 
 const ProductionSchedule = () => {
   const { token, userId, searchText  } = useGlobalContext();
   const [mpsData, setMpsData] = useState([]);
   const navigation = useNavigation();
-  const [search, setSearch] = useState('');
 
   const getFilteredData = () => {
     if (searchText.trim() === '') {
@@ -54,34 +51,24 @@ const ProductionSchedule = () => {
       console.error(error);
     }
   };
-
-  const handleSearch = async () => {};
-
+  
   return (
-    <View styles={{flex: 1}}>
+    <View className="bg-primary h-full" styles={{flex: 1}}>
       <FlatList
         data={filteredData}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         keyExtractor={item => item.mpsID.toString()}
         renderItem={({ item }) => (
-          <Card key={item.mpsID} style={{
-            margin: 10,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }} onPress={() => handleCardPress(item.mpsID)}>
-          
-            <Card.Title title={item.productName} titleStyle={{ color: 'orange' }}/>
+          <Card 
+            key={item.mpsID} 
+            style={styles.card} 
+            onPress={() => handleCardPress(item.mpsID)}>
+            <Card.Title title={item.productName} titleStyle={styles.title} />
             <Card.Content>
-              <Text>MPS ID: {item.mpsID}</Text>
-              <Text>Start Date: {item.dateStart}</Text>
-              <Text>End Date: {item.dateEnd}</Text>
-              <Text>Quantity: {item.quantity}</Text>
+              <Text style={styles.text}>MPS ID: {item.mpsID}</Text>
+              <Text style={styles.text}>Start Date: {item.dateStart}</Text>
+              <Text style={styles.text}>End Date: {item.dateEnd}</Text>
+              <Text style={styles.text}>Quantity: {item.quantity}</Text>
             </Card.Content>
           </Card>
         )}
@@ -91,7 +78,7 @@ const ProductionSchedule = () => {
         <CustomButton
           icon={"plus"}
           iconSize={28}
-          containerStyles="p-0 absolute bottom-4 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          containerStyles="p-0 absolute bottom-20 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
           isLoading={false}
           handlePress={handleInsert}
         />
@@ -101,27 +88,23 @@ const ProductionSchedule = () => {
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    position: 'absolute',
-    bottom: 15,
-    width: '100%',
-
-  },
   card: {
     margin: 10,
     padding: 10,
   },
-  material: {
-    marginTop: 10,
-  },
   title: {
-    color: '#FFA500', // Màu cam
-    fontSize: 20, // Kích thước font
-    fontWeight: 'bold', // Đặt font chữ đậm
+    color: '#FFA500', // Orange color
+    fontSize: 20, // Font size
+    fontWeight: 'bold', // Bold font
   },
-
+  cardContent: {
+    
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
 });
+
 
 export default ProductionSchedule
