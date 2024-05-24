@@ -142,7 +142,7 @@ const ProductManagerLayout = () => {
         name="ProductManagerHome"
         options={{
           drawerLabel: "Home",
-          title: "Home",
+          title: "Product Manager Home",
           headerShadowVisible: false,
           drawerIcon: () => (
             <SimpleLineIcons
