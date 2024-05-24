@@ -52,6 +52,14 @@ const WorkOrderStack = () => (
   </Stack.Navigator>
 );
 
+const ProductManagerStack = () => (
+  <Stack.Navigator initialRouteName="ProductManager" screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProductManager" component={ProductManagerHome} />
+    <Stack.Screen name="WorkOrderHome" component={WorkOrder} />
+    <Stack.Screen name="WorkOrderDetail" component={WorkOrderDetail} />
+  </Stack.Navigator>
+);
+
 const Drawer = createDrawerNavigator()
 
 const ProductManagerLayout = () => {
@@ -151,7 +159,7 @@ const ProductManagerLayout = () => {
               color={"#ff9c01"} />
           ),
         }}
-        component={ProductManagerHome} 
+        component={ProductManagerStack } 
       />
       <Drawer.Screen
         name="ProductionSchedule"
