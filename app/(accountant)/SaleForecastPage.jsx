@@ -20,6 +20,7 @@ import {
 } from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
+import dateUtilsInstance from "../../utils/DateUtils";
 
 const SaleForecast = () => {
 	const { token, userLogin } = useGlobalContext();
@@ -56,6 +57,26 @@ const SaleForecast = () => {
 
 	const handleNavigate = (id) => {
 		navigation.navigate("SaleForecastDetailPage", { itemId: id });
+	};
+
+	const handleSwipeItemPress = (title, item) => {
+		if (title === "Delete") {
+			setConfirmationModalVisible(true);
+			setId(item.id);
+		} else if (title === "Edit") {
+			handleEditPress(item);
+		}
+	};
+
+	const handleEditPress = (item) => {
+		setsfModalVisible(true);
+		setId(item.id);
+		setStartDate(new Date(item.dateStart));
+		if (item.dateEnd === null) {
+			setEndDate(new Date(item.dateStart));
+		} else {
+			setEndDate(new Date(item.dateEnd));
+		}
 	};
 
 	async function createSaleForecast() {
@@ -156,50 +177,48 @@ const SaleForecast = () => {
 										data={data.slice().sort((a, b) => a.id - b.id)}
 										keyExtractor={(item) => item.id.toString()}
 										renderItem={({ item }) => (
-											<Card
-												style={styles.card}
-												onPress={() => handleNavigate(item.id)}
+											<Swipeable
+												key={item.id}
+												renderLeftActions={() => (
+													<LeftSwipe
+														onPressItem={(title) =>
+															handleSwipeItemPress(title, item)
+														}
+													/>
+												)}
 											>
-												<Card.Title
-													title={"Sale Forecast.No: " + item.id}
-													titleStyle={styles.title}
-												/>
-												<Card.Content>
-													<Text className="flex text-lg font-psemi text-black">
-														Date Start: {item.dateStart}
-													</Text>
-													<Text className="flex text-lg font-psemi text-black">
-														Date End: {item.dateEnd}
-													</Text>
-												</Card.Content>
-
-												<View style={styles.row}>
-													<CustomButton
-														title="Update"
-														handlePress={() => {
-															setsfModalVisible(true);
-															setId(item.id);
-															setStartDate(new Date(item.dateStart));
-															if (item.dateEnd === null) {
-																setEndDate(new Date(item.dateStart));
-															} else {
-																setEndDate(new Date(item.dateEnd));
-															}
-														}}
-														containerStyles="flex w-40 bg-green-500 m-1"
-														isLoading={false}
+												<Card
+													style={styles.card}
+													onPress={() => handleNavigate(item.id)}
+												>
+													<Card.Title
+														title={"Sale Forecast.No: " + item.id}
+														titleStyle={styles.title}
 													/>
-													<CustomButton
-														title="Delete"
-														handlePress={() => {
-															setConfirmationModalVisible(true);
-															setId(item.id);
-														}}
-														containerStyles="flex w-40 bg-red-500"
-														isLoading={false}
-													/>
-												</View>
-											</Card>
+													<Card.Content>
+														<View className="flex-row mb-2">
+															<Text className="text-lg font-semibold text-black mr-2">
+																Date Start:
+															</Text>
+															<Text className="text-lg text-black">
+																{dateUtilsInstance.formatDateString(
+																	item.dateStart
+																)}
+															</Text>
+														</View>
+														<View className="flex-row mb-2">
+															<Text className="text-lg font-semibold text-black mr-2">
+																Date End:
+															</Text>
+															<Text className="text-lg text-black">
+																{dateUtilsInstance.formatDateString(
+																	item.dateEnd
+																)}
+															</Text>
+														</View>
+													</Card.Content>
+												</Card>
+											</Swipeable>
 										)}
 									/>
 								</View>
@@ -286,6 +305,7 @@ const styles = StyleSheet.create({
 		margin: 10,
 		padding: 10,
 		backgroundColor: "#fff",
+		width: 390,
 	},
 });
 
