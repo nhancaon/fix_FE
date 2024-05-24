@@ -9,6 +9,7 @@ import {
 	Alert,
 	TextInput,
 	Button,
+	SafeAreaView,
 	Image,
 } from "react-native";
 import {
@@ -28,38 +29,33 @@ import IconButton from "../../components/IconButton";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { icons } from "../../constants";
-import { AppLoader, ToastMessage, AlertWithTwoOptions } from "../../components";
+import AppLoader from "../AppLoader";
+import AlertWithTwoOptions from "../AlertWithTwoOptions";
+import ToastMessage from "../ToastMessage";
 import { set } from "date-fns";
-import { Picker } from "@react-native-picker/picker";
 
-const ProductManagerHomeDetail = ({ route }) => {
+const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
 	const { id } = route.params;
 	const [workOrder, setWorkOrder] = useState([]);
 	const [workOrderDetails, setWorkOrderDetails] = useState([]);
 	const [mps, setMPS] = useState([]);
-
+	const [loading, setLoading] = useState(true);
+	const successToastRef = useRef(null);
+	const errorToastRef = useRef(null);
 	const [showStartPicker, setShowStartPicker] = useState(false);
 	const [showEndPicker, setShowEndPicker] = useState(false);
 	const [items, setItems] = useState([
 		{ label: "Pending", value: "pending" },
 		{ label: "Processing", value: "processing" },
-		{ label: "Finish", value: "PMcheck" },
+		{ label: "Finish", value: "ACcheck" },
 	]);
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false);
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
-	const [loading, setLoading] = useState(true);
-	const successToastRef = useRef(null);
-	const errorToastRef = useRef(null);
-	const [confirmationModalVisible, setConfirmationModalVisible] =
-		useState(false);
-	const initialLabel = items.find(
-		(item) => item.value === workOrder.workOrderStatus
-	)?.label;
-
-	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
@@ -124,10 +120,9 @@ const ProductManagerHomeDetail = ({ route }) => {
 				});
 			}
 			const timer = setTimeout(() => {
-				navigation.navigate("ProductManager");
+				navigation.navigate("WorkOrderPage");
 			}, 4000);
 		} catch (error) {
-			console.error(error);
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
 					type: "danger",
@@ -135,6 +130,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 					description: "Work Order delete failed!",
 				});
 			}
+			console.error(error);
 		} finally {
 			setLoading(false);
 		}
@@ -190,30 +186,34 @@ const ProductManagerHomeDetail = ({ route }) => {
 				</ScrollView>
 			</View>
 
-			<View style={{ marginBottom: 200, backgroundColor: "#161622" }}>
+			<View style={{ marginBottom: 230, backgroundColor: "#161622" }}>
 				<ScrollView>
 					<Card style={styles.card}>
 						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text className="flex font-psemibold text-black">
+							<Text className="flex font-psemibold text-black mr-4">
 								Work Order Status:
 							</Text>
-							<Picker
-								selectedValue={selectedValue}
-								onValueChange={(itemValue) => {
-									console.log("onChangeValue called with:", itemValue);
-									setSelectedValue(itemValue);
+							<DropDownPicker
+								open={open}
+								value={value}
+								items={items}
+								setOpen={setOpen}
+								setValue={setValue}
+								setItems={setItems}
+								containerStyle={{ height: 45, width: "45%" }}
+								style={{ backgroundColor: "#fafafa" }}
+								itemStyle={{ justifyContent: "flex-start" }}
+								dropDownStyle={{ backgroundColor: "#fafafa" }}
+								onChangeValue={(value) => {
+									console.log("onChangeValue called with:", value);
+									setWorkOrder((prevState) => ({
+										...prevState,
+										workOrderStatus: value,
+									}));
 								}}
-								style={{ flex: 1 }}
-							>
-								{items.map((item, index) => (
-									<Picker.Item
-										key={index}
-										label={item.label}
-										value={item.label}
-									/>
-								))}
-							</Picker>
+							/>
 						</View>
+
 						{showStartPicker && (
 							<DateTimePicker
 								value={
@@ -242,7 +242,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 							onPress={() => setShowStartPicker(true)}
 						>
 							<View style={{ flexDirection: "row", marginTop: 5 }}>
-								<Text className="flex font-psemibold text-black mr-5">
+								<Text className="flex font-psemibold text-black mr-3">
 									Start Date:{" "}
 								</Text>
 								<Text className="flex font-psemi text-black mr-3">
@@ -392,7 +392,12 @@ const ProductManagerHomeDetail = ({ route }) => {
 										}}
 									/>
 								</View>
-								<View style={{ flexDirection: "row", alignItems: "center" }}>
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+									}}
+								>
 									<Text className="flex font-psemibold text-black mr-20">
 										Projected Production:
 									</Text>
@@ -436,13 +441,11 @@ const ProductManagerHomeDetail = ({ route }) => {
 
 			<View style={styles.buttonContainer}>
 				<IconButton
-					onPress={() => navigation.navigate("ProductManager")}
+					onPress={() => navigation.navigate("WorkOrderPage")}
 					iconName="arrow-left"
 				/>
 				<IconButton
-					onPress={() => {
-						setConfirmationModalVisible(true);
-					}}
+					onPress={() => setConfirmationModalVisible(true)}
 					iconName="trash"
 				/>
 				<IconButton onPress={handleSave} iconName="save" />
@@ -486,7 +489,7 @@ const styles = StyleSheet.create({
 		margin: 10,
 	},
 	card: {
-		margin: 10, // Add margin around the Card
+		margin: 7, // Add margin around the Card
 		padding: 10, // Add padding inside the Card
 		backgroundColor: "#f8f8f8", // Change the background color of the Card
 		borderRadius: 10, // Add rounded corners to the Card
@@ -503,6 +506,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		fontSize: 12, // Adjust your text size here
 	},
+	backgroundColor: {
+		backgroundColor: "#161622",
+		flex: 1,
+	},
 	header: {
 		flexDirection: "row",
 		paddingHorizontal: 10,
@@ -513,4 +520,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default ProductManagerHomeDetail;
+export default WorkOrderAC;

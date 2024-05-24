@@ -202,12 +202,6 @@ function BOMDetail({ route }) {
 			const timer = setTimeout(() => {
 				navigation.navigate("PMBOM");
 			}, 4000);
-			// Alert.alert("Success", "Deleted BOM successfully", [
-			// 	{
-			// 		text: "OK",
-			// 		onPress: () => ,
-			// 	},
-			// ]);
 		} catch (error) {
 			console.log("Failed to delete BOM: ", error);
 		} finally {
