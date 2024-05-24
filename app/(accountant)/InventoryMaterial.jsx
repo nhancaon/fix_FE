@@ -262,7 +262,7 @@ const InventoryMaterial = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {isEditMode ? "Edit Material" : "Create New Material"}
+              {isEditMode ? "Edit Material" : "Create New Inventory Material"}
             </Text>
             {!isEditMode && ( 
               <>
