@@ -6,7 +6,9 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
 import IconButton from '../../components/IconButton';
-
+import {
+    CustomButton,
+  } from "../../components";
 
 const WorkOrder = () => {
 
@@ -35,35 +37,41 @@ const WorkOrder = () => {
 
     const handleCardPress = (id) => {
         try {
-            navigation.navigate('WorkOrderDetail', { workOrderID: id });
+            navigation.navigate('WorkOrderDetail', { id });
         } catch (error) {
             console.error(error);
         }
     }
 
     return (
-        <View styles={{flex: 1}}>
-            
-            <FlatList
-                data={workOrders}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <Card style={{margin: 1}} onPress={() => handleCardPress(item.id)}>
-                    <Card.Content>
-                      <Text>{`ID: ${item.id}`}</Text>
-                      <Text>{`Start Date: ${item.dateStart}`}</Text>
-                      <Text>{`End Date: ${item.dateEnd}`}</Text>
-                      <Text>{`Status: ${item.workOrderStatus}`}</Text>
-                    </Card.Content>
-                  </Card>
-                )}
+        <View style={{ flex: 1 }}>
+            <View style={{ padding: 10}}>
+                <FlatList
+                    data={workOrders}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                    <Card style={{margin: 1}} onPress={() => handleCardPress(item.id)}>
+                        <Card.Content>
+                        <Text>{`ID: ${item.id}`}</Text>
+                        <Text>{`Start Date: ${item.dateStart}`}</Text>
+                        <Text>{`End Date: ${item.dateEnd}`}</Text>
+                        <Text>{`Status: ${item.workOrderStatus}`}</Text>
+                        </Card.Content>
+                    </Card>
+                    )}
+                />
+            </View>
+            {/* button */}
+
+            <CustomButton
+                icon={"plus"}
+                iconSize={28}
+                containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+                isLoading={false}
+                handlePress={handleInsert}
             />
 
-            {/* button */}
-            <View style={styles.buttonContainer}>
-                <IconButton onPress={handleInsert} iconName="plus" />
-            </View>
-
+            
         </View>
     );
 };
