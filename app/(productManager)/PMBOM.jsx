@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import SearchBar from '../../components/SearchBar';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getAllBOMs, getBOMlikeName, getBOMsByStatus } from '../../services/BOMServices';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { CustomButton } from '../../components';
 
 const PMBOM = () => {
-  const { token  } = useGlobalContext();
+  const { token, searchText, setSearchText  } = useGlobalContext();
   const [search, setSearch] = useState('');
   const [boms, setBoms] = useState([]);
   const [open, setOpen] = useState(false);
@@ -20,6 +20,17 @@ const PMBOM = () => {
     { label: 'Finish', value: 'FINISH' },
   ]);
  
+  const getFilteredData = () => {
+    if (searchText.trim() === '') {
+      return boms;
+    }
+    return boms.filter(item =>
+      item.bomname.toLowerCase().includes(searchText.toLowerCase())
+    );
+  };
+
+  const filteredData = getFilteredData();
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -74,14 +85,6 @@ const PMBOM = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Xem trong chairman/BottomTabBar/EmployeePage method getFilteredData -> cahc filter va map data */}
-      {/* Ko xai search bar vi chiem cho lam */}
-      <SearchBar
-        value={search}
-        onChangeText={setSearch}
-        onSearch={handleSearch}
-      />
-      {/* fillter */}
       <DropDownPicker
               open={open}
               value={value}
@@ -109,7 +112,7 @@ const PMBOM = () => {
             />
       {/* get All */}
       <FlatList
-        data={boms}
+        data={filteredData}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <Card style={styles.card} onPress={() => handleCardPress(item.id)}>
@@ -122,14 +125,16 @@ const PMBOM = () => {
           </Card>
         )}
       />
-      
-      {/* button */}
-      <View style={styles.buttonContainer}>
-        <IconButton onPress={handleInsert} iconName="plus" />
-        <IconButton onPress={handleUpdate} iconName="edit" />
-        <IconButton onPress={handleDelete} iconName="trash" />
-      </View>
 
+      <View>  
+        <CustomButton
+          icon={"plus"}
+          iconSize={28}
+          containerStyles="p-0 absolute bottom-4 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          isLoading={false}
+          handlePress={handleInsert}
+        />
+      </View>
     </View>
   );
 };

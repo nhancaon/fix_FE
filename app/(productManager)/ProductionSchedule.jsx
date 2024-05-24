@@ -4,15 +4,26 @@ import { useGlobalContext } from '../../context/GlobalProvider';
 import IconButton from '../../components/IconButton';
 import { Card } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { CustomButton } from '../../components';
 import ProductionScheduleDetail from '../../components/MPS/MPSDetail';
-import SearchBar from '../../components/SearchBar';
 
 const ProductionSchedule = () => {
-  const { token, userId  } = useGlobalContext();
+  const { token, userId, searchText  } = useGlobalContext();
   const [mpsData, setMpsData] = useState([]);
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
+
+  const getFilteredData = () => {
+    if (searchText.trim() === '') {
+      return mpsData;
+    }
+    return mpsData.filter(item =>
+      item.productName.toLowerCase().includes(searchText.toLowerCase())
+    );
+  };
+
+  const filteredData = getFilteredData();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -48,14 +59,8 @@ const ProductionSchedule = () => {
 
   return (
     <View styles={{flex: 1}}>
-      {/* <SearchBar
-        value={search}
-        onChangeText={setSearch}
-        onSearch={handleSearch}
-      /> */}
-
       <FlatList
-        data={mpsData}
+        data={filteredData}
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
         keyExtractor={item => item.mpsID.toString()}
         renderItem={({ item }) => (
@@ -81,24 +86,17 @@ const ProductionSchedule = () => {
           </Card>
         )}
       />
-    
-      <View style={{
-          position: 'absolute',
-          right: 10,
-          bottom: 10,
-          padding: 10, // padding to keep the button from the very edge of the screen
-      }}>
-        <IconButton onPress={handleInsert} iconName="plus"  style={{
-            borderRadius: 50, // assuming the width and height of the button is 100
-            width: 100,
-            height: 100,
-            justifyContent: 'center', // these two lines are to keep the icon in the center of the button
-            alignItems: 'center',
-        }} />
-      </View>
 
+      <View>  
+        <CustomButton
+          icon={"plus"}
+          iconSize={28}
+          containerStyles="p-0 absolute bottom-4 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+          isLoading={false}
+          handlePress={handleInsert}
+        />
+      </View>
     </View>
-    
   )
 }
 
