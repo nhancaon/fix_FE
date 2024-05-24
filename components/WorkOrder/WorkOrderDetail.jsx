@@ -33,9 +33,6 @@ import AppLoader from "../AppLoader";
 import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
 import { set } from "date-fns";
-import IconButton from '../../components/IconButton';
-import DropDownPicker from 'react-native-dropdown-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 const WorkOrderDetail = ({ route }) => {
 	const { token, userId } = useGlobalContext();
@@ -59,9 +56,11 @@ const WorkOrderDetail = ({ route }) => {
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
-	    const initialLabel = items.find(item => item.value === workOrder.workOrderStatus)?.label;
+	const initialLabel = items.find(
+		(item) => item.value === workOrder.workOrderStatus
+	)?.label;
 
-    const [selectedValue, setSelectedValue] = useState(initialLabel);
+	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
@@ -242,53 +241,57 @@ const WorkOrderDetail = ({ route }) => {
 								}}
 							/>
 						)}
+					</Card>
+					{mps.map((item, index) => (
+						<TouchableOpacity
+							key={index.toString()}
+							style={styles.itemContainer}
+							onPress={() => {
+								setWorkOrderDetails((prevDetails) => {
+									if (prevDetails.length === 0) {
+										return prevDetails;
+									}
+									const newDetails = [...prevDetails];
+									newDetails[newDetails.length - 1].masterProductionScheduleId =
+										item.mpsID;
+									return newDetails;
+								});
+							}}
+						>
+							<View style={styles.row}>
+								<Text style={styles.column}>{item.productName}</Text>
+								<Text style={styles.column}>{item.dateStart}</Text>
+								<Text style={styles.column}>{item.dateEnd}</Text>
+								<Text style={styles.column}>{item.quantity}</Text>
+							</View>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
+			</View>
 
-                    {mps.map((item, index) => (
-                        <TouchableOpacity
-                            key={index.toString()}
-                            style={styles.itemContainer}
-                            onPress={() => {
-                                setWorkOrderDetails(prevDetails => {
-                                    if (prevDetails.length === 0) {
-                                        
-                                        return prevDetails;
-                                      }
-                                    const newDetails = [...prevDetails];
-                                    newDetails[newDetails.length - 1].masterProductionScheduleId = item.mpsID;
-                                    return newDetails;
-                                });
-                            }}
-                        >
-                        <View style={styles.row}>
-                                <Text style={styles.column}>{item.productName}</Text>
-                                <Text style={styles.column}>{item.dateStart}</Text>
-                                <Text style={styles.column}>{item.dateEnd}</Text>
-                                <Text style={styles.column}>{item.quantity}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </View>
+			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
+				<ScrollView>
+					<Card style={styles.card}>
+						<View style={{ flexDirection: "row", alignItems: "center" }}>
+							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
 
-            <View style={{marginBottom: 200, backgroundColor:'#fff'}}>
-            <ScrollView >
-                <Card style={styles.card}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ marginRight: 10 }}>Work Order Status:</Text>
-                        
-                        <Picker
-                            selectedValue={selectedValue}
-                            onValueChange={(itemValue) => {
-                                console.log('onChangeValue called with:', itemValue);
-                                setSelectedValue(itemValue);
-                            }}
-                            style={{ flex: 1 }}
-                            >
-                            {items.map((item, index) => (
-                                <Picker.Item key={index} label={item.label} value={item.label} />
-                            ))}
-                        </Picker>
-                    </View>
+							<Picker
+								selectedValue={selectedValue}
+								onValueChange={(itemValue) => {
+									console.log("onChangeValue called with:", itemValue);
+									setSelectedValue(itemValue);
+								}}
+								style={{ flex: 1 }}
+							>
+								{items.map((item, index) => (
+									<Picker.Item
+										key={index}
+										label={item.label}
+										value={item.label}
+									/>
+								))}
+							</Picker>
+						</View>
 
 						<TouchableOpacity
 							style={styles.text}

@@ -190,34 +190,30 @@ const ProductManagerHomeDetail = ({ route }) => {
 				</ScrollView>
 			</View>
 
-			<View style={{ marginBottom: 230, backgroundColor: "#161622" }}>
+			<View style={{ marginBottom: 200, backgroundColor: "#161622" }}>
 				<ScrollView>
 					<Card style={styles.card}>
 						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text className="flex font-psemibold text-black mr-4">
+							<Text className="flex font-psemibold text-black">
 								Work Order Status:
 							</Text>
-							<DropDownPicker
-								open={open}
-								value={value}
-								items={items}
-								setOpen={setOpen}
-								setValue={setValue}
-								setItems={setItems}
-								containerStyle={{ height: 45, width: "45%" }}
-								style={{ backgroundColor: "#fafafa" }}
-								itemStyle={{ justifyContent: "flex-start" }}
-								dropDownStyle={{ backgroundColor: "#fafafa" }}
-								onChangeValue={(value) => {
-									console.log("onChangeValue called with:", value);
-									setWorkOrder((prevState) => ({
-										...prevState,
-										workOrderStatus: value,
-									}));
+							<Picker
+								selectedValue={selectedValue}
+								onValueChange={(itemValue) => {
+									console.log("onChangeValue called with:", itemValue);
+									setSelectedValue(itemValue);
 								}}
-							/>
+								style={{ flex: 1 }}
+							>
+								{items.map((item, index) => (
+									<Picker.Item
+										key={index}
+										label={item.label}
+										value={item.label}
+									/>
+								))}
+							</Picker>
 						</View>
-
 						{showStartPicker && (
 							<DateTimePicker
 								value={
@@ -246,7 +242,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 							onPress={() => setShowStartPicker(true)}
 						>
 							<View style={{ flexDirection: "row", marginTop: 5 }}>
-								<Text className="flex font-psemibold text-black mr-3">
+								<Text className="flex font-psemibold text-black mr-5">
 									Start Date:{" "}
 								</Text>
 								<Text className="flex font-psemi text-black mr-3">
@@ -261,57 +257,6 @@ const ProductManagerHomeDetail = ({ route }) => {
 								/>
 							</View>
 						</TouchableOpacity>
-					</Card>
-					{mps.map((item, index) => (
-						<TouchableOpacity
-							key={index.toString()}
-							style={styles.itemContainer}
-							onPress={() => {
-								setWorkOrderDetails((prevDetails) => {
-									if (prevDetails.length === 0) {
-										// If there are no details yet, just return the previous state
-										return prevDetails;
-									}
-									const newDetails = [...prevDetails];
-									newDetails[newDetails.length - 1].masterProductionScheduleId =
-										item.mpsID;
-									return newDetails;
-								});
-							}}
-						>
-							<View style={styles.row}>
-								<Text style={styles.column}>{item.productName}</Text>
-								<Text style={styles.column}>{item.dateStart}</Text>
-								<Text style={styles.column}>{item.dateEnd}</Text>
-								<Text style={styles.column}>{item.quantity}</Text>
-							</View>
-						</TouchableOpacity>
-					))}
-				</ScrollView>
-			</View>
-
-			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
-				<ScrollView>
-					<Card style={styles.card}>
-						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
-							<Picker
-								selectedValue={selectedValue}
-								onValueChange={(itemValue) => {
-									console.log("onChangeValue called with:", itemValue);
-									setSelectedValue(itemValue);
-								}}
-								style={{ flex: 1 }}
-							>
-								{items.map((item, index) => (
-									<Picker.Item
-										key={index}
-										label={item.label}
-										value={item.label}
-									/>
-								))}
-							</Picker>
-						</View>
 
 						{showEndPicker && (
 							<DateTimePicker
