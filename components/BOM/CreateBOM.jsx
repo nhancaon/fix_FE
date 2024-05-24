@@ -29,7 +29,7 @@ function CreateBOM({ route }) {
 		unit: "g",
 		totalPrice: null,
 		sellPrice: null,
-		dateCreation: new Date().toISOString(),
+		dateCreation: new Date().toISOString().split('T')[0],
 		bomDetails: [],
 	});
 	const [materials, setMaterials] = useState([]);
@@ -44,6 +44,7 @@ function CreateBOM({ route }) {
 
 	useEffect(() => {
 		setNewMaterialUnit("g");
+		// console.log("bomDetail date creation: ",response);
 	}, []);
 
 	const createRequestBody = (bomDetail) => {
@@ -259,9 +260,7 @@ function CreateBOM({ route }) {
 
 									<FormField
 										title="Date creation"
-										placeholder={
-											bomDetail.dateCreation
-												? bomDetail.dateCreation.toString()
+										placeholder={bomDetail.dateCreation ? bomDetail.dateCreation.toString()
 												: ""
 										}
 										value={

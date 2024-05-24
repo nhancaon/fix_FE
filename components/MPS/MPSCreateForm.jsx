@@ -12,12 +12,8 @@ import { CustomButton, FormField, ToastMessage } from "../../components";
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();
     const [products, setProducts] = useState([]);
-    const [showStartPicker, setShowStartPicker] = useState(false);
-    const [showEndPicker, setShowEndPicker] = useState(false);
     const [dateStart, setDateStart] = useState(new Date().toISOString().split('T')[0]);
     const [dateEnd, setDateEnd] = useState(new Date().toISOString().split('T')[0]);
-    const [formattedStartDate, setFormattedStartDate] = useState('');
-    const [formattedEndDate, setFormattedEndDate] = useState('');
     const [mpsRequest, setMPSRequest] = useState({
         product_manager_ID: userId,
         productId: '',
@@ -170,7 +166,7 @@ const MPSCreateForm = () => {
                                 />
 
                                 <FormField
-                                    // title="Require Time"
+                                    title="In Progress"
                                     placeholder="In Progress"
                                     value={mpsRequest?.in_progress ? mpsRequest.in_progress : ''}
                                     otherStyles="mt-3"
