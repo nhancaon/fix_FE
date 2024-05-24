@@ -9,6 +9,7 @@ import { Card } from 'react-native-paper';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from "@react-native-picker/picker";
 
 const ProductManagerHomeDetail = ({route}) => {
     const { token, userId } = useGlobalContext();
@@ -28,7 +29,10 @@ const ProductManagerHomeDetail = ({route}) => {
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(workOrder.workOrderStatus);
-      
+    const initialLabel = items.find(item => item.value === workOrder.workOrderStatus)?.label;
+
+    const [selectedValue, setSelectedValue] = useState(initialLabel); 
+    
     useEffect(() => {
         setValue(workOrder.workOrderStatus);
     }, [workOrder.workOrderStatus]);
@@ -104,6 +108,10 @@ const ProductManagerHomeDetail = ({route}) => {
                             style={styles.itemContainer}
                             onPress={() => {
                                 setWorkOrderDetails(prevDetails => {
+                                    if (prevDetails.length === 0) {
+                                        // If there are no details yet, just return the previous state
+                                        return prevDetails;
+                                      }
                                     const newDetails = [...prevDetails];
                                     newDetails[newDetails.length - 1].masterProductionScheduleId = item.mpsID;
                                     return newDetails;
@@ -126,22 +134,18 @@ const ProductManagerHomeDetail = ({route}) => {
                 <Card style={styles.card}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ marginRight: 10 }}>Work Order Status:</Text>
-                        <DropDownPicker
-                            open={open}
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            containerStyle={{ height: 45, width: '45%' }}
-                            style={{ backgroundColor: '#fafafa' }}
-                            itemStyle={{ justifyContent: 'flex-start' }}
-                            dropDownStyle={{ backgroundColor: '#fafafa' }}
-                            onChangeValue={(value) => {
-                                console.log('onChangeValue called with:', value);
-                                setWorkOrder(prevState => ({ ...prevState, workOrderStatus: value }));
+                        <Picker
+                            selectedValue={selectedValue}
+                            onValueChange={(itemValue) => {
+                                console.log('onChangeValue called with:', itemValue);
+                                setSelectedValue(itemValue);
                             }}
-                        />
+                            style={{ flex: 1 }}
+                            >
+                            {items.map((item, index) => (
+                                <Picker.Item key={index} label={item.label} value={item.label} />
+                            ))}
+                        </Picker>
                     </View>
 
                     {showStartPicker && (
