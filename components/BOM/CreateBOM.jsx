@@ -7,38 +7,34 @@ import { Picker } from '@react-native-picker/picker';
 import { Card, Title, Paragraph, List, DataTable } from 'react-native-paper';
 import BOMDetail from './BOMDetail';
 import { createBOM } from '../../services/BOMServices';
+import FormField from '../FormField';
 
 function CreateBOM ({ route }) {
-  
-    const navigation = useNavigation();
-    const { token, userId  } = useGlobalContext();
-    const [bomDetail, setBomDetail] = useState({
-        productManagerId: null,
-        BOMName: "",
-        BOMStatus: 'PENDING',
-        timeProduction: null,
-        unit: 'g',
-        totalPrice: null,
-        sellPrice: null,
-        dateCreation: new Date().toISOString(),
-        bomDetails: [
-          
-        ]
-      });
-    const [materials, setMaterials] = useState([]);
-    const [newMaterialName, setNewMaterialName] = useState('');
-    const [newMaterialUnit, setNewMaterialUnit] = useState('');
-    const [newMaterialPrice, setNewMaterialPrice] = useState('');
-    const [newMaterialQuantity, setNewMaterialQuantity] = useState('');
-    const [tempDeletedMaterials, setTempDeletedMaterials] = useState([]);
+  const navigation = useNavigation();
+  const { token, userId  } = useGlobalContext();
+  const [bomDetail, setBomDetail] = useState({
+    productManagerId: null,
+    BOMName: "",
+    BOMStatus: 'PENDING',
+    timeProduction: null,
+    unit: 'g',
+    totalPrice: null,
+    sellPrice: null,
+    dateCreation: new Date().toISOString(),
+    bomDetails: []});
+  const [materials, setMaterials] = useState([]);
+  const [newMaterialName, setNewMaterialName] = useState('');
+  const [newMaterialUnit, setNewMaterialUnit] = useState('');
+  const [newMaterialPrice, setNewMaterialPrice] = useState('');
+  const [newMaterialQuantity, setNewMaterialQuantity] = useState('');
+  const [tempDeletedMaterials, setTempDeletedMaterials] = useState([]);
 
-    useEffect(() => {
-        setNewMaterialUnit('g');
-        
-      }, []);
+  useEffect(() => {
+    setNewMaterialUnit('g');
+  }, []);
     
-      const createRequestBody = (bomDetail) => {
-        const requestBody = {
+  const createRequestBody = (bomDetail) => {
+  const requestBody = {
           productManagerId: userId,
           BOMName: bomDetail.BOMName,
           BOMStatus: bomDetail.BOMStatus,
@@ -94,8 +90,6 @@ function CreateBOM ({ route }) {
         try {
           const requestBody = createRequestBody(bomDetail);
           console.log('requestBody:', requestBody);
-        //   console.log('detail',requestBody.bomDetails);
-        //   console.log('materials',requestBody.bomDetails.material);
           const res = await createBOM(token,requestBody);
           if (res.result === null) {
             Alert.alert(
@@ -158,65 +152,68 @@ function CreateBOM ({ route }) {
         setNewMaterialQuantity('');
     };
 
-    return (
-        <View style={{ flex: 1 }}>
-            <View>
-            <FlatList
-                ListHeaderComponent={
-                    <>
-                    
-                    <Card style={{ padding: 10, margin: 10 }}>
-                        <Card.Content>
-                            <Paragraph>Product Manager:</Paragraph>
-                            <Title>{bomDetail.productManager?.fullName}</Title>
-                            <Paragraph>BOM Name:</Paragraph>
-                            <TextInput
-                                style={{ backgroundColor: '#fff', marginBottom: 10 }}
-                                value={bomDetail.BOMName}
-                                defaultValue={bomDetail.BOMName ? bomDetail.BOMName: ''}
-                                onChangeText={(text) => setBomDetail(prevState => ({...prevState, BOMName: text}))}
-                            />
-                        </Card.Content>
-                    </Card>
+  return (
+    <View className="bg-primary h-full" style={{ flex: 1 }}>
+      <View>
+        <FlatList
+          style={{ marginBottom: 60 }}
+          ListHeaderComponent={
+            <>
+              <Card style={styles.cardFirstContainer}>
+                <Card.Title title={'Product Manager'} titleStyle={styles.cardFirstTitle} />
+                <Card.Content>
+                  <FormField
+                    title="BOM Name"
+                    placeholder={bomDetail.BOMName ? bomDetail.BOMName: ''}
+                    value={bomDetail.BOMName}
+                    handleChangeText={(text) => setBomDetail(prevState => ({...prevState, BOMName: text}))}
+                    otherStyles="mt-2"
+                    edit={true}
+                  />
+                </Card.Content>
+              </Card>
 
-                    <Card style={{ padding: 10, margin: 10 }}>
-                        <Card.Content>
-                            <Title>Time Production:</Title>
-                            <TextInput
-                                label="Time Production"
-                                defaultValue={bomDetail.timeProduction ? bomDetail.timeProduction.toString() : ''}
-                                onChangeText={(value) => handleInputChange('timeProduction', value)}
-                                style={{ backgroundColor: '#fff', marginBottom: 10 }}
-                            />
+              <Card style={styles.cardSecondContainer}>
+                <Card.Content>
+                  <FormField
+                    title="Time production"
+                    placeholder={bomDetail.timeProduction ? bomDetail.timeProduction.toString() : ''}
+                    value={bomDetail.timeProduction ? bomDetail.timeProduction.toString() : ''}
+                    handleChangeText={(value) => handleInputChange('timeProduction', value)}
+                    otherStyles="mt-2"
+                    edit={true}
+                  />
 
-                            <Title>Total Price:</Title>
-                            <TextInput
-                            label="Total Price"
-                            defaultValue={bomDetail.totalPrice ? bomDetail.totalPrice.toString() : ''}
-                            onChangeText={(value) => handleInputChange('totalPrice', value)}
-                            style={{ backgroundColor: '#fff', marginBottom: 10 }}
-                            />
+                  <FormField
+                    title="Total price"
+                    placeholder={bomDetail.totalPrice ? bomDetail.totalPrice.toString() : ''}
+                    value={bomDetail.totalPrice ? bomDetail.totalPrice.toString() : ''}
+                    handleChangeText={(value) => handleInputChange('totalPrice', value)}
+                    otherStyles="mt-2"
+                    edit={true}
+                  />
 
-                            <Title>Sell Price:</Title>
-                            <TextInput
-                            label="Sell Price"
-                            defaultValue={bomDetail.sellPrice ? bomDetail.sellPrice.toString() : ''}
-                            onChangeText={(value) => handleInputChange('sellPrice', value)}
-                            style={{ backgroundColor: '#fff', marginBottom: 10 }}
-                            />
+                  <FormField
+                    title="Sell price"
+                    placeholder={bomDetail.sellPrice ? bomDetail.sellPrice.toString() : ''}
+                    value={bomDetail.sellPrice ? bomDetail.sellPrice.toString() : ''}
+                    handleChangeText={(value) => handleInputChange('sellPrice', value)}
+                    otherStyles="mt-2"
+                    edit={true}
+                  />
 
-                            <Title>Date Creation:</Title>
-                            <TextInput
-                            label="Date Creation"
-                            defaultValue={bomDetail.dateCreation ? bomDetail.dateCreation.toString() : ''}
-                            editable={false}
-                            style={{ backgroundColor: '#fff', marginBottom: 10 }}
-                            />
-                        </Card.Content>
-                    </Card>
+                  <FormField
+                    title="Date creation"
+                    placeholder={bomDetail.dateCreation ? bomDetail.dateCreation.toString() : ''}
+                    value={bomDetail.dateCreation ? bomDetail.dateCreation.toString() : ''}
+                    otherStyles="mt-2"
+                    edit={false}
+                  />
+                </Card.Content>
+              </Card>
 
-                    <Card style={{ padding: 10, margin: 10 }}>
-                        <Card.Content>
+              <Card style={styles.cardSecondContainer}>
+                <Card.Content>
                             
                             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                 <Title>Unit:</Title>
@@ -248,8 +245,9 @@ function CreateBOM ({ route }) {
                             
                         </Card.Content>
                     </Card>
-                    <Card style={{ flex: 1 }}>
-                        <View style={{ flex: 1, height: 900 }}>
+
+                    <Card style={styles.cardFourthContainer}>
+                    <Card.Content>
                             <DataTable>
                                 <DataTable.Header>
                                     <DataTable.Title><View style={{ flex: 2 }}><Text>Material</Text></View></DataTable.Title>
@@ -290,7 +288,7 @@ function CreateBOM ({ route }) {
                                 <DataTable.Cell><View style={{ flex: 0.1 }}><IconButton iconName="plus" onPress={handleAddMaterial} /></View></DataTable.Cell>
                                 </DataTable.Row>
                             </DataTable>
-                        </View>
+                            </Card.Content>
                     </Card>
                     </>
                 }
@@ -314,8 +312,30 @@ const styles = StyleSheet.create({
       width: '100%',
       flexDirection: 'row', 
       justifyContent: 'space-between'
-  
     },
+  cardFirstContainer: {
+    padding: 5,
+    margin: 10,
+    backgroundColor: '#fff',
+  },
+  cardFirstTitle: {
+    color: '#FFA500', // Orange color
+    fontSize: 20, // Font size
+    fontWeight: 'bold', // Bold font
+  },
+  cardFirstInfo: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  cardSecondContainer: {
+    margin: 10,
+    backgroundColor: '#fff',
+  },
+  cardFourthContainer:{
+    flex: 1,
+    margin: 10,
+    backgroundColor: '#fff',
+  }
  });
 
 export default CreateBOM;
