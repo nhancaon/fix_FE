@@ -25,6 +25,7 @@ import ProductionScheduleDetail from '../../components/MPS/MPSDetail';
 import MPSCreateForm from '../../components/MPS/MPSCreateForm';
 import CreateWorkOrder from '../../components/WorkOrder/CreateWO';
 import WorkOrderDetail from '../../components/WorkOrder/WorkOrderDetail';
+import ProductManagerHomeDetail from './ProductManagerHomeDetail';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,13 @@ const WorkOrderStack = () => (
     <Stack.Screen name="WorkOrderHome" component={WorkOrder} />
     <Stack.Screen name="CreateWorkOrder" component={CreateWorkOrder} />
     <Stack.Screen name="WorkOrderDetail" component={WorkOrderDetail} />
+  </Stack.Navigator>
+);
+
+const ProductManagerStack = () => (
+  <Stack.Navigator initialRouteName="ProductManager" screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProductManager" component={ProductManagerHome} />
+    <Stack.Screen name="ProductManagerHomeDetail" component={ProductManagerHomeDetail} />
   </Stack.Navigator>
 );
 
@@ -151,7 +159,7 @@ const ProductManagerLayout = () => {
               color={"#ff9c01"} />
           ),
         }}
-        component={ProductManagerHome} 
+        component={ProductManagerStack } 
       />
       <Drawer.Screen
         name="ProductionSchedule"

@@ -10,7 +10,11 @@ const ProductManagerHome = () => {
   const { token, userId } = useGlobalContext();
   const navigation = useNavigation();
   const [workOrders, setWorkOrders] = useState([]);
-
+  const [items, setItems] = useState([
+    { label: 'Pending', value: 'pending' },
+    { label: 'Processing', value: 'processing' },
+    { label: 'Finish', value: 'PMcheck' },
+  ]);
   useFocusEffect(
     React.useCallback(() => {
         const fetchData = async () => {
@@ -24,7 +28,7 @@ const ProductManagerHome = () => {
 
   const handleCardPress = (id) => {
     try {
-        navigation.navigate('WorkOrderDetail', { id });
+        navigation.navigate('ProductManagerHomeDetail', { id });
     } catch (error) {
         console.error(error);
     }
@@ -42,6 +46,7 @@ const ProductManagerHome = () => {
               <Text style={styles.text}>{`Start Date: ${item.dateStart}`}</Text>
               <Text style={styles.text}>{`End Date: ${item.dateEnd}`}</Text>
               <Text style={styles.text}>{`Status: ${item.workOrderStatus}`}</Text>
+              <Text style={styles.text}>{`Status: ${items.find(i => i.value === item.workOrderStatus)?.label || item.workOrderStatus}`}</Text>
             </Card.Content>
           </Card>
         )}

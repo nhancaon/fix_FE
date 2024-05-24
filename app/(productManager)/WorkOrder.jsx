@@ -15,7 +15,11 @@ const WorkOrder = () => {
     const { token, userId } = useGlobalContext();
     const navigation = useNavigation();
     const [workOrders, setWorkOrders] = useState([]);
-
+    const [items, setItems] = useState([
+        { label: 'Pending', value: 'pending' },
+        { label: 'Processing', value: 'processing' },
+        { label: 'Finish', value: 'PMcheck' },
+    ]);
     useFocusEffect(
         React.useCallback(() => {
             const fetchData = async () => {
@@ -55,7 +59,7 @@ const WorkOrder = () => {
                         <Text>{`ID: ${item.id}`}</Text>
                         <Text>{`Start Date: ${item.dateStart}`}</Text>
                         <Text>{`End Date: ${item.dateEnd}`}</Text>
-                        <Text>{`Status: ${item.workOrderStatus}`}</Text>
+                        <Text>{`Status: ${items.find(i => i.value === item.workOrderStatus)?.label || item.workOrderStatus}`}</Text>
                         </Card.Content>
                     </Card>
                     )}

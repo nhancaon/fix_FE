@@ -1,61 +1,70 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { getAllBOMs, getBOMlikeName, getBOMsByStatus } from '../../services/BOMServices';
-import { useGlobalContext } from '../../context/GlobalProvider';
-import { Card } from 'react-native-paper';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { CustomButton } from '../../components';
+import React, { useState, useRef } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import {
+	getAllBOMs,
+	getBOMlikeName,
+	getBOMsByStatus,
+} from "../../services/BOMServices";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { Card } from "react-native-paper";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { CustomButton, AppLoader, ToastMessage } from "../../components";
 
 const PMBOM = () => {
-  const navigation = useNavigation();
-  const { token, searchText } = useGlobalContext();
-  const [boms, setBoms] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Check Price', value: 'CHECK_PRICE' },
-    { label: 'Finish', value: 'FINISH' },
-  ]);
+	const [loading, setLoading] = useState(true);
+	const successToastRef = useRef(null);
+	const errorToastRef = useRef(null);
+	const navigation = useNavigation();
+	const { token, searchText } = useGlobalContext();
+	const [boms, setBoms] = useState([]);
+	const [open, setOpen] = useState(false);
+	const [value, setValue] = useState(null);
+	const [items, setItems] = useState([
+		{ label: "Pending", value: "PENDING" },
+		{ label: "Check Price", value: "CHECK_PRICE" },
+		{ label: "Finish", value: "FINISH" },
+	]);
 
-  const getFilteredData = () => {
-    if (searchText.trim() === '') {
-      return boms;
-    }
-    return boms.filter(item =>
-      item.bomname.toLowerCase().includes(searchText.toLowerCase())
-    );
-  };
+	const getFilteredData = () => {
+		if (searchText.trim() === "") {
+			return boms;
+		}
+		return boms.filter((item) =>
+			item.bomname.toLowerCase().includes(searchText.toLowerCase())
+		);
+	};
 
-  const filteredData = getFilteredData();
+	const filteredData = getFilteredData();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        const data = await getAllBOMs(token);
-        setBoms(data.result);
-      };
-      fetchData();
-    }, [token])
-  );
+	useFocusEffect(
+		React.useCallback(() => {
+			setLoading(true);
+			const fetchData = async () => {
+				const data = await getAllBOMs(token);
+				setBoms(data.result);
+				setLoading(false);
+			};
+			fetchData();
+		}, [token])
+	);
 
-  const handleInsert = () => {
-    try {
-      navigation.navigate('CreateBOM');
-    } catch (error) {
-      console.error(error);
-    }
-  };
+	const handleInsert = () => {
+		try {
+			navigation.navigate("CreateBOM");
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-  const handleCardPress = async (id) => {
-    console.log(`Card with id ${id} was pressed.`);
-    try {
-      navigation.navigate('BOMDetail', { id });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+	const handleCardPress = async (id) => {
+		console.log(`Card with id ${id} was pressed.`);
+		try {
+			navigation.navigate("BOMDetail", { id });
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
   return (
     <View className="bg-primary h-full" style={{ flex: 1 }}>
@@ -112,33 +121,31 @@ const PMBOM = () => {
 };
 
 const styles = StyleSheet.create({
-  dropDownContainer: {
-    height: 40,
-    width: '37%',
-    alignSelf: 'flex-end',
-    zIndex: 2000,
-    marginEnd: 10,
-    marginVertical: 5,
-  },
-  dropDown: {
-    backgroundColor: '#FFA500',
-  },
-  card: {
-    margin: 10,
-    padding: 10,
-  },
-  title: {
-    color: '#FFA500', // Orange color
-    fontSize: 20, // Font size
-    fontWeight: 'bold', // Bold font
-  },
-  cardContent: {
-    
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
+	dropDownContainer: {
+		height: 40,
+		width: "37%",
+		alignSelf: "flex-end",
+		zIndex: 2000,
+		marginEnd: 10,
+		marginVertical: 5,
+	},
+	dropDown: {
+		backgroundColor: "#FFA500",
+	},
+	card: {
+		margin: 10,
+		padding: 10,
+	},
+	title: {
+		color: "#FFA500", // Orange color
+		fontSize: 20, // Font size
+		fontWeight: "bold", // Bold font
+	},
+	cardContent: {},
+	text: {
+		fontSize: 16,
+		marginBottom: 5,
+	},
 });
 
 export default PMBOM;

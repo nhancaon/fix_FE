@@ -11,7 +11,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
 
-const WorkOrderDetail = ({route}) => {
+const ProductManagerHomeDetail = ({route}) => {
     const { token, userId } = useGlobalContext();
     const navigation = useNavigation();
     const { id } = route.params;
@@ -31,8 +31,8 @@ const WorkOrderDetail = ({route}) => {
     const [value, setValue] = useState(workOrder.workOrderStatus);
     const initialLabel = items.find(item => item.value === workOrder.workOrderStatus)?.label;
 
-    const [selectedValue, setSelectedValue] = useState(initialLabel);
-
+    const [selectedValue, setSelectedValue] = useState(initialLabel); 
+    
     useEffect(() => {
         setValue(workOrder.workOrderStatus);
     }, [workOrder.workOrderStatus]);
@@ -109,7 +109,7 @@ const WorkOrderDetail = ({route}) => {
                             onPress={() => {
                                 setWorkOrderDetails(prevDetails => {
                                     if (prevDetails.length === 0) {
-                                        
+                                        // If there are no details yet, just return the previous state
                                         return prevDetails;
                                       }
                                     const newDetails = [...prevDetails];
@@ -134,7 +134,6 @@ const WorkOrderDetail = ({route}) => {
                 <Card style={styles.card}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ marginRight: 10 }}>Work Order Status:</Text>
-                        
                         <Picker
                             selectedValue={selectedValue}
                             onValueChange={(itemValue) => {
@@ -302,7 +301,7 @@ const WorkOrderDetail = ({route}) => {
             </View>
 
             <View style={styles.buttonContainer}>
-                <IconButton onPress={() => navigation.navigate('WorkOrderHome')} iconName="arrow-left" />
+                <IconButton onPress={() => navigation.navigate('ProductManager')} iconName="arrow-left" />
                 <IconButton onPress = {handleDelete} iconName="trash" />
                 <IconButton onPress={handleSave} iconName="save" />
             </View>
@@ -350,4 +349,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WorkOrderDetail;
+export default ProductManagerHomeDetail;
