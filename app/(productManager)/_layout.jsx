@@ -158,14 +158,33 @@ const ProductManagerLayout = () => {
         component={MPSStack} 
         headerShadowVisible={false}
         options={{
-          drawerLabel: "ProductionSchedule",
-          title: "ProductionSchedule",
+          drawerLabel: "Schedule",
+          title: searchMode ? null : "Production Schedule",
           headerShadowVisible: false,
           drawerIcon: () => (
             <MaterialCommunityIcons
               name="calendar-clock"
               size={20}
               color={"#ff9c01"} />
+          ),
+          headerRight: () => (
+            searchMode ? (
+              <View style={styles.searchContainer}>
+                <TextInput
+                  style={styles.searchText}
+                  placeholder="Search products..."
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
+                <TouchableOpacity onPress={handleCancelSearch}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handleSearchIconClick}>
+                <MaterialIcons name="search" size={30} color="#000" style={styles.searchIcon} />
+              </TouchableOpacity>
+            )
           ),
         }} 
       />
