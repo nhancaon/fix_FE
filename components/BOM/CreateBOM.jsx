@@ -10,7 +10,6 @@ import { createBOM } from "../../services/BOMServices";
 import FormField from "../FormField";
 import AppLoader from "../AppLoader";
 import ToastMessage from "../ToastMessage";
-import CustomAlert from "../../components/CustomAlert";
 
 function CreateBOM({ route }) {
 	const navigation = useNavigation();
@@ -35,11 +34,6 @@ function CreateBOM({ route }) {
 	const [loading, setLoading] = useState(false);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
-
-	const [modalVisible, setModalVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [alertMessage1, setAlertMessage1] = useState("");
-    const [alertMessage2, setAlertMessage2] = useState("");
 
 	useEffect(() => {
 		setNewMaterialUnit("g");

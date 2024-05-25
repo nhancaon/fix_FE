@@ -1,20 +1,6 @@
 import React, { useState, useRef } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	ScrollView,
-	FlatList,
-	TouchableOpacity,
-	Alert,
-	TextInput,
-	Button,
-	Image,
-} from "react-native";
-import {
-	getAllWorkOrdersOfPM,
-	creatWorkOrder,
-} from "../../services/WorkOrderServices";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
+import { creatWorkOrder } from "../../services/WorkOrderServices";
 import { createWorkOrderDetail } from "../../services/WorkOrderDetailServices";
 import { getAllMPS } from "../../services/MPSServices";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -25,6 +11,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { icons } from "../../constants";
 import AppLoader from "../AppLoader";
 import ToastMessage from "../ToastMessage";
+import CustomButton from "../CustomButton";
+import FormField from "../FormField";
+import CustomAlert from "../CustomAlert";
 import { Picker } from "@react-native-picker/picker";
 const CreateWorkOrder = () => {
 	const [loading, setLoading] = useState(true);
@@ -65,6 +54,11 @@ const CreateWorkOrder = () => {
 	const [selectedValue, setSelectedValue] = useState(initialLabel);
 	
 
+	const [modalVisible, setModalVisible] = useState(false);
+  	const [errorMessage, setErrorMessage] = useState("");
+  	const [alertMessage1, setAlertMessage1] = useState("");
+  	const [alertMessage2, setAlertMessage2] = useState("");
+
 	useFocusEffect(
 		React.useCallback(() => {
 			const fetchData = async () => {
@@ -77,6 +71,10 @@ const CreateWorkOrder = () => {
 			fetchData();
 		}, [token, userId])
 	);
+
+	const handleClose = () => {
+		setModalVisible(false); 
+	  };
 
 	const handleSave = async () => {
 		try {
@@ -178,9 +176,9 @@ const CreateWorkOrder = () => {
 				</ScrollView>
 			</View>
 
-			<View style={{ marginBottom: 10, backgroundColor: "#161622" }}>
+			<View style={{ marginBottom: 10, backgroundColor: "#161622", }}>
 				<ScrollView>
-					<Card containerStyle={styles.card}>
+					<Card containerStyle={styles.card} style={{marginHorizontal:10, padding: 5}}>
 						<Card.Title title={"Work Order"} titleStyle={styles.title} />
 						{showStartPicker && (
 							<DateTimePicker
@@ -279,7 +277,7 @@ const CreateWorkOrder = () => {
 								/>
 							</View>
 						</TouchableOpacity>
-						<View style={{ flexDirection: "row", marginTop: 5 }}>
+						<View style={{ flexDirection: "row"}}>
 							<Text className="flex font-psemibold text-black mr-5 ml-5">
 								Status:
 							</Text>
@@ -289,77 +287,91 @@ const CreateWorkOrder = () => {
 						</View>
 					</Card>
 					<View className="flex flex-1 justify-center items-center">
-						<Title className="font-psemibold text-orange-400">
-							Work Order Detail
-						</Title>
+						<Text style={styles.title}>
+						Work Order Detail
+						</Text>
 					</View>
+					
 					{workOrderDetails.map((detail, index) => (
+						<Card style={styles.card}>
 						<View style={{ margin: 5 }}>
 							<View key={index} style={{ margin: 0, backgroundColor: "#fff" }}>
 								<View style={{ flexDirection: "row", alignItems: "center" }}>
 									<Text className="flex font-psemibold text-black mr-20 ml-5">
 										MPS ID:
 									</Text>
-									<Text className="flex font-psemi text-black mr-20 ml-5">
+									<Text className="flex font-psemi text-black mr-20">
 										{detail.masterProductionScheduleId}
 									</Text>
 								</View>
-								<View style={{ flexDirection: "row", alignItems: "center" }}>
-									<Text className="flex font-psemibold text-black mr-28 ml-5">
-										Note:
-									</Text>
-									<TextInput
-										placeholder="Note"
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].note = text;
-											setWorkOrderDetails(newDetails);
-										}}
-									/>
-								</View>
-								<View style={{ flexDirection: "row", alignItems: "center" }}>
-									<Text className="flex font-psemibold text-black mr-5 ml-5">
-										Projected Production:
-									</Text>
-									<TextInput
-										placeholder="Projected Production"
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].projectedProduction = text;
-											setWorkOrderDetails(newDetails);
-										}}
-									/>
-								</View>
+								
+								<FormField
+            						title="Note"
+            						placeholder={"Note"}
+            						handleChangeText={(text) => {
+										const newDetails = [...workOrderDetails];
+										newDetails[index].note = text;
+										setWorkOrderDetails(newDetails);
+									}}
+            						otherStyles="mt-3"
+            						edit={true}
+								/>
+
+								<FormField
+            						title="Projected Production"
+            						placeholder={"Projected Production"}
+            						handleChangeText={(text) => {
+										const newDetails = [...workOrderDetails];
+										newDetails[index].projectedProduction = text;
+										setWorkOrderDetails(newDetails);
+									}}
+            						otherStyles="mt-3"
+            						edit={true}
+								/>
 							</View>
 						</View>
+						</Card>
 					))}
 					<View style={{ height: 200 }} />
 				</ScrollView>
 			</View>
 
+			<CustomButton
+              icon={"plus"}
+              iconSize={28}
+              containerStyles="p-0 absolute bottom-28 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+              isLoading={false}
+              handlePress={() =>
+				setWorkOrderDetails((prevState) => [
+					...prevState,
+					{
+						workOrderId: "",
+						masterProductionScheduleId: "",
+						note: "",
+						projectedProduction: "",
+						actualProduction: 0,
+						faultyProducts: 0,
+						actualProductionPrice: 0,
+						faultyProductPrice: 0,
+					},
+				])}
+            />
+
+			<CustomAlert
+				modalVisible={modalVisible}
+				setModalVisible={setModalVisible}
+				title="Error"
+				error={errorMessage}
+				message1={alertMessage1}
+				message2={alertMessage2}
+				isSingleButton={modalVisible}
+				onPressButton1={handleClose}
+			/>
+
 			<View style={styles.buttonContainer}>
 				<IconButton
 					onPress={() => navigation.navigate("WorkOrderHome")}
 					iconName="arrow-left"
-				/>
-				<IconButton
-					title="Add Detail"
-					onPress={() =>
-						setWorkOrderDetails((prevState) => [
-							...prevState,
-							{
-								workOrderId: "",
-								masterProductionScheduleId: "",
-								note: "",
-								projectedProduction: "",
-								actualProduction: 0,
-								faultyProducts: 0,
-								actualProductionPrice: 0,
-								faultyProductPrice: 0,
-							},
-						])
-					}
-					iconName="plus-circle"
 				/>
 				<IconButton onPress={handleSave} iconName="save" />
 			</View>
@@ -422,7 +434,7 @@ const styles = StyleSheet.create({
 		color: "#FFA500",
 		fontSize: 20,
 		fontWeight: "bold",
-		paddingTop: 10,
+		margin: 4,
 	},
 });
 
