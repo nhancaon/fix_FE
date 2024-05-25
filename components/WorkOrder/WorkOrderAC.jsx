@@ -4,12 +4,8 @@ import {
 	Text,
 	StyleSheet,
 	ScrollView,
-	FlatList,
 	TouchableOpacity,
-	Alert,
 	TextInput,
-	Button,
-	SafeAreaView,
 	Image,
 } from "react-native";
 import {
@@ -32,6 +28,7 @@ import { icons } from "../../constants";
 import AppLoader from "../AppLoader";
 import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
+import CustomButton from "../CustomButton";
 import { set } from "date-fns";
 
 const WorkOrderAC = ({ route }) => {
@@ -93,6 +90,9 @@ const WorkOrderAC = ({ route }) => {
 					description: "Work Order updated successfully!",
 				});
 			}
+			setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
 		} catch (error) {
 			console.error(error);
 			if (errorToastRef.current) {
@@ -119,9 +119,9 @@ const WorkOrderAC = ({ route }) => {
 					description: "Work Order deleted successfully!",
 				});
 			}
-			const timer = setTimeout(() => {
-				navigation.navigate("WorkOrderPage");
-			}, 4000);
+			setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
 		} catch (error) {
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
@@ -414,30 +414,28 @@ const WorkOrderAC = ({ route }) => {
 							</Card>
 						))}
 					</View>
-
-					<View>
-						<IconButton
-							title="Add Detail"
-							onPress={() =>
-								setWorkOrderDetails((prevState) => [
-									...prevState,
-									{
-										workOrderId: id,
-										masterProductionScheduleId: "",
-										note: "",
-										projectedProduction: "",
-										actualProduction: 0,
-										faultyProducts: 0,
-										actualProductionPrice: 0,
-										faultyProductPrice: 0,
-									},
-								])
-							}
-							iconName="plus-circle"
-						/>
-					</View>
 				</ScrollView>
 			</View>
+
+			<CustomButton
+              	icon={"plus"}
+            	iconSize={28}
+              	containerStyles="p-0 absolute bottom-28 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+              	isLoading={false}
+              	handlePress={() =>
+					setWorkOrderDetails((prevState) => [
+						...prevState,
+						{
+							workOrderId: id,
+							masterProductionScheduleId: "",
+							note: "",
+							projectedProduction: "",
+							actualProduction: 0,
+							faultyProducts: 0,
+							actualProductionPrice: 0,
+							faultyProductPrice: 0,
+						},])}
+            />
 
 			<View style={styles.buttonContainer}>
 				<IconButton
