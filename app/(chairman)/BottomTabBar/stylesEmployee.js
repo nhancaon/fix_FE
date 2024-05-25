@@ -4,11 +4,12 @@ const styles = StyleSheet.create({
   backgroundColor: {
     backgroundColor: '#161622',
     flex: 1,
+    paddingBottom: 180
   },
   container: {
     flex: 1,
     backgroundColor: '#161622',
-    marginBottom: 180
+ 
   },
   headerContainer: {
     flexDirection: 'row',
