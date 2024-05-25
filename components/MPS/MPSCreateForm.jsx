@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import {  createMPS, updateMPS, deleteMPS } from '../../services/MPSServices'
+import React, { useState, useEffect, useRef } from 'react';
+import {  createMPS } from '../../services/MPSServices'
 import { useGlobalContext } from '../../context/GlobalProvider';
 import IconButton from '../../components/IconButton';
-import { Card, TextInput } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import { getAllProduct } from '../../services/ProductServices';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { CustomButton, FormField, ToastMessage } from "../../components";
+import { FormField, ToastMessage } from "../../components";
+import CustomAlert from "../../components/CustomAlert";
 
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();
+    const successToastRef = useRef(null);
+    const errorToastRef = useRef(null);
     const [products, setProducts] = useState([]);
     const [dateStart, setDateStart] = useState(new Date().toISOString().split('T')[0]);
     const [dateEnd, setDateEnd] = useState(new Date().toISOString().split('T')[0]);
@@ -26,6 +28,11 @@ const MPSCreateForm = () => {
         in_progress: '0.0'
     });
     const navigation = useNavigation();
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [alertMessage1, setAlertMessage1] = useState("");
+    const [alertMessage2, setAlertMessage2] = useState("");
     
     useEffect(() => {
         const fetchData = async () => {
@@ -39,7 +46,6 @@ const MPSCreateForm = () => {
             setProducts(products);
         };
         fetchData();
-        
     }, []);
     
     const handleSave = async () => {
@@ -47,13 +53,16 @@ const MPSCreateForm = () => {
         try {
             const response = await createMPS(token, mpsRequest);
             console.log("response: ",response);
-            // navigation.navigate('ProductionScheduleHome');
-            Alert.alert('Success', 'MPS created successfully', [
-                {
-                    text: 'OK',
-                    onPress: () => navigation.navigate('ProductionScheduleHome')
-                }
-            ]);
+            if (successToastRef.current) {
+                successToastRef.current.show({
+                    type: 'success',
+                    text: 'Master Production Schedule',
+                    description: 'MPS created successfully.'
+                });
+            }
+            setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
         } catch (error) {
             console.error(error);
         }
@@ -64,7 +73,10 @@ const MPSCreateForm = () => {
             setDateStart(selectedDate || dateStart);
             setMPSRequest(prevState => ({ ...prevState, dateStart: selectedDate }));
         } else {
-            alert('Start date cannot be after end date');
+            setModalVisible(true);
+            setErrorMessage("Start date cannot be after end date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
         }
     };
     
@@ -73,9 +85,16 @@ const MPSCreateForm = () => {
             setDateEnd(selectedDate || dateEnd);
             setMPSRequest(prevState => ({ ...prevState, dateEnd: selectedDate }));
         } else {
-            alert('End date cannot be before start date');
+            setModalVisible(true);
+            setErrorMessage("End date cannot be before start date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
         }
-    };   
+    };
+    
+    const handCloseAlertBox = () => {
+        setModalVisible(false); 
+    };
 
     return (
         <View className="bg-primary h-full" style={{flex: 1}}>
@@ -177,9 +196,24 @@ const MPSCreateForm = () => {
                         </Card>
                     </Card.Content>
                 </Card>
-
-            <View style={{ height: 100 }} />
+                <View style={{ height: 50 }} />
             </ScrollView>
+
+            <ToastMessage type={"success"} ref={successToastRef} />
+
+            <ToastMessage type="danger" ref={errorToastRef} />
+
+            <CustomAlert
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                title="Error"
+                error={errorMessage}
+                message1={alertMessage1}
+                message2={alertMessage2}
+                isSingleButton={modalVisible}
+                onPressButton1={handCloseAlertBox}
+            />
+
             <View style={styles.buttonContainer}>
                 <IconButton onPress={() => navigation.navigate('ProductionScheduleHome')} iconName="arrow-left" />
                 <IconButton onPress={handleSave} iconName="save" />

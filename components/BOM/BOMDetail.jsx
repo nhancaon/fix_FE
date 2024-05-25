@@ -32,8 +32,7 @@ function BOMDetail({ route }) {
 	const [newMaterialPrice, setNewMaterialPrice] = useState("");
 	const [newMaterialQuantity, setNewMaterialQuantity] = useState("");
 	const [tempDeletedMaterials, setTempDeletedMaterials] = useState([]);
-	const [confirmationModalVisible, setConfirmationModalVisible] =
-		useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
@@ -166,6 +165,9 @@ function BOMDetail({ route }) {
 						description: "BOM saved successfully!",
 					});
 				}
+				setTimeout(() => {
+					navigation.goBack();
+				}, 3500);
 			} else {
 				if (errorToastRef.current) {
 					errorToastRef.current.show({
@@ -199,9 +201,9 @@ function BOMDetail({ route }) {
 					description: "Delete BOM successfully!",
 				});
 			}
-			const timer = setTimeout(() => {
-				navigation.navigate("PMBOM");
-			}, 4000);
+			setTimeout(() => {
+				navigation.goBack();
+			}, 3500);
 		} catch (error) {
 			console.log("Failed to delete BOM: ", error);
 		} finally {
