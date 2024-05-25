@@ -73,3 +73,16 @@ export const getWorkOrderDetail = async (token, workOrderID) => {
         console.log("Error at WorkOrder Service: ", e);
     }
 }
+
+export const getWorkOrderToday = async (token) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.get(`/api/WorkOrder/getAllWorkOrdersStartingToday`, config);
+        return res;
+    }
+    catch (e) {
+        console.log("Error at WorkOrder Service: ", e);
+    }
+}
