@@ -9,7 +9,7 @@ import IconButton from "../../components/IconButton";
 import { CustomButton, AppLoader } from "../../components";
 
 const WorkOrderPage = () => {
-	const { token, userId } = useGlobalContext();
+	const { token } = useGlobalContext();
 	const navigation = useNavigation();
 	const [workOrders, setWorkOrders] = useState([]);
 	const [loading, setLoading] = useState(true);

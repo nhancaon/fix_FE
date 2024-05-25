@@ -125,7 +125,7 @@ const AccountantLayout = () => {
 				name="WorkOrderPage"
 				options={{
 					drawerLabel: "Work Order",
-					title: "WorkOrderPage",
+					title: "Work Order",
 					headerShadowVisible: false,
 					drawerIcon: () => (
 						<MaterialIcons name="work" size={20} color={"#ff9c01"} />
