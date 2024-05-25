@@ -132,7 +132,7 @@ const MPSCreateForm = () => {
                             value={mpsRequest?.quantity ? mpsRequest.quantity.toString() : ''}
                             otherStyles="mt-3"
                             edit={true}
-                            onPress={text => setMPSRequest(prevState => ({ ...prevState, quantity: parseInt(text) }))}
+                            handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, quantity: parseInt(text) }))}
                         />
 
                         <Card.Title title="Additional Details" titleStyle={styles.title}/>
@@ -144,7 +144,7 @@ const MPSCreateForm = () => {
                                     value={mpsRequest?.requireTime ? mpsRequest.requireTime.toString() : ''}
                                     otherStyles="mt-3"
                                     edit={true}
-                                    onPress={text => setMPSRequest(prevState => ({ ...prevState, requireTime: text }))}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, requireTime: text }))}
                                 />
 
                                 <FormField
@@ -153,7 +153,7 @@ const MPSCreateForm = () => {
                                     value={mpsRequest?.durationHour ? mpsRequest.durationHour.toString() : ''}
                                     otherStyles="mt-3"
                                     edit={true}
-                                    onPress={text => setMPSRequest(prevState => ({ ...prevState, durationHour: text }))}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, durationHour: text }))}
                                 />
 
                                 <FormField
@@ -162,7 +162,7 @@ const MPSCreateForm = () => {
                                     value={mpsRequest?.effortHour ? mpsRequest.effortHour.toString() : ''}
                                     otherStyles="mt-3"
                                     edit={true}
-                                    onPress={text => setMPSRequest(prevState => ({ ...prevState, effortHour: text }))}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, effortHour: text }))}
                                 />
 
                                 <FormField
@@ -171,7 +171,7 @@ const MPSCreateForm = () => {
                                     value={mpsRequest?.in_progress ? mpsRequest.in_progress : ''}
                                     otherStyles="mt-3"
                                     edit={true}
-                                    onPress={text => {setMPSRequest(prevState => ({ ...prevState, in_progress: text }));}}
+                                    handleChangeText={text => {setMPSRequest(prevState => ({ ...prevState, in_progress: text }));}}
                                 />
                             </Card.Content>
                         </Card>

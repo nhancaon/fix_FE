@@ -242,30 +242,6 @@ const WorkOrderDetail = ({ route }) => {
 							/>
 						)}
 					</Card>
-					{mps.map((item, index) => (
-						<TouchableOpacity
-							key={index.toString()}
-							style={styles.itemContainer}
-							onPress={() => {
-								setWorkOrderDetails((prevDetails) => {
-									if (prevDetails.length === 0) {
-										return prevDetails;
-									}
-									const newDetails = [...prevDetails];
-									newDetails[newDetails.length - 1].masterProductionScheduleId =
-										item.mpsID;
-									return newDetails;
-								});
-							}}
-						>
-							<View style={styles.row}>
-								<Text style={styles.column}>{item.productName}</Text>
-								<Text style={styles.column}>{item.dateStart}</Text>
-								<Text style={styles.column}>{item.dateEnd}</Text>
-								<Text style={styles.column}>{item.quantity}</Text>
-							</View>
-						</TouchableOpacity>
-					))}
 				</ScrollView>
 			</View>
 
