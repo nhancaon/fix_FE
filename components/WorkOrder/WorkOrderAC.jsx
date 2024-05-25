@@ -33,8 +33,8 @@ import AppLoader from "../AppLoader";
 import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
 import { set } from "date-fns";
-import { Picker } from "@react-native-picker/picker";
-const WorkOrderDetail = ({ route }) => {
+
+const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
 	const { id } = route.params;
@@ -49,18 +49,13 @@ const WorkOrderDetail = ({ route }) => {
 	const [items, setItems] = useState([
 		{ label: "Pending", value: "pending" },
 		{ label: "Processing", value: "processing" },
-		{ label: "Finish", value: "PMcheck" },
+		{ label: "Finish", value: "ACcheck" },
 	]);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
-	const initialLabel = items.find(
-		(item) => item.value === workOrder.workOrderStatus
-	)?.label;
-
-	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
@@ -125,7 +120,7 @@ const WorkOrderDetail = ({ route }) => {
 				});
 			}
 			const timer = setTimeout(() => {
-				navigation.navigate("WorkOrderHome");
+				navigation.navigate("WorkOrderPage");
 			}, 4000);
 		} catch (error) {
 			if (errorToastRef.current) {
@@ -241,57 +236,48 @@ const WorkOrderDetail = ({ route }) => {
 								}}
 							/>
 						)}
-					</Card>
-					{mps.map((item, index) => (
+
 						<TouchableOpacity
-							key={index.toString()}
-							style={styles.itemContainer}
-							onPress={() => {
-								setWorkOrderDetails((prevDetails) => {
-									if (prevDetails.length === 0) {
-										return prevDetails;
-									}
-									const newDetails = [...prevDetails];
-									newDetails[newDetails.length - 1].masterProductionScheduleId =
-										item.mpsID;
-									return newDetails;
-								});
-							}}
+							style={styles.text}
+							onPress={() => setShowStartPicker(true)}
 						>
-							<View style={styles.row}>
-								<Text style={styles.column}>{item.productName}</Text>
-								<Text style={styles.column}>{item.dateStart}</Text>
-								<Text style={styles.column}>{item.dateEnd}</Text>
-								<Text style={styles.column}>{item.quantity}</Text>
+							<View style={{ flexDirection: "row", marginTop: 5 }}>
+								<Text className="flex font-psemibold text-black mr-3">
+									Start Date:{" "}
+								</Text>
+								<Text className="flex font-psemi text-black mr-3">
+									{workOrder.dateStart
+										? new Date(workOrder.dateStart).toLocaleDateString()
+										: "Not selected"}
+								</Text>
+								<Image
+									source={icons.calendar}
+									className="w-6 h-6"
+									resizeMode="contain"
+								/>
 							</View>
 						</TouchableOpacity>
-					))}
-				</ScrollView>
-			</View>
 
-			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
-				<ScrollView>
-					<Card style={styles.card}>
-						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
-
-							<Picker
-								selectedValue={selectedValue}
-								onValueChange={(itemValue) => {
-									console.log("onChangeValue called with:", itemValue);
-									setSelectedValue(itemValue);
+						{showEndPicker && (
+							<DateTimePicker
+								value={
+									workOrder.dateEnd ? new Date(workOrder.dateEnd) : new Date()
+								}
+								mode="date"
+								display="default"
+								onChange={(event, selectedDate) => {
+									setShowEndPicker(false);
+									if (selectedDate >= new Date(workOrder.dateStart)) {
+										setWorkOrder((prevState) => ({
+											...prevState,
+											dateEnd: selectedDate?.toISOString(),
+										}));
+									} else {
+										alert("End date cannot be before start date");
+									}
 								}}
-								style={{ flex: 1 }}
-							>
-								{items.map((item, index) => (
-									<Picker.Item
-										key={index}
-										label={item.label}
-										value={item.label}
-									/>
-								))}
-							</Picker>
-						</View>
+							/>
+						)}
 
 						<TouchableOpacity
 							style={styles.text}
@@ -455,7 +441,7 @@ const WorkOrderDetail = ({ route }) => {
 
 			<View style={styles.buttonContainer}>
 				<IconButton
-					onPress={() => navigation.navigate("WorkOrderHome")}
+					onPress={() => navigation.navigate("WorkOrderPage")}
 					iconName="arrow-left"
 				/>
 				<IconButton
@@ -534,4 +520,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default WorkOrderDetail;
+export default WorkOrderAC;

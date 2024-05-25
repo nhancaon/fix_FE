@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#161622',
-    marginBottom: 180
+    marginBottom: 150
   },
   headerContainer: {
     flexDirection: 'row',
