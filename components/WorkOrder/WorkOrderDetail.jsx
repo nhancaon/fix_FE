@@ -166,9 +166,9 @@ const WorkOrderDetail = ({ route }) => {
 							onPress={() => {
 								setWorkOrderDetails((prevDetails) => {
 									if (prevDetails.length === 0) {
-                                        // If there are no details yet, just return the previous state
-                                        return prevDetails;
-                                    }
+										// If there are no details yet, just return the previous state
+										return prevDetails;
+									}
 									const newDetails = [...prevDetails];
 									newDetails[newDetails.length - 1].masterProductionScheduleId =
 										item.mpsID;
@@ -195,7 +195,7 @@ const WorkOrderDetail = ({ route }) => {
 				</ScrollView>
 			</View>
 
-			<View style={{ marginBottom: 230, backgroundColor: "#161622" }}>
+			<View style={{ marginBottom: 240, backgroundColor: "#161622" }}>
 				<ScrollView>
 					<Card style={styles.card}>
 						<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -203,19 +203,22 @@ const WorkOrderDetail = ({ route }) => {
 								Work Order Status:
 							</Text>
 							<Picker
-                            selectedValue={selectedValue}
-                            onValueChange={(itemValue) => {
-                                console.log('onChangeValue called with:', itemValue);
-                                setSelectedValue(itemValue);
-                            }}
-                            style={{ flex: 1 }}
-                            >
-                            {items.map((item, index) => (
-                                <Picker.Item key={index} label={item.label} value={item.label} />
-                            ))}
-                        	</Picker>
+								selectedValue={selectedValue}
+								onValueChange={(itemValue) => {
+									console.log("onChangeValue called with:", itemValue);
+									setSelectedValue(itemValue);
+								}}
+								style={{ flex: 1 }}
+							>
+								{items.map((item, index) => (
+									<Picker.Item
+										key={index}
+										label={item.label}
+										value={item.label}
+									/>
+								))}
+							</Picker>
 						</View>
-
 						{showStartPicker && (
 							<DateTimePicker
 								value={
@@ -238,33 +241,48 @@ const WorkOrderDetail = ({ route }) => {
 								}}
 							/>
 						)}
-					</Card>
-				</ScrollView>
-			</View>
 
-			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
-				<ScrollView>
-					<Card style={styles.card}>
-						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
+						<TouchableOpacity
+							style={styles.text}
+							onPress={() => setShowStartPicker(true)}
+						>
+							<View style={{ flexDirection: "row", marginTop: 5 }}>
+								<Text className="flex font-psemibold text-black mr-3">
+									Start Date:{" "}
+								</Text>
+								<Text className="flex font-psemi text-black mr-3">
+									{workOrder.dateStart
+										? new Date(workOrder.dateStart).toLocaleDateString()
+										: "Not selected"}
+								</Text>
+								<Image
+									source={icons.calendar}
+									className="w-6 h-6"
+									resizeMode="contain"
+								/>
+							</View>
+						</TouchableOpacity>
 
-							<Picker
-								selectedValue={selectedValue}
-								onValueChange={(itemValue) => {
-									console.log("onChangeValue called with:", itemValue);
-									setSelectedValue(itemValue);
+						{showEndPicker && (
+							<DateTimePicker
+								value={
+									workOrder.dateEnd ? new Date(workOrder.dateEnd) : new Date()
+								}
+								mode="date"
+								display="default"
+								onChange={(event, selectedDate) => {
+									setShowEndPicker(false);
+									if (selectedDate >= new Date(workOrder.dateStart)) {
+										setWorkOrder((prevState) => ({
+											...prevState,
+											dateEnd: selectedDate?.toISOString(),
+										}));
+									} else {
+										alert("End date cannot be before start date");
+									}
 								}}
-								style={{ flex: 1 }}
-							>
-								{items.map((item, index) => (
-									<Picker.Item
-										key={index}
-										label={item.label}
-										value={item.label}
-									/>
-								))}
-							</Picker>
-						</View>
+							/>
+						)}
 
 						<TouchableOpacity
 							style={styles.text}

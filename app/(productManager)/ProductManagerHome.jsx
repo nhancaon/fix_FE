@@ -16,7 +16,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppLoader } from "../../components";
-import {Chatbot} from '../../services/ChatbotServices';
+import { Chatbot } from "../../services/ChatbotServices";
 
 const ProductManagerHome = () => {
 	const { token, userId } = useGlobalContext();
@@ -42,8 +42,6 @@ const ProductManagerHome = () => {
 		}, [token, userId])
 	);
 
-	
-
 	const handleCardPress = (id) => {
 		try {
 			navigation.navigate("ProductManagerHomeDetail", { id });
@@ -52,27 +50,26 @@ const ProductManagerHome = () => {
 		}
 	};
 
-	const [input, setInput] = useState('');
-  const [response, setResponse] = useState(null);
+	const [input, setInput] = useState("");
+	const [response, setResponse] = useState(null);
 
-  const handleInputChange = (text) => {
-    setInput(text);
-  };
+	const handleInputChange = (text) => {
+		setInput(text);
+	};
 
-  const handleSubmit = async () => {
-    try{
-      console.log("input: ",input);
-      const chatbotResponse = await Chatbot(input);
-      setResponse(chatbotResponse);
-    }catch(error){
-      console.error("handle summit error",error);
-    }
-    
-  };
+	const handleSubmit = async () => {
+		try {
+			console.log("input: ", input);
+			const chatbotResponse = await Chatbot(input);
+			setResponse(chatbotResponse);
+		} catch (error) {
+			console.error("handle summit error", error);
+		}
+	};
 
 	return (
 		<SafeAreaView style={styles.backgroundColor}>
-			<View style={{ padding: 10 }}>
+			<View style={{ padding: 10, maxHeight: 100 * 4 }}>
 				<FlatList
 					data={workOrders}
 					keyExtractor={(item) => item.id.toString()}
@@ -107,22 +104,81 @@ const ProductManagerHome = () => {
 				/>
 			</View>
 			{loading ? <AppLoader /> : null}
-			<Card style={{borderColor: 'blue', borderWidth: 1, minHeight: 200}}>
-				<View >
-					<View style={{flexDirection: 'row', alignItems: 'center'}}>
-					<Text>You: </Text>
-					<TextInput 
-						style={{height: 40, backgroundColor: '#fff', borderColor: 'gray', borderWidth: 1, flex: 1}} 
-						value={input} 
-						onChangeText={handleInputChange} 
-						placeholder="Enter chat content here..."
-					/>
-					</View>
-					<Text>Chatbot: </Text>
-					{response && <Text style={{ padding:50}}>{response}</Text>}
+			<Card
+				style={{
+					borderColor: "#fff",
+					borderWidth: 1,
+					minHeight: 200,
+					borderRadius: 10,
+					padding: 10,
+					backgroundColor: "#000",
+				}}
+			>
+				<View>
+					<Text style={{ fontWeight: "bold", marginBottom: 5, color: "white" }}>
+						Chatbot:{" "}
+					</Text>
+					<ScrollView
+						style={{
+							maxHeight: 100,
+							marginBottom: 10,
+						}}
+						contentContainerStyle={{ padding: 10 }}
+						nestedScrollEnabled={true}
+					>
+						{response && (
+							<Text
+								style={{
+									padding: 10,
+									backgroundColor: "#000",
+									borderRadius: 0,
+									borderColor: "#000",
+									borderWidth: 0,
+									marginBottom: 10,
+									color: "white",
+									maxHeight: 100,
+								}}
+							>
+								{response}
+							</Text>
+						)}
+					</ScrollView>
 				</View>
-				<Button title="Submit" onPress={handleSubmit} color="orange" />
+				<View
+					style={{
+						marginBottom: 10,
+					}}
+				></View>
 			</Card>
+			<Card
+				style={{
+					borderColor: "#fff",
+					borderWidth: 1,
+					maxHeight: 200,
+					borderRadius: 10,
+					padding: 10,
+					backgroundColor: "#000",
+				}}
+			>
+				<Text style={{ fontWeight: "bold", margin: 0, color: "white" }}>
+					You:{" "}
+				</Text>
+				<TextInput
+					style={{
+						height: 40,
+						backgroundColor: "#fff",
+						borderColor: "gray",
+						borderWidth: 1,
+						borderRadius: 5,
+						paddingHorizontal: 10,
+						margin: 10,
+					}}
+					value={input}
+					onChangeText={handleInputChange}
+					placeholder="Enter chat content here..."
+				/>
+			</Card>
+			<Button title="Submit" onPress={handleSubmit} color="orange" />
 		</SafeAreaView>
 	);
 };
