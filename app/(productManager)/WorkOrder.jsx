@@ -6,6 +6,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
 import IconButton from '../../components/IconButton';
+import {downloadFile} from '../../services/FileServices';
+
 import {
     CustomButton,
   } from "../../components";
@@ -47,6 +49,15 @@ const WorkOrder = () => {
         }
     }
 
+    const handleDownload = async () => {
+        try {
+            const data = await downloadFile(token,'hello.txt');
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ padding: 10}}>
@@ -70,10 +81,20 @@ const WorkOrder = () => {
             <CustomButton
                 icon={"plus"}
                 iconSize={28}
-                containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+                containerStyles="p-0 absolute bottom-48 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
                 isLoading={false}
                 handlePress={handleInsert}
             />
+
+            <CustomButton
+                icon={"download"}
+                iconSize={28}
+                containerStyles="p-0 absolute bottom-32 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+                isLoading={false}
+                handlePress={handleDownload}
+            />
+
+
 
             
         </View>

@@ -6,7 +6,7 @@ import { useGlobalContext } from '../../context/GlobalProvider';
 import { Card } from 'react-native-paper';
 import IconButton from '../../components/IconButton';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+import {Chatbot} from '../../services/ChatbotServices';
 
 const ProductManagerHome = () => {
   const { token, userId } = useGlobalContext();
@@ -28,6 +28,24 @@ const ProductManagerHome = () => {
     }, [token, userId])
   );
 
+  const [input, setInput] = useState('');
+  const [response, setResponse] = useState(null);
+
+  const handleInputChange = (text) => {
+    setInput(text);
+  };
+
+  const handleSubmit = async () => {
+    try{
+      console.log("input: ",input);
+      const chatbotResponse = await Chatbot(input);
+      setResponse(chatbotResponse);
+    }catch(error){
+      console.error("handle summit error",error);
+    }
+    
+  };
+
   const handleCardPress = (id) => {
     try {
         navigation.navigate('ProductManagerHomeDetail', { id });
@@ -37,29 +55,46 @@ const ProductManagerHome = () => {
   }
 
   return (
-    <View style={{ padding: 10}}>
-    <FlatList
-        data={workOrders}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-        <Card style={{margin: 1}} onPress={() => handleCardPress(item.id)}>
-            <Card.Content>
-            <Text>{`ID: ${item.id}`}</Text>
-            <Text>{`Start Date: ${item.dateStart}`}</Text>
-            <Text>{`End Date: ${item.dateEnd}`}</Text>
-            <Text>{`Status: ${items.find(i => i.value === item.workOrderStatus)?.label || item.workOrderStatus}`}</Text>
-            </Card.Content>
+      <View style={{ flex:1 ,padding: 10}}>
+        <FlatList
+            data={workOrders}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+            <Card style={{margin: 1}} onPress={() => handleCardPress(item.id)}>
+                <Card.Content>
+                <Text>{`ID: ${item.id}`}</Text>
+                <Text>{`Start Date: ${item.dateStart}`}</Text>
+                <Text>{`End Date: ${item.dateEnd}`}</Text>
+                <Text>{`Status: ${items.find(i => i.value === item.workOrderStatus)?.label || item.workOrderStatus}`}</Text>
+                </Card.Content>
+            </Card>
+            )}
+        />
+        
+        <Card style={{borderColor: 'blue', borderWidth: 1, minHeight: 200}}>
+          <View >
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text>You: </Text>
+              <TextInput 
+                style={{height: 40, backgroundColor: '#fff', borderColor: 'gray', borderWidth: 1, flex: 1}} 
+                value={input} 
+                onChangeText={handleInputChange} 
+                placeholder="Enter chat content here..."
+              />
+            </View>
+            <Text>Chatbot: </Text>
+            {response && <Text style={{ padding:50}}>{response}</Text>}
+          </View>
+          <Button title="Submit" onPress={handleSubmit} color="orange" />
         </Card>
-        )}
-    />
-</View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   sidebar: {
     flex: 2,
