@@ -200,10 +200,10 @@ const WorkOrderAC = ({ route }) => {
 								setOpen={setOpen}
 								setValue={setValue}
 								setItems={setItems}
-								containerStyle={{ height: 45, width: "45%" }}
-								style={{ backgroundColor: "#fafafa" }}
-								itemStyle={{ justifyContent: "flex-start" }}
-								dropDownStyle={{ backgroundColor: "#fafafa" }}
+								containerStyle={[styles.dropDownContainer, open && { zIndex: 1000 }]}
+        						style={styles.dropDown}
+        						itemStyle={{ justifyContent: 'flex-start' }}
+        						dropDownStyle={styles.dropDown}
 								onChangeValue={(value) => {
 									console.log("onChangeValue called with:", value);
 									setWorkOrder((prevState) => ({
@@ -466,6 +466,14 @@ const WorkOrderAC = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	dropDownContainer: {
+		height: 45, 
+		width: "45%",
+		zIndex: 2000,
+	},
+	dropDown: {
+		backgroundColor: "#FFA500",
+	},
 	buttonContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
