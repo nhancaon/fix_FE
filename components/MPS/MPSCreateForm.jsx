@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import {  getMPSByID, createMPS, updateMPS, deleteMPS } from '../../services/MPSServices'
+import React, { useState, useEffect, useRef } from 'react';
+import {  createMPS } from '../../services/MPSServices'
 import { useGlobalContext } from '../../context/GlobalProvider';
 import IconButton from '../../components/IconButton';
-import { Card, Title, TextInput } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity, Alert} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import { getAllProduct } from '../../services/ProductServices';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { FormField, ToastMessage } from "../../components";
+import CustomAlert from "../../components/CustomAlert";
 
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();
+    const successToastRef = useRef(null);
+    const errorToastRef = useRef(null);
     const [products, setProducts] = useState([]);
-    const [showStartPicker, setShowStartPicker] = useState(false);
-    const [showEndPicker, setShowEndPicker] = useState(false);
-    const [dateStart, setDateStart] = useState(new Date());
-    const [dateEnd, setDateEnd] = useState(new Date());
+    const [dateStart, setDateStart] = useState(new Date().toISOString().split('T')[0]);
+    const [dateEnd, setDateEnd] = useState(new Date().toISOString().split('T')[0]);
     const [mpsRequest, setMPSRequest] = useState({
         product_manager_ID: userId,
         productId: '',
-        dateStart: dateStart.toISOString(),
-        dateEnd: dateEnd.toISOString(),
+        dateStart: dateStart,
+        dateEnd: dateEnd,
         quantity: '',
         requireTime: '',
         durationHour: '',
@@ -28,9 +29,16 @@ const MPSCreateForm = () => {
     });
     const navigation = useNavigation();
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [alertMessage1, setAlertMessage1] = useState("");
+    const [alertMessage2, setAlertMessage2] = useState("");
+    
     useEffect(() => {
         const fetchData = async () => {
+            console.log("dateStart: ", dateStart);
             const response = await getAllProduct(token);
+            console.log("response: ",response);
             const products = response.result.map(product => ({
                 id: product.id,
                 name: product.name
@@ -38,7 +46,6 @@ const MPSCreateForm = () => {
             setProducts(products);
         };
         fetchData();
-        
     }, []);
     
     const handleSave = async () => {
@@ -46,124 +53,167 @@ const MPSCreateForm = () => {
         try {
             const response = await createMPS(token, mpsRequest);
             console.log("response: ",response);
-            // navigation.navigate('ProductionScheduleHome');
-            Alert.alert('Success', 'MPS created successfully', [
-                {
-                    text: 'OK',
-                    onPress: () => navigation.navigate('ProductionScheduleHome')
-                }
-            ]);
+            if (successToastRef.current) {
+                successToastRef.current.show({
+                    type: 'success',
+                    text: 'Master Production Schedule',
+                    description: 'MPS created successfully.'
+                });
+            }
+            setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
         } catch (error) {
             console.error(error);
         }
     };
 
+    const handleStartDateChange = (selectedDate) => {
+        if (selectedDate <= dateEnd) {
+            setDateStart(selectedDate || dateStart);
+            setMPSRequest(prevState => ({ ...prevState, dateStart: selectedDate }));
+        } else {
+            setModalVisible(true);
+            setErrorMessage("Start date cannot be after end date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
+        }
+    };
+    
+    const handleEndDateChange = (selectedDate) => {
+        if (selectedDate >= dateStart) {
+            setDateEnd(selectedDate || dateEnd);
+            setMPSRequest(prevState => ({ ...prevState, dateEnd: selectedDate }));
+        } else {
+            setModalVisible(true);
+            setErrorMessage("End date cannot be before start date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
+        }
+    };
+    
+    const handCloseAlertBox = () => {
+        setModalVisible(false); 
+    };
+
     return (
-       
-        <View style={{flex: 1}}>
+        <View className="bg-primary h-full" style={{flex: 1}}>
             <ScrollView style={{borderWidth: 1, }} alwaysBounceVertical={true} vertical={true}>
-                <View style={{ }}>
-                    {products.map((product, index) => (
-                        <TouchableOpacity 
-                            key={index} 
-                            onPress={() => setMPSRequest(prevState => ({ ...prevState, productId: product.id, productName: product.name }))}
-                        >
-                            <View style={{ borderBottomWidth: 1, margin: 10 }}>
-                                <Text>Product ID: {product.id}</Text>
-                                <Text>Product Name: {product.name}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                <Card style={styles.card}>
+                    <Card.Content style={styles.cardContent}>
+                        {products.map((product, index) => (
+                            <TouchableOpacity 
+                                key={index} 
+                                onPress={() => setMPSRequest(prevState => ({ ...prevState, productId: product.id, productName: product.name }))}>
+                                <View style={{ borderBottomWidth: 1, margin: 10 }}>
+                                    <Text>Product ID: {product.id}</Text>
+                                    <Text>Product Name: {product.name}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </Card.Content>
+                </Card>
             </ScrollView>
-            <View style={{ height: 10 }} />
-            <ScrollView >
-            <Card>
-                <Card.Content>
-                    <TextInput
-                        label="Product Name"
-                        value={mpsRequest?.productName}
-                        onChangeText={text => setMPSRequest(prevState => ({ ...prevState, productName: text }))}
-                    />
 
-                    {showStartPicker && (
-                        <DateTimePicker
+            <ScrollView>
+                <Card style={styles.cardSecond}>
+                    <Card.Content>
+                        <FormField
+                            title="Product Name"
+                            placeholder={mpsRequest?.productName}
+                            value={mpsRequest?.productName}
+                            otherStyles="mt-3"
+                            edit={true}
+                            onPress={text => setMPSRequest(prevState => ({ ...prevState, productName: text }))}
+                        />
+
+                        <FormField
+                            title="Start Date"
+                            placeholder={dateStart}
                             value={dateStart}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowStartPicker(false);
-                                if (selectedDate <= dateEnd) {
-                                    setDateStart(selectedDate || dateStart);
-                                    setMPSRequest(prevState => ({ ...prevState, dateStart: selectedDate?.toISOString() }));
-                                } else {
-                                    alert('Start date cannot be after end date');
-                                }
-                            }}
+                            otherStyles="mt-3"
+                            edit={true}
+                            onPress={handleStartDateChange}
                         />
-                    )}
 
-                    <TouchableOpacity onPress={() => setShowStartPicker(true)}>
-                        <Text>Start Date: {dateStart.toLocaleDateString()}</Text>
-                    </TouchableOpacity>
-
-                    {showEndPicker && (
-                        <DateTimePicker
+                        <FormField
+                            title="End Date"
+                            placeholder={dateEnd}
                             value={dateEnd}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowEndPicker(false);
-                                if (selectedDate >= dateStart) {
-                                    setDateEnd(selectedDate || dateEnd);
-                                    setMPSRequest(prevState => ({ ...prevState, dateEnd: selectedDate?.toISOString() }));
-                                } else {
-                                    alert('End date cannot be before start date');
-                                }
-                            }}
+                            otherStyles="mt-3"
+                            edit={true}
+                            onPress={handleEndDateChange}
                         />
-                    )}
 
-                    <TouchableOpacity onPress={() => setShowEndPicker(true)}>
-                        <Text>End Date: {dateEnd.toLocaleDateString()}</Text>
-                    </TouchableOpacity>
-                    
-                    <TextInput
-                        label="Quantity"
-                        value={mpsRequest?.quantity ? mpsRequest.quantity.toString() : ''}
-                        onChangeText={text => setMPSRequest(prevState => ({ ...prevState, quantity: parseInt(text) }))}
-                    />
-                    <Card>
-                        <Card.Title title="Additional Details" />
-                        <Card.Content>
-                            <TextInput
-                                label="Require Time"
-                                value={mpsRequest?.requireTime ? mpsRequest.requireTime.toString() : ''}
-                                onChangeText={text => setMPSRequest(prevState => ({ ...prevState, requireTime: text }))}
-                            />
-                            <TextInput
-                                label="Duration Hour"
-                                value={mpsRequest?.durationHour ? mpsRequest.durationHour.toString() : ''}
-                                onChangeText={text => setMPSRequest(prevState => ({ ...prevState, durationHour: text }))}
-                            />
-                            <TextInput
-                                label="Effort Hour"
-                                value={mpsRequest?.effortHour ? mpsRequest.effortHour.toString() : ''}
-                                onChangeText={text => setMPSRequest(prevState => ({ ...prevState, effortHour: text }))}
-                            />
-                            <TextInput
-                                label="In Progress"
-                                value={mpsRequest?.in_progress ? mpsRequest.in_progress : ''}
-                                onChangeText={text => {
-                                    setMPSRequest(prevState => ({ ...prevState, in_progress: text }));
-                                }}
-                            />
-                        </Card.Content>
-                    </Card>
-                </Card.Content>
-            </Card>
-            <View style={{ height: 100 }} />
+                        <FormField
+                            title="Quantity"
+                            placeholder={mpsRequest?.quantity ? mpsRequest.quantity.toString() : ''}
+                            value={mpsRequest?.quantity ? mpsRequest.quantity.toString() : ''}
+                            otherStyles="mt-3"
+                            edit={true}
+                            handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, quantity: parseInt(text) }))}
+                        />
+
+                        <Card.Title title="Additional Details" titleStyle={styles.title}/>
+                        <Card style={styles.cardThird}>
+                            <Card.Content>
+                                <FormField
+                                    title="Require Time"
+                                    placeholder={mpsRequest?.requireTime ? mpsRequest.requireTime.toString() : ''}
+                                    value={mpsRequest?.requireTime ? mpsRequest.requireTime.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, requireTime: text }))}
+                                />
+
+                                <FormField
+                                    title="Duration Hour"
+                                    placeholder={mpsRequest?.durationHour ? mpsRequest.durationHour.toString() : ''}
+                                    value={mpsRequest?.durationHour ? mpsRequest.durationHour.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, durationHour: text }))}
+                                />
+
+                                <FormField
+                                    title="Effort Hour"
+                                    placeholder={mpsRequest?.effortHour ? mpsRequest.effortHour.toString() : ''}
+                                    value={mpsRequest?.effortHour ? mpsRequest.effortHour.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, effortHour: text }))}
+                                />
+
+                                <FormField
+                                    title="In Progress"
+                                    placeholder="In Progress"
+                                    value={mpsRequest?.in_progress ? mpsRequest.in_progress : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => {setMPSRequest(prevState => ({ ...prevState, in_progress: text }));}}
+                                />
+                            </Card.Content>
+                        </Card>
+                    </Card.Content>
+                </Card>
+                <View style={{ height: 50 }} />
             </ScrollView>
+
+            <ToastMessage type={"success"} ref={successToastRef} />
+
+            <ToastMessage type="danger" ref={errorToastRef} />
+
+            <CustomAlert
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                title="Error"
+                error={errorMessage}
+                message1={alertMessage1}
+                message2={alertMessage2}
+                isSingleButton={modalVisible}
+                onPressButton1={handCloseAlertBox}
+            />
+
             <View style={styles.buttonContainer}>
                 <IconButton onPress={() => navigation.navigate('ProductionScheduleHome')} iconName="arrow-left" />
                 <IconButton onPress={handleSave} iconName="save" />
@@ -176,12 +226,41 @@ const MPSCreateForm = () => {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      position: 'absolute',
-      bottom: 15,
-      width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        bottom: 15,
+        width: '100%',
+    },
+    card: {
+        backgroundColor: '#FFA500',
+        margin: 10,
+        padding: 10,
+    },
+    cardContent: {
+        backgroundColor: '#fff',
+        margin: 10,
+        borderRadius: 10,
+    },
+    cardSecond: {
+        backgroundColor: '#fff',
+        margin: 10,
+        padding: 10,
+    },
+    cardThird: {
+        backgroundColor: '#FFA500',
+        padding: 10,
+    },
+    title: {
+        color: '#FFA500', // Orange color
+        fontSize: 20, // Font size
+        fontWeight: 'bold', // Bold font
+        marginTop: 10,
+    },
+    text: {
+        fontSize: 16,
     },
 });
+
 
 export default MPSCreateForm;

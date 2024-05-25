@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	StyleSheet,
-	FlatList,
-	Alert,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, FlatList, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import IconButton from "../../components/IconButton";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -17,6 +10,7 @@ import { createBOM } from "../../services/BOMServices";
 import FormField from "../FormField";
 import AppLoader from "../AppLoader";
 import ToastMessage from "../ToastMessage";
+import CustomAlert from "../../components/CustomAlert";
 
 function CreateBOM({ route }) {
 	const navigation = useNavigation();
@@ -29,7 +23,7 @@ function CreateBOM({ route }) {
 		unit: "g",
 		totalPrice: null,
 		sellPrice: null,
-		dateCreation: new Date().toISOString(),
+		dateCreation: new Date().toISOString().split('T')[0],
 		bomDetails: [],
 	});
 	const [materials, setMaterials] = useState([]);
@@ -41,6 +35,11 @@ function CreateBOM({ route }) {
 	const [loading, setLoading] = useState(false);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
+
+	const [modalVisible, setModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [alertMessage1, setAlertMessage1] = useState("");
+    const [alertMessage2, setAlertMessage2] = useState("");
 
 	useEffect(() => {
 		setNewMaterialUnit("g");
@@ -84,12 +83,8 @@ function CreateBOM({ route }) {
 					text: "OK",
 					onPress: () => {
 						// Remove the material from the bomDetail.bomDetails array
-						setBomDetail((prevState) => ({
-							...prevState,
-							bomDetails: prevState.bomDetails.filter(
-								(material, i) => i !== index
-							),
-						}));
+						setBomDetail((prevState) => ({...prevState, bomDetails: prevState.bomDetails.filter((i) => i !== index
+							),}));
 					},
 				},
 			]
@@ -259,9 +254,7 @@ function CreateBOM({ route }) {
 
 									<FormField
 										title="Date creation"
-										placeholder={
-											bomDetail.dateCreation
-												? bomDetail.dateCreation.toString()
+										placeholder={bomDetail.dateCreation ? bomDetail.dateCreation.toString()
 												: ""
 										}
 										value={

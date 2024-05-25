@@ -1,179 +1,261 @@
-import React, { useState, useEffect } from 'react';
-import {  getMPSByID, createMPS, updateMPS, deleteMPS } from '../../services/MPSServices'
+import React, { useState, useEffect, useRef } from 'react';
+import { getMPSByID, updateMPS, deleteMPS } from '../../services/MPSServices';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import IconButton from '../../components/IconButton';
-import { Card, Title, TextInput } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, FlatList, ScrollView, Alert,TouchableOpacity } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { FormField, ToastMessage } from "../../components";
+import CustomAlert from "../../components/CustomAlert";
+import AlertWithTwoOptions from "../../components/AlertWithTwoOptions";
 
 const ProductionScheduleDetail = ({ route }) => {
-    const { token, userId  } = useGlobalContext();
-    const [mpsDetail, setMPSDetail] = useState({});
-    const navigation = useNavigation();
     const { id } = route.params;
-    const [showStartPicker, setShowStartPicker] = useState(false);
-    const [showEndPicker, setShowEndPicker] = useState(false);
-    const [dateStart, setDateStart] = useState();
-    const [dateEnd, setDateEnd] = useState();
+    const { token } = useGlobalContext();
+    const [ mpsDetail, setMPSDetail ] = useState({});
+    const navigation = useNavigation();
+    const successToastRef = useRef(null);
+    const errorToastRef = useRef(null);
+    const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [alertMessage1, setAlertMessage1] = useState("");
+    const [alertMessage2, setAlertMessage2] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
-        console.log("id: ",id);
-        const response = await getMPSByID(token,id); // replace token with actual token
-        setMPSDetail(response.result);
-        setDateStart(new Date(response.result.dateStart));
-        setDateEnd(new Date(response.result.dateEnd));
+            console.log("id: ", id);
+            const response = await getMPSByID(token, id); // replace token with actual token
+            console.log("response: ", response);
+            setMPSDetail(response.result);
         };
         fetchData();
     }, []);
-    
+
     const handleSave = async () => {
         try {
-            console.log("mpsDetail: ",mpsDetail);
+            console.log("mpsDetail: ", mpsDetail);
             const response = await updateMPS(token, mpsDetail);
-            console.log("response: ",response);
-            Alert.alert('Success', 'MPS updated successfully', [
-                {
-                    text: 'OK',
-                    
-                }
-            ]);
+            console.log("response: ", response);
+            if (successToastRef.current) {
+                successToastRef.current.show({
+                    type: 'success',
+                    text: 'Master Production Schedule',
+                    description: 'MPS updated successfully.'
+                });
+            }
+            setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
         } catch (error) {
-
             console.error(error);
-            Alert.alert('Error', 'MPS update failed: ' + error, [
-                {
-                    text: 'OK',
-                }
-            ]);
+            if (errorToastRef.current) {
+                errorToastRef.current.show({
+                    type: 'danger',
+                    text: 'Cannot update MPS',
+                    description: 'MPS update failed: ' + error
+                });
+            }
         }
     };
 
     const handleDelete = async () => {
         try {
             const response = await deleteMPS(token, id);
-            console.log("response: ",response);
-            Alert.alert('Success', 'MPS deleted successfully', [
-                {
-                    text: 'OK',
-                    onPress: () => navigation.navigate('ProductionScheduleHome')
-                }
-            ]);
-        
+            console.log("response: ", response);
+            if (successToastRef.current) {
+                successToastRef.current.show({
+                    type: 'success',
+                    text: 'Master Production Schedule',
+                    description: 'MPS deleted successfully.'
+                });
+            }
+            setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
         } catch (error) {
             console.error(error);
-            Alert.alert('Error', 'MPS delete failed: ' + error, [
-                {
-                    text: 'OK',
-                }
-            ]);
+            if (errorToastRef.current) {
+                errorToastRef.current.show({
+                    type: 'danger',
+                    text: 'Cannot delete MPS',
+                    description: 'MPS delete failed: ' + error
+                });
+            }
         }
     };
 
+    const handleStartDateChange = (selectedDate) => {
+        if (selectedDate <= mpsDetail.dateEnd) {
+            setMPSDetail(prevState => ({ ...prevState, dateStart: selectedDate }));
+        } else {
+            setModalVisible(true);
+            setErrorMessage("Start date cannot be after end date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
+        }
+    };
+
+    const handleEndDateChange = (selectedDate) => {
+        if (selectedDate >= mpsDetail.dateStart) {
+            setMPSDetail(prevState => ({ ...prevState, dateEnd: selectedDate }));
+        } else {
+            setModalVisible(true);
+            setErrorMessage("End date cannot be before start date");
+            setAlertMessage1("Close");
+            setAlertMessage2("");
+        }
+    };
+
+    const handCloseAlertBox = () => {
+        setModalVisible(false); 
+    };
+
     return (
-       
-        <View style={{flex: 1}}>
-            <ScrollView style={{flex: 1}}>
-            <Card>
-                <Card.Title title={mpsDetail?.productName} subtitle={mpsDetail?.productManagerName} titleStyle={{ color: 'orange' }}/>
-                <Card.Content>
-                    <Text>MPS ID: {mpsDetail?.mpsID}</Text>
+        <View className="bg-primary h-full" style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1, margin: 20, marginBottom: 70 }}>
+                <Card style={styles.card}>
+                    <Card.Title
+                        title={mpsDetail?.productName}
+                        subtitle={"Product manager: " + mpsDetail?.productManagerName}
+                        titleStyle={styles.title} />
 
-                    {showStartPicker && (
-                        <DateTimePicker
-                            value={new Date(mpsDetail?.dateStart)}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowStartPicker(false);
-                                if (selectedDate <= new Date(mpsDetail?.dateEnd)) {
-                                    setMPSDetail(prevState => ({ ...prevState, dateStart: selectedDate?.toISOString() }));
-                                } else {
-                                    alert('Start date cannot be after end date');
-                                }
-                            }}
+                    <Card.Content>
+                        <Text style={styles.text}>MPS ID: {mpsDetail?.mpsID}</Text>
+                        <FormField
+                            title="Start Date"
+                            placeholder={mpsDetail.dateStart}
+                            value={mpsDetail.dateStart}
+                            otherStyles="mt-3"
+                            edit={true}
+                            onPress={handleStartDateChange}
                         />
-                    )}
 
-                    <TouchableOpacity onPress={() => setShowStartPicker(true)}>
-                        <Text>Start Date: {new Date(mpsDetail?.dateStart).toLocaleDateString()}</Text>
-                    </TouchableOpacity>
-
-                    {showEndPicker && (
-                        <DateTimePicker
-                            value={new Date(mpsDetail?.dateEnd)}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowEndPicker(false);
-                                if (selectedDate >= new Date(mpsDetail?.dateStart)) {
-                                    setMPSDetail(prevState => ({ ...prevState, dateEnd: selectedDate?.toISOString() }));
-                                } else {
-                                    alert('End date cannot be before start date');
-                                }
-                            }}
+                        <FormField
+                            title="End Date"
+                            placeholder={mpsDetail.dateEnd}
+                            value={mpsDetail.dateEnd}
+                            otherStyles="mt-3"
+                            edit={true}
+                            onPress={handleEndDateChange}
                         />
-                    )}
 
-                    <TouchableOpacity onPress={() => setShowEndPicker(true)}>
-                        <Text>End Date: {new Date(mpsDetail?.dateEnd).toLocaleDateString()}</Text>
-                    </TouchableOpacity>
+                        <FormField
+                            title="Quantity"
+                            placeholder={mpsDetail?.quantity ? mpsDetail.quantity.toString() : ''}
+                            value={mpsDetail?.quantity ? mpsDetail.quantity.toString() : ''}
+                            otherStyles="mt-3"
+                            edit={true}
+                            handleChangeText={text => setMPSDetail(prevState => ({ ...prevState, quantity: parseInt(text) }))}
+                        />
 
-                    <TextInput
-                        label="Quantity"
-                        value={mpsDetail?.quantity ? mpsDetail.quantity.toString() : ''}
-                        onChangeText={text => setMPSDetail(prevState => ({ ...prevState, quantity: parseInt(text) }))}
-                    />
-                    <Card>
-                        <Card.Title title="Additional Details" />
-                        <Card.Content>
-                            <TextInput
-                                label="Require Time"
-                                value={mpsDetail?.requireTime ? mpsDetail.requireTime.toString() : ''}
-                                onChangeText={text => setMPSDetail(prevState => ({ ...prevState, requireTime: text }))}
-                            />
-                            <TextInput
-                                label="Duration Hour"
-                                value={mpsDetail?.durationHour ? mpsDetail.durationHour.toString() : ''}
-                                onChangeText={text => setMPSDetail(prevState => ({ ...prevState, durationHour: text }))}
-                            />
-                            <TextInput
-                                label="Effort Hour"
-                                value={mpsDetail?.effortHour ? mpsDetail.effortHour.toString() : ''}
-                                onChangeText={text => setMPSDetail(prevState => ({ ...prevState, effortHour: text }))}
-                            />
-                            <TextInput
-                                label="In Progress"
-                                value={mpsDetail?.in_progress ? mpsDetail.in_progress.toString() : ''}
-                                onChangeText={text => {
-                                    setMPSDetail(prevState => ({ ...prevState, in_progress: text }));
-                                }}
-                            />
-                        </Card.Content>
-                    </Card>
-                </Card.Content>
-            </Card>
-            <View style={{ height: 100 }} />
+                        <Card.Title title="Additional Details" titleStyle={styles.title} />
+                        <Card style={styles.cardSecondContainer}>
+                            <Card.Content>
+                                <FormField
+                                    title="Require Time"
+                                    placeholder={mpsDetail?.requireTime ? mpsDetail.requireTime.toString() : ''}
+                                    value={mpsDetail?.requireTime ? mpsDetail.requireTime.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSDetail(prevState => ({ ...prevState, requireTime: text }))}
+                                />
+
+                                <FormField
+                                    title="Duration Hour"
+                                    placeholder={mpsDetail?.durationHour ? mpsDetail.durationHour.toString() : ''}
+                                    value={mpsDetail?.durationHour ? mpsDetail.durationHour.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSDetail(prevState => ({ ...prevState, durationHour: text }))}
+                                />
+
+                                <FormField
+                                    title="Effort Hour"
+                                    placeholder={mpsDetail?.effortHour ? mpsDetail.effortHour.toString() : ''}
+                                    value={mpsDetail?.effortHour ? mpsDetail.effortHour.toString() : ''}
+                                    otherStyles="mt-3"
+                                    edit={true}
+                                    handleChangeText={text => setMPSDetail(prevState => ({ ...prevState, effortHour: text }))}
+                                />
+
+                                <FormField
+                                    // title="In Progress"
+                                    placeholder="In Progress"
+                                    value={mpsDetail?.in_progress ? mpsDetail.in_progress.toString() : ''}
+                                    otherStyles="mt-1"
+                                    edit={true}
+                                    handleChangeText={text => { setMPSDetail(prevState => ({ ...prevState, in_progress: text })) }}
+                                />
+                            </Card.Content>
+                        </Card>
+                    </Card.Content>
+                </Card>
             </ScrollView>
+
+            <ToastMessage type={"success"} ref={successToastRef} />
+
+            <ToastMessage type="danger" ref={errorToastRef} />
+
             <View style={styles.buttonContainer}>
                 <IconButton onPress={() => navigation.navigate('ProductionScheduleHome')} iconName="arrow-left" />
-                <IconButton onPress = {handleDelete} iconName="trash" />
                 <IconButton onPress={handleSave} iconName="save" />
+                <IconButton
+					onPress={() => {
+						setConfirmationModalVisible(true);
+					}}
+					iconName="trash"
+				/>
             </View>
+            <AlertWithTwoOptions
+				visible={confirmationModalVisible}
+				message="Are you sure?"
+				onYesPress={() => {
+					handleDelete();
+					setConfirmationModalVisible(false);
+				}}
+				onNoPress={() => setConfirmationModalVisible(false)}
+			/>
+            <CustomAlert
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                title="Error"
+                error={errorMessage}
+                message1={alertMessage1}
+                message2={alertMessage2}
+                isSingleButton={modalVisible}
+                onPressButton1={handCloseAlertBox}
+            />
         </View>
-    
-        
     )
 };
 
 const styles = StyleSheet.create({
     buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      position: 'absolute',
-      bottom: 15,
-      width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        bottom: 15,
+        width: '100%',
+    },
+    card: {
+        margin: 10,
+        padding: 10,
+    },
+    title: {
+        color: '#FFA500', // Orange color
+        fontSize: 20, // Font size
+        fontWeight: 'bold', // Bold font,
+        marginTop: 10
+    },
+    cardContent: {
+
+    },
+    text: {
+        fontSize: 16,
+    },
+    cardSecondContainer: {
+        // margin: 5,
     },
 });
 

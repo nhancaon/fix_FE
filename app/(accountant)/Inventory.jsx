@@ -7,7 +7,10 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useCallback } from "react";
-import { createInventory, getAllInventories } from "../../services/InventoryServices";
+import {
+  createInventory,
+  getAllInventories,
+} from "../../services/InventoryServices";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import { CustomButton, AppLoader } from "../../components";
@@ -47,7 +50,6 @@ const Inventory = () => {
   };
 
   const handleFormSubmit = async () => {
-    console.log("form", form)
     try {
       const newInventory = {
         name: form.name,
@@ -107,7 +109,7 @@ const Inventory = () => {
             <CustomButton
               icon={"plus"}
               iconSize={28}
-              containerStyles="p-0 absolute bottom-[-52px] self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+              containerStyles="p-0 absolute bottom-6 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
               isLoading={false}
               handlePress={() => {
                 setForm({

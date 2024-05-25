@@ -41,7 +41,6 @@ const SignIn = () => {
       return;
     }
     setSubmitting(true);
-    console.log("Password: ", password);  // Equal password in login and reset 
     setPasswordLogin(password);
 
     try {

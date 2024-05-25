@@ -4,12 +4,8 @@ import {
 	Text,
 	StyleSheet,
 	ScrollView,
-	FlatList,
 	TouchableOpacity,
-	Alert,
 	TextInput,
-	Button,
-	SafeAreaView,
 	Image,
 } from "react-native";
 import {
@@ -32,9 +28,10 @@ import { icons } from "../../constants";
 import AppLoader from "../AppLoader";
 import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
+import CustomButton from "../CustomButton";
 import { set } from "date-fns";
-import { Picker } from "@react-native-picker/picker";
-const WorkOrderDetail = ({ route }) => {
+
+const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
 	const { id } = route.params;
@@ -49,18 +46,13 @@ const WorkOrderDetail = ({ route }) => {
 	const [items, setItems] = useState([
 		{ label: "Pending", value: "pending" },
 		{ label: "Processing", value: "processing" },
-		{ label: "Finish", value: "PMcheck" },
+		{ label: "Finish", value: "ACcheck" },
 	]);
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false);
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
-	const initialLabel = items.find(
-		(item) => item.value === workOrder.workOrderStatus
-	)?.label;
-
-	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
@@ -98,6 +90,9 @@ const WorkOrderDetail = ({ route }) => {
 					description: "Work Order updated successfully!",
 				});
 			}
+			setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
 		} catch (error) {
 			console.error(error);
 			if (errorToastRef.current) {
@@ -124,9 +119,9 @@ const WorkOrderDetail = ({ route }) => {
 					description: "Work Order deleted successfully!",
 				});
 			}
-			const timer = setTimeout(() => {
-				navigation.navigate("WorkOrderHome");
-			}, 4000);
+			setTimeout(() => {
+                navigation.goBack();
+            }, 3500);
 		} catch (error) {
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
@@ -165,10 +160,6 @@ const WorkOrderDetail = ({ route }) => {
 							style={styles.itemContainer}
 							onPress={() => {
 								setWorkOrderDetails((prevDetails) => {
-									if (prevDetails.length === 0) {
-                                        // If there are no details yet, just return the previous state
-                                        return prevDetails;
-                                    }
 									const newDetails = [...prevDetails];
 									newDetails[newDetails.length - 1].masterProductionScheduleId =
 										item.mpsID;
@@ -202,18 +193,25 @@ const WorkOrderDetail = ({ route }) => {
 							<Text className="flex font-psemibold text-black mr-4">
 								Work Order Status:
 							</Text>
-							<Picker
-                            selectedValue={selectedValue}
-                            onValueChange={(itemValue) => {
-                                console.log('onChangeValue called with:', itemValue);
-                                setSelectedValue(itemValue);
-                            }}
-                            style={{ flex: 1 }}
-                            >
-                            {items.map((item, index) => (
-                                <Picker.Item key={index} label={item.label} value={item.label} />
-                            ))}
-                        	</Picker>
+							<DropDownPicker
+								open={open}
+								value={value}
+								items={items}
+								setOpen={setOpen}
+								setValue={setValue}
+								setItems={setItems}
+								containerStyle={[styles.dropDownContainer, open && { zIndex: 1000 }]}
+        						style={styles.dropDown}
+        						itemStyle={{ justifyContent: 'flex-start' }}
+        						dropDownStyle={styles.dropDown}
+								onChangeValue={(value) => {
+									console.log("onChangeValue called with:", value);
+									setWorkOrder((prevState) => ({
+										...prevState,
+										workOrderStatus: value,
+									}));
+								}}
+							/>
 						</View>
 
 						{showStartPicker && (
@@ -238,33 +236,48 @@ const WorkOrderDetail = ({ route }) => {
 								}}
 							/>
 						)}
-					</Card>
-				</ScrollView>
-			</View>
 
-			<View style={{ marginBottom: 200, backgroundColor: "#fff" }}>
-				<ScrollView>
-					<Card style={styles.card}>
-						<View style={{ flexDirection: "row", alignItems: "center" }}>
-							<Text style={{ marginRight: 10 }}>Work Order Status:</Text>
+						<TouchableOpacity
+							style={styles.text}
+							onPress={() => setShowStartPicker(true)}
+						>
+							<View style={{ flexDirection: "row", marginTop: 5 }}>
+								<Text className="flex font-psemibold text-black mr-3">
+									Start Date:{" "}
+								</Text>
+								<Text className="flex font-psemi text-black mr-3">
+									{workOrder.dateStart
+										? new Date(workOrder.dateStart).toLocaleDateString()
+										: "Not selected"}
+								</Text>
+								<Image
+									source={icons.calendar}
+									className="w-6 h-6"
+									resizeMode="contain"
+								/>
+							</View>
+						</TouchableOpacity>
 
-							<Picker
-								selectedValue={selectedValue}
-								onValueChange={(itemValue) => {
-									console.log("onChangeValue called with:", itemValue);
-									setSelectedValue(itemValue);
+						{showEndPicker && (
+							<DateTimePicker
+								value={
+									workOrder.dateEnd ? new Date(workOrder.dateEnd) : new Date()
+								}
+								mode="date"
+								display="default"
+								onChange={(event, selectedDate) => {
+									setShowEndPicker(false);
+									if (selectedDate >= new Date(workOrder.dateStart)) {
+										setWorkOrder((prevState) => ({
+											...prevState,
+											dateEnd: selectedDate?.toISOString(),
+										}));
+									} else {
+										alert("End date cannot be before start date");
+									}
 								}}
-								style={{ flex: 1 }}
-							>
-								{items.map((item, index) => (
-									<Picker.Item
-										key={index}
-										label={item.label}
-										value={item.label}
-									/>
-								))}
-							</Picker>
-						</View>
+							/>
+						)}
 
 						<TouchableOpacity
 							style={styles.text}
@@ -401,34 +414,32 @@ const WorkOrderDetail = ({ route }) => {
 							</Card>
 						))}
 					</View>
-
-					<View>
-						<IconButton
-							title="Add Detail"
-							onPress={() =>
-								setWorkOrderDetails((prevState) => [
-									...prevState,
-									{
-										workOrderId: id,
-										masterProductionScheduleId: "",
-										note: "",
-										projectedProduction: "",
-										actualProduction: 0,
-										faultyProducts: 0,
-										actualProductionPrice: 0,
-										faultyProductPrice: 0,
-									},
-								])
-							}
-							iconName="plus-circle"
-						/>
-					</View>
 				</ScrollView>
 			</View>
 
+			<CustomButton
+              	icon={"plus"}
+            	iconSize={28}
+              	containerStyles="p-0 absolute bottom-28 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+              	isLoading={false}
+              	handlePress={() =>
+					setWorkOrderDetails((prevState) => [
+						...prevState,
+						{
+							workOrderId: id,
+							masterProductionScheduleId: "",
+							note: "",
+							projectedProduction: "",
+							actualProduction: 0,
+							faultyProducts: 0,
+							actualProductionPrice: 0,
+							faultyProductPrice: 0,
+						},])}
+            />
+
 			<View style={styles.buttonContainer}>
 				<IconButton
-					onPress={() => navigation.navigate("WorkOrderHome")}
+					onPress={() => navigation.navigate("WorkOrderPage")}
 					iconName="arrow-left"
 				/>
 				<IconButton
@@ -455,6 +466,14 @@ const WorkOrderDetail = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	dropDownContainer: {
+		height: 45, 
+		width: "45%",
+		zIndex: 2000,
+	},
+	dropDown: {
+		backgroundColor: "#FFA500",
+	},
 	buttonContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -507,4 +526,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default WorkOrderDetail;
+export default WorkOrderAC;
