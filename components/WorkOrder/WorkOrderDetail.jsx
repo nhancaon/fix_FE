@@ -1,39 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	ScrollView,
-	FlatList,
-	TouchableOpacity,
-	Alert,
-	TextInput,
-	Button,
-	SafeAreaView,
-	Image,
-} from "react-native";
-import {
-	deleteWorkOrder,
-	getWorkOrderDetail,
-	updateWorkOrder,
-} from "../../services/WorkOrderServices";
-import {
-	updateWorkOrderDetail,
-	createWorkOrderDetail,
-} from "../../services/WorkOrderDetailServices";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
+import { deleteWorkOrder, getWorkOrderDetail, updateWorkOrder } from "../../services/WorkOrderServices";
+import { createWorkOrderDetail } from "../../services/WorkOrderDetailServices";
 import { getAllMPS } from "../../services/MPSServices";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { Card } from "react-native-paper";
 import IconButton from "../../components/IconButton";
-import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { icons } from "../../constants";
 import AppLoader from "../AppLoader";
 import AlertWithTwoOptions from "../AlertWithTwoOptions";
 import ToastMessage from "../ToastMessage";
-import { set } from "date-fns";
+import CustomButton from "../CustomButton";
 import { Picker } from "@react-native-picker/picker";
+
+
 const WorkOrderDetail = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
@@ -419,30 +401,29 @@ const WorkOrderDetail = ({ route }) => {
 							</Card>
 						))}
 					</View>
-
-					<View>
-						<IconButton
-							title="Add Detail"
-							onPress={() =>
-								setWorkOrderDetails((prevState) => [
-									...prevState,
-									{
-										workOrderId: id,
-										masterProductionScheduleId: "",
-										note: "",
-										projectedProduction: "",
-										actualProduction: 0,
-										faultyProducts: 0,
-										actualProductionPrice: 0,
-										faultyProductPrice: 0,
-									},
-								])
-							}
-							iconName="plus-circle"
-						/>
-					</View>
 				</ScrollView>
 			</View>
+
+			<CustomButton
+				icon={"plus"}
+				iconSize={28}
+				containerStyles="p-0 absolute bottom-28 self-end right-10 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+				isLoading={false}
+				handlePress={() =>
+					setWorkOrderDetails((prevState) => [
+						...prevState,
+						{
+							workOrderId: id,
+							masterProductionScheduleId: "",
+							note: "",
+							projectedProduction: "",
+							actualProduction: 0,
+							faultyProducts: 0,
+							actualProductionPrice: 0,
+							faultyProductPrice: 0,
+						},
+					])}
+			/>
 
 			<View style={styles.buttonContainer}>
 				<IconButton
