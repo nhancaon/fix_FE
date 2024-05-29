@@ -8,12 +8,14 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-nativ
 import { getAllProduct } from '../../services/ProductServices';
 import { FormField, ToastMessage } from "../../components";
 import CustomAlert from "../../components/CustomAlert";
+import { set } from 'date-fns';
 
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();
     const successToastRef = useRef(null);
     const errorToastRef = useRef(null);
     const [products, setProducts] = useState([]);
+    const [timeProduction, setTimeProduction] = useState(0);
     const [dateStart, setDateStart] = useState(new Date().toISOString().split('T')[0]);
     const [dateEnd, setDateEnd] = useState(new Date().toISOString().split('T')[0]);
     const [mpsRequest, setMPSRequest] = useState({
@@ -41,7 +43,8 @@ const MPSCreateForm = () => {
             console.log("response: ",response);
             const products = response.result.map(product => ({
                 id: product.id,
-                name: product.name
+                name: product.name,
+                timeProduction: product.bom && product.bom.timeProduction ? product.bom.timeProduction : 0
             }));
             setProducts(products);
         };
@@ -104,7 +107,11 @@ const MPSCreateForm = () => {
                         {products.map((product, index) => (
                             <TouchableOpacity 
                                 key={index} 
-                                onPress={() => setMPSRequest(prevState => ({ ...prevState, productId: product.id, productName: product.name }))}>
+                                onPress={() => {
+                                    setMPSRequest(prevState => ({ ...prevState, productId: product.id, productName: product.name}));
+                                    setTimeProduction(product.timeProduction);
+                                    console.log("timeProduction: ", product.timeProduction);
+                                }}>
                                 <View style={{ borderBottomWidth: 1, margin: 10 }}>
                                     <Text>Product ID: {product.id}</Text>
                                     <Text>Product Name: {product.name}</Text>
@@ -151,7 +158,16 @@ const MPSCreateForm = () => {
                             value={mpsRequest?.quantity ? mpsRequest.quantity.toString() : ''}
                             otherStyles="mt-3"
                             edit={true}
-                            handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, quantity: parseInt(text) }))}
+                            handleChangeText={text => {
+                                const newQuantity = parseInt(text);
+                                setMPSRequest(prevState => ({ 
+                                    ...prevState, 
+                                    quantity: newQuantity,
+                                    
+                                }));
+                                setMPSRequest(prevState => ({ ...prevState, requireTime: newQuantity *  timeProduction}));
+                                console.log("requireTime: ", mpsRequest.requireTime);
+                            }}
                         />
 
                         <Card.Title title="Additional Details" titleStyle={styles.title}/>
@@ -163,7 +179,6 @@ const MPSCreateForm = () => {
                                     value={mpsRequest?.requireTime ? mpsRequest.requireTime.toString() : ''}
                                     otherStyles="mt-3"
                                     edit={true}
-                                    handleChangeText={text => setMPSRequest(prevState => ({ ...prevState, requireTime: text }))}
                                 />
 
                                 <FormField

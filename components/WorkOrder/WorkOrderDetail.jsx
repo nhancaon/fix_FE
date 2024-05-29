@@ -304,6 +304,7 @@ const WorkOrderDetail = ({ route }) => {
 										onChangeText={(text) => {
 											const newDetails = [...workOrderDetails];
 											newDetails[index].actualProduction = Number(text);
+											newDetails[index].actualProductionPrice = Number(text) * detail.productPrice;
 											setWorkOrderDetails(newDetails);
 										}}
 									/>
@@ -315,11 +316,8 @@ const WorkOrderDetail = ({ route }) => {
 									<TextInput
 										style={{ fontSize: 14 }}
 										value={String(detail.actualProductionPrice)}
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].actualProductionPrice = Number(text);
-											setWorkOrderDetails(newDetails);
-										}}
+										editable={false}
+			
 									/>
 								</View>
 								<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -329,11 +327,8 @@ const WorkOrderDetail = ({ route }) => {
 									<TextInput
 										style={{ fontSize: 14 }}
 										value={String(detail.faultyProductPrice)}
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].faultyProductPrice = Number(text);
-											setWorkOrderDetails(newDetails);
-										}}
+										editable={false}
+										
 									/>
 								</View>
 								<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -346,6 +341,7 @@ const WorkOrderDetail = ({ route }) => {
 										onChangeText={(text) => {
 											const newDetails = [...workOrderDetails];
 											newDetails[index].faultyProducts = Number(text);
+											newDetails[index].faultyProductPrice = Number(text) * detail.productPrice;
 											setWorkOrderDetails(newDetails);
 										}}
 									/>
@@ -359,8 +355,7 @@ const WorkOrderDetail = ({ route }) => {
 										value={String(detail.masterProductionScheduleId)}
 										onChangeText={(text) => {
 											const newDetails = [...workOrderDetails];
-											newDetails[index].masterProductionScheduleId =
-												Number(text);
+											newDetails[index].masterProductionScheduleId = detail.faultyProducts * detail.productPrice;	
 											setWorkOrderDetails(newDetails);
 										}}
 									/>
