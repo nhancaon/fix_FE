@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
 import { creatWorkOrder } from "../../services/WorkOrderServices";
-import { createWorkOrderDetail } from "../../services/WorkOrderDetailServices";
+import { createWorkOrderDetail, sumProjectedProductionByMPS } from "../../services/WorkOrderDetailServices";
 import { getAllMPS } from "../../services/MPSServices";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -52,8 +52,8 @@ const CreateWorkOrder = () => {
 	)?.label;
 
 	const [selectedValue, setSelectedValue] = useState(initialLabel);
-	
-
+	const [selectedMps, setSelectedMps] = useState(null);
+	const [sumProjectedProduction, setSumProjectedProduction] = useState(0);
 	const [modalVisible, setModalVisible] = useState(false);
   	const [errorMessage, setErrorMessage] = useState("");
   	const [alertMessage1, setAlertMessage1] = useState("");
@@ -77,49 +77,50 @@ const CreateWorkOrder = () => {
 	  };
 
 	const handleSave = async () => {
-		try {
-			setLoading(true);
-			const WO = await creatWorkOrder(token, workOrder);
-			if (WO && WO.result) {
-				const WOID = WO.result;
-				console.log("WOID: ", WOID);
-				const newWorkOrderDetails = workOrderDetails.map((detail) => ({
-					...detail,
-					workOrderId: WOID,
-				}));
+		console.log('mps', mps);
+		// try {
+		// 	setLoading(true);
+		// 	const WO = await creatWorkOrder(token, workOrder);
+		// 	if (WO && WO.result) {
+		// 		const WOID = WO.result;
+		// 		console.log("WOID: ", WOID);
+		// 		const newWorkOrderDetails = workOrderDetails.map((detail) => ({
+		// 			...detail,
+		// 			workOrderId: WOID,
+		// 		}));
 
-				setWorkOrderDetails(newWorkOrderDetails);
-				console.log(newWorkOrderDetails);
-				const WODetail = await createWorkOrderDetail(
-					token,
-					newWorkOrderDetails
-				);
-				console.log(WODetail);
-				if (successToastRef.current) {
-					successToastRef.current.show({
-						type: "success",
-						text: "Success",
-						description: "MPS created successfully!",
-					});
-				}
-				const timer = setTimeout(() => {
-					navigation.navigate("WorkOrderHome");
-				}, 4000);
-			} else {
-				if (errorToastRef.current) {
-					errorToastRef.current.show({
-						type: "danger",
-						text: "Error",
-						description:
-							"API call failed, WO or WO.result is null or undefined!",
-					});
-				}
-			}
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
+		// 		setWorkOrderDetails(newWorkOrderDetails);
+		// 		console.log(newWorkOrderDetails);
+		// 		const WODetail = await createWorkOrderDetail(
+		// 			token,
+		// 			newWorkOrderDetails
+		// 		);
+		// 		console.log(WODetail);
+		// 		if (successToastRef.current) {
+		// 			successToastRef.current.show({
+		// 				type: "success",
+		// 				text: "Success",
+		// 				description: "MPS created successfully!",
+		// 			});
+		// 		}
+		// 		const timer = setTimeout(() => {
+		// 			navigation.navigate("WorkOrderHome");
+		// 		}, 4000);
+		// 	} else {
+		// 		if (errorToastRef.current) {
+		// 			errorToastRef.current.show({
+		// 				type: "danger",
+		// 				text: "Error",
+		// 				description:
+		// 					"API call failed, WO or WO.result is null or undefined!",
+		// 			});
+		// 		}
+		// 	}
+		// } catch (error) {
+		// 	console.error(error);
+		// } finally {
+		// 	setLoading(false);
+		// }
 	};
 
 	return (
@@ -144,7 +145,10 @@ const CreateWorkOrder = () => {
 						<TouchableOpacity
 							key={index.toString()}
 							style={styles.itemContainer}
-							onPress={() => {
+							onPress={ async () => {
+								setSelectedMps(item);
+								const result = await sumProjectedProductionByMPS(token, item.mpsID);
+								setSumProjectedProduction(result.result);
 								setWorkOrderDetails((prevDetails) => {
 									if (prevDetails.length === 0) {
                                         // If there are no details yet, just return the previous state
@@ -318,12 +322,16 @@ const CreateWorkOrder = () => {
 								/>
 
 								<FormField
-            						title="Projected Production"
+            						title={`Projected Production (Already planned in MPS: ${sumProjectedProduction})`}
             						placeholder={"Projected Production"}
             						handleChangeText={(text) => {
-										const newDetails = [...workOrderDetails];
-										newDetails[index].projectedProduction = text;
-										setWorkOrderDetails(newDetails);
+										if (selectedMps && parseInt(text) > selectedMps.quantity) {
+											alert('Projected Production cannot be greater than MPS Quantity. Please enter a valid value.');
+										} else {
+											const newDetails = [...workOrderDetails];
+											newDetails[index].projectedProduction = text;
+											setWorkOrderDetails(newDetails);
+										}
 									}}
             						otherStyles="mt-3"
             						edit={true}

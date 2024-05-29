@@ -146,13 +146,14 @@ function CreateBOM({ route }) {
 				materialVolume: 0,
 			},
 			quantity: newMaterialQuantity, // You can replace this with the appropriate value
-			totalUnitPrice: null,
+			totalUnitPrice: newMaterialPrice * newMaterialQuantity,
 		};
 
 		// setMaterials([...materials, newMaterial]);
 		setBomDetail((prevState) => ({
 			...prevState,
 			bomDetails: [...prevState.bomDetails, newMaterial],
+			totalPrice: prevState.totalPrice ? prevState.totalPrice + newMaterial.totalUnitPrice : newMaterial.totalUnitPrice,
 		}));
 
 		console.log("materials: ", materials);

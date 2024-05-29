@@ -23,3 +23,15 @@ export const updateWorkOrderDetail = async (token, req) => {
         console.log("Error at WorkOrderDetail Service: ", e);
     }
 }
+
+export const sumProjectedProductionByMPS = async (token, idmps) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const res = await http.get(`/api/WorkOrderDetail/sumProjectedProductionByMasterProductionSchedule/${idmps}`, config);
+        return res;
+    } catch (e) {
+        console.log("Error at WorkOrderDetail Service: ", e);
+    }
+}
