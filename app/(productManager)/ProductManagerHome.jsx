@@ -17,6 +17,7 @@ import { Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppLoader } from "../../components";
 import { Chatbot } from "../../services/ChatbotServices";
+import { CustomButton } from "../../components";
 
 const ProductManagerHome = () => {
 	const { token, userId } = useGlobalContext();
@@ -136,7 +137,6 @@ const ProductManagerHome = () => {
 									borderWidth: 0,
 									marginBottom: 10,
 									color: "white",
-									maxHeight: 100,
 								}}
 							>
 								{response}
@@ -158,27 +158,49 @@ const ProductManagerHome = () => {
 					borderRadius: 10,
 					padding: 10,
 					backgroundColor: "#000",
+					marginTop: 20,
 				}}
 			>
 				<Text style={{ fontWeight: "bold", margin: 0, color: "white" }}>
 					You:{" "}
 				</Text>
-				<TextInput
-					style={{
-						height: 40,
-						backgroundColor: "#fff",
-						borderColor: "gray",
-						borderWidth: 1,
-						borderRadius: 5,
-						paddingHorizontal: 10,
-						margin: 10,
-					}}
-					value={input}
-					onChangeText={handleInputChange}
-					placeholder="Enter chat content here..."
-				/>
+				<View className="flex-row mb-2">
+					<ScrollView
+						style={{
+							maxHeight: 180,
+							marginBottom: 3,
+						}}
+						contentContainerStyle={{ padding: 2 }}
+						nestedScrollEnabled={true}
+					>
+						<TextInput
+							style={{
+								height: 40,
+								backgroundColor: "#fff",
+								borderColor: "gray",
+								borderWidth: 1,
+								borderRadius: 5,
+								paddingHorizontal: 10,
+								margin: 10,
+							}}
+							multiline
+							value={input}
+							onChangeText={handleInputChange}
+							placeholder="Enter chat content here..."
+							placeholderTextColor="white"
+						/>
+					</ScrollView>
+					<CustomButton
+						icon={"arrow-up"}
+						iconSize={25}
+						containerStyles="p-0 self-end right-4 h-12 w-12 rounded-full bg-slate-500 items-center justify-center ml-5"
+						handlePress={() => {
+							handleSubmit();
+							setInput("");
+						}}
+					/>
+				</View>
 			</Card>
-			<Button title="Submit" onPress={handleSubmit} color="orange" />
 		</SafeAreaView>
 	);
 };
