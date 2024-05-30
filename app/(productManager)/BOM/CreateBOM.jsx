@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, StyleSheet, FlatList, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import IconButton from "../../components/IconButton";
-import { useGlobalContext } from "../../context/GlobalProvider";
+import IconButton from "../../../components/IconButton";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 import { Picker } from "@react-native-picker/picker";
 import { Card, Title, Paragraph, List, DataTable } from "react-native-paper";
 import BOMDetail from "./BOMDetail";
-import { createBOM } from "../../services/BOMServices";
-import FormField from "../FormField";
-import AppLoader from "../AppLoader";
-import ToastMessage from "../ToastMessage";
+import { createBOM } from "../../../services/BOMServices";
+import FormField from "../../../components/FormField";
+import AppLoader from "../../../components/AppLoader";
+import ToastMessage from "../../../components/ToastMessage";
 
 function CreateBOM({ route }) {
 	const navigation = useNavigation();

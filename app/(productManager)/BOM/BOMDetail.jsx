@@ -1,23 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	StyleSheet,
-	FlatList,
-	Alert,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, FlatList, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import IconButton from "../../components/IconButton";
-import { useGlobalContext } from "../../context/GlobalProvider";
-import { getBOMDetail, updateBOM, deleteBOM } from "../../services/BOMServices";
 import { Picker } from "@react-native-picker/picker";
 import { Card, Title, DataTable } from "react-native-paper";
-import FormField from "../../components/FormField";
-import CustomButton from "../../components/CustomButton";
-import AlertWithTwoOptions from "../../components/AlertWithTwoOptions";
-import AppLoader from "../AppLoader";
-import ToastMessage from "../../components/ToastMessage";
+import IconButton from "../../../components/IconButton";
+import { useGlobalContext } from "../../../context/GlobalProvider";
+import { getBOMDetail, updateBOM, deleteBOM } from "../../../services/BOMServices";
+import FormField from "../../../components/FormField";
+import AlertWithTwoOptions from "../../../components/AlertWithTwoOptions";
+import AppLoader from "../../../components/AppLoader";
+import ToastMessage from "../../../components/ToastMessage";
 
 function BOMDetail({ route }) {
 	const navigation = useNavigation();

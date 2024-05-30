@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {  createMPS } from '../../services/MPSServices'
-import { useGlobalContext } from '../../context/GlobalProvider';
-import IconButton from '../../components/IconButton';
+import { createMPS } from '../../../services/MPSServices'
+import { useGlobalContext } from '../../../context/GlobalProvider';
+import IconButton from '../../../components/IconButton';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
-import { getAllProduct } from '../../services/ProductServices';
-import { FormField, ToastMessage } from "../../components";
-import CustomAlert from "../../components/CustomAlert";
-import { set } from 'date-fns';
+import { getAllProduct } from '../../../services/ProductServices';
+import { FormField, ToastMessage } from "../../../components";
+import CustomAlert from "../../../components/CustomAlert";
 
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();

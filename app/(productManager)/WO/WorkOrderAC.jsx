@@ -1,35 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	ScrollView,
-	TouchableOpacity,
-	TextInput,
-	Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
 import {
 	deleteWorkOrder,
 	getWorkOrderDetail,
 	updateWorkOrder,
-} from "../../services/WorkOrderServices";
-import {
-	updateWorkOrderDetail,
-	createWorkOrderDetail,
-} from "../../services/WorkOrderDetailServices";
-import { getAllMPS } from "../../services/MPSServices";
+} from "../../../services/WorkOrderServices";
+import { createWorkOrderDetail } from "../../../services/WorkOrderDetailServices";
+import { getAllMPS } from "../../../services/MPSServices";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useGlobalContext } from "../../context/GlobalProvider";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 import { Card } from "react-native-paper";
-import IconButton from "../../components/IconButton";
+import IconButton from "../../../components/IconButton";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { icons } from "../../constants";
-import AppLoader from "../AppLoader";
-import AlertWithTwoOptions from "../AlertWithTwoOptions";
-import ToastMessage from "../ToastMessage";
-import CustomButton from "../CustomButton";
-import { set } from "date-fns";
+import { icons } from "../../../constants";
+import AppLoader from "../../../components/AppLoader";
+import AlertWithTwoOptions from "../../../components/AlertWithTwoOptions";
+import ToastMessage from "../../../components/ToastMessage";
+import CustomButton from "../../../components/CustomButton";
 
 const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();

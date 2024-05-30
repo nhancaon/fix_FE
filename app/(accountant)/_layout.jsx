@@ -11,7 +11,7 @@ import ProfilePage from "./Profile/ProfilePage";
 import AccountantHome from "./AccountantHome";
 import Inventory from "./InventoryPage";
 import WorkOrderPage from "./WordOrderPage";
-import WorkOrderAC from "../../components/WorkOrder/WorkOrderAC";
+import WorkOrderAC from "../(productManager)/WO/WorkOrderAC";
 import SignIn from "../(auth)/sign-in";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { AuthContext } from "../../store/AuthContext";
