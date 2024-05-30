@@ -9,6 +9,8 @@ import { getAllProduct } from '../../../services/ProductServices';
 import { FormField, ToastMessage } from "../../../components";
 import CustomAlert from "../../../components/CustomAlert";
 
+// Master Production Schedule create page
+// Author: Pham Van Cao
 const MPSCreateForm = () => {
     const { token, userId  } = useGlobalContext();
     const successToastRef = useRef(null);
@@ -35,9 +37,13 @@ const MPSCreateForm = () => {
     const [alertMessage1, setAlertMessage1] = useState("");
     const [alertMessage2, setAlertMessage2] = useState("");
     
+    // Fetch all products
+    // Author: Pham Van Cao
     useEffect(() => {
         const fetchData = async () => {
             console.log("dateStart: ", dateStart);
+            // Get all products
+            // Author: Pham Van Cao
             const response = await getAllProduct(token);
             console.log("response: ",response);
             const products = response.result.map(product => ({
@@ -50,9 +56,13 @@ const MPSCreateForm = () => {
         fetchData();
     }, []);
     
+    // Save Master Production Schedule
+    // Author: Pham Van Cao
     const handleSave = async () => {
         console.log("mpsRequest: ",mpsRequest);
         try {
+            // Create Master Production Schedule
+            // Author: Pham Van Cao
             const response = await createMPS(token, mpsRequest);
             console.log("response: ",response);
             if (successToastRef.current) {
@@ -70,6 +80,8 @@ const MPSCreateForm = () => {
         }
     };
 
+    // Handle start date change
+    // Author: Pham Hien Nhan
     const handleStartDateChange = (selectedDate) => {
         if (selectedDate <= dateEnd) {
             setDateStart(selectedDate || dateStart);
@@ -82,6 +94,8 @@ const MPSCreateForm = () => {
         }
     };
     
+    // Handle end date change
+    // Author: Pham Hien Nhan
     const handleEndDateChange = (selectedDate) => {
         if (selectedDate >= dateStart) {
             setDateEnd(selectedDate || dateEnd);
@@ -94,6 +108,8 @@ const MPSCreateForm = () => {
         }
     };
     
+    // Handle close alert box
+    // Author: Pham Hien Nhan
     const handCloseAlertBox = () => {
         setModalVisible(false); 
     };

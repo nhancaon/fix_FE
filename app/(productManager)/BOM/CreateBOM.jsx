@@ -11,6 +11,8 @@ import FormField from "../../../components/FormField";
 import AppLoader from "../../../components/AppLoader";
 import ToastMessage from "../../../components/ToastMessage";
 
+// Create BOM page
+// Author: Pham Van Cao
 function CreateBOM({ route }) {
 	const navigation = useNavigation();
 	const { token, userId } = useGlobalContext();
@@ -35,10 +37,13 @@ function CreateBOM({ route }) {
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
 
+	// Set the default unit to "g" when the component mounts
 	useEffect(() => {
 		setNewMaterialUnit("g");
 	}, []);
 
+	// Create the request body for the createBOM API
+	// Author: Pham Van Cao
 	const createRequestBody = (bomDetail) => {
 		const requestBody = {
 			productManagerId: userId,
@@ -64,6 +69,8 @@ function CreateBOM({ route }) {
 		return requestBody;
 	};
 
+	// Handle deleting a material from the BOM
+	// Author: Pham Van Cao
 	const handleDeleteMaterial = (index) => {
 		Alert.alert(
 			"Delete Material",
@@ -85,16 +92,25 @@ function CreateBOM({ route }) {
 		);
 	};
 
+	// Handle input change for the BOM details
+	// Author: Pham Van Cao
 	const handleInputChange = (name, value) => {
 		setBomDetail((prevState) => ({ ...prevState, [name]: value }));
 		console.log("BOMUpdate: ", BOMDetail);
 	};
 
+	// Handle saving the BOM
+	// Author: Pham Van Cao
 	const handleSave = async () => {
 		try {
 			setLoading(true);
+			// Create the request body
+			// Author: Pham Van Cao
 			const requestBody = createRequestBody(bomDetail);
 			console.log("requestBody:", requestBody);
+
+			// Create the new BOM
+			// Author: Pham Van Cao
 			const res = await createBOM(token, requestBody);
 			if (res.result === null) {
 				if (successToastRef.current) {
@@ -122,6 +138,8 @@ function CreateBOM({ route }) {
 		setTempDeletedMaterials([]);
 	};
 
+	// Handle adding a new material to the BOM
+	// Author: Pham Van Cao
 	const handleAddMaterial = () => {
 		console.log("newMaterialName:", newMaterialName);
 		console.log("newMaterialPrice:", newMaterialPrice);
