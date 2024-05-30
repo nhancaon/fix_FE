@@ -15,7 +15,8 @@ import ToastMessage from "../../../components/ToastMessage";
 import CustomButton from "../../../components/CustomButton";
 import { Picker } from "@react-native-picker/picker";
 
-
+// Work Order Detail page
+// Author: Pham Van Cao
 const WorkOrderDetail = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
@@ -33,9 +34,7 @@ const WorkOrderDetail = ({ route }) => {
 		{ label: "Processing", value: "processing" },
 		{ label: "Finish", value: "PMcheck" },
 	]);
-	const [confirmationModalVisible, setConfirmationModalVisible] =
-		useState(false);
-
+	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
 	const initialLabel = items.find(
@@ -44,18 +43,25 @@ const WorkOrderDetail = ({ route }) => {
 
 	const [selectedValue, setSelectedValue] = useState(initialLabel);
 
+	// Set the value of the Picker when the workOrderStatus changes
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
 	}, [workOrder.workOrderStatus]);
 
+	// Set the value of the Picker when the workOrderStatus changes
+	// Author: Pham Van Cao
 	useFocusEffect(
 		React.useCallback(() => {
 			const fetchData = async () => {
 				setLoading(true);
+				// Get the work order details
+				// Author: Pham Van Cao
 				const response = await getWorkOrderDetail(token, id);
 				setWorkOrder(response.result.workOrder);
 				setWorkOrderDetails(response.result.workOrderDetails);
 
+				// Get all MPS
+				// Author: Pham Van Cao
 				const mpsResponse = await getAllMPS(token);
 				setMPS(mpsResponse.result);
 				setLoading(false);
@@ -64,12 +70,17 @@ const WorkOrderDetail = ({ route }) => {
 		}, [token, userId])
 	);
 
+	// Save the work order
+	// Author: Pham Van Cao
 	const handleSave = async () => {
 		try {
 			setLoading(true);
 			console.log("workOrder: ", workOrder);
 			console.log("workOrderDetails: ", workOrderDetails);
+			// Update the work order
 			const response = await updateWorkOrder(token, workOrder);
+
+			// Create the work order details
 			const responseDT = await createWorkOrderDetail(token, workOrderDetails);
 			console.log("response: ", response);
 			console.log("responseDT: ", responseDT);
@@ -97,9 +108,13 @@ const WorkOrderDetail = ({ route }) => {
 		}
 	};
 
+	// Delete the work order
+	// Author: Pham Van Cao
 	const handleDelete = async () => {
 		try {
 			setLoading(true);
+			// Delete the work order
+			// Author: Pham Van Cao
 			const response = await deleteWorkOrder(token, id);
 			console.log("response: ", response);
 			if (successToastRef.current) {

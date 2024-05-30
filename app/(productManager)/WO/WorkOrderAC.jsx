@@ -19,6 +19,8 @@ import AlertWithTwoOptions from "../../../components/AlertWithTwoOptions";
 import ToastMessage from "../../../components/ToastMessage";
 import CustomButton from "../../../components/CustomButton";
 
+// Work Order AC page
+// Author: Nguyen Cao Nhan
 const WorkOrderAC = ({ route }) => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
@@ -36,24 +38,30 @@ const WorkOrderAC = ({ route }) => {
 		{ label: "Processing", value: "processing" },
 		{ label: "Finish", value: "ACcheck" },
 	]);
-	const [confirmationModalVisible, setConfirmationModalVisible] =
-		useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
 
+	// Set the value of the dropdown to the work order status
 	useEffect(() => {
 		setValue(workOrder.workOrderStatus);
 	}, [workOrder.workOrderStatus]);
 
+	// Fetch work order details and master production schedules
+	// Author: Nguyen Cao Nhan
 	useFocusEffect(
 		React.useCallback(() => {
 			const fetchData = async () => {
 				setLoading(true);
+				// Get work order details 
+				// Author: Nguyen Cao Nhan
 				const response = await getWorkOrderDetail(token, id);
 				setWorkOrder(response.result.workOrder);
 				setWorkOrderDetails(response.result.workOrderDetails);
 
+				// Get all master production schedules
+				// Author: Nguyen Cao Nhan
 				const mpsResponse = await getAllMPS(token);
 				setMPS(mpsResponse.result);
 				setLoading(false);
@@ -62,12 +70,19 @@ const WorkOrderAC = ({ route }) => {
 		}, [token, userId])
 	);
 
+	// Handle save work order
+	// Author: Nguyen Cao Nhan
 	const handleSave = async () => {
 		try {
 			setLoading(true);
 			console.log("workOrder: ", workOrder);
 			console.log("workOrderDetails: ", workOrderDetails);
+			// Update work order
+			// Author: Nguyen Cao Nhan
 			const response = await updateWorkOrder(token, workOrder);
+
+			// Create work order details
+			// Author: Nguyen Cao Nhan
 			const responseDT = await createWorkOrderDetail(token, workOrderDetails);
 			console.log("response: ", response);
 			console.log("responseDT: ", responseDT);
@@ -95,6 +110,8 @@ const WorkOrderAC = ({ route }) => {
 		}
 	};
 
+	// Handle delete work order
+	// Author: Nguyen Cao Nhan
 	const handleDelete = async () => {
 		try {
 			setLoading(true);

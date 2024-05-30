@@ -14,6 +14,9 @@ import ToastMessage from "../../../components/ToastMessage";
 import CustomButton from ".../../../components/CustomButton";
 import FormField from "../../../components/FormField";
 import CustomAlert from "../../../components/CustomAlert";
+
+// Create Work Order page for Product Manager
+// Author: Pham Van Cao
 const CreateWorkOrder = () => {
 	const [loading, setLoading] = useState(true);
 	const successToastRef = useRef(null);
@@ -58,10 +61,14 @@ const CreateWorkOrder = () => {
   	const [alertMessage1, setAlertMessage1] = useState("");
   	const [alertMessage2, setAlertMessage2] = useState("");
 
+	// Fetch all MPS data
+	// Author: Pham Van Cao
 	useFocusEffect(
 		React.useCallback(() => {
 			const fetchData = async () => {
 				setLoading(true);
+				// Fetch all MPS data
+				// Author: Pham Van Cao
 				const mpsData = await getAllMPS(token);
 				setMPS(mpsData.result);
 				setLoading(false);
@@ -71,6 +78,8 @@ const CreateWorkOrder = () => {
 		}, [token, userId])
 	);
 
+	// Handle close modal
+	// Author: Pham Hien Nhan
 	const handleClose = () => {
 		setModalVisible(false); 
 	  };
