@@ -3,7 +3,10 @@ import { Text, View, Image } from "react-native";
 import "react-native-gesture-handler";
 import { SimpleLineIcons, MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DrawerItemList, createDrawerNavigator } from "@react-navigation/drawer";
+import {
+	DrawerItemList,
+	createDrawerNavigator,
+} from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { images } from "../../constants";
 
@@ -11,7 +14,7 @@ import ProfilePage from "./Profile/ProfilePage";
 import AccountantHome from "./AccountantHome";
 import Inventory from "./InventoryPage";
 import WorkOrderPage from "./WordOrderPage";
-import WorkOrderAC from "../(productManager)/WO/WorkOrderAC";
+import WorkOrderAC from "./WO/WorkOrderAC";
 import SignIn from "../(auth)/sign-in";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { AuthContext } from "../../store/AuthContext";
@@ -27,7 +30,10 @@ const Stack = createNativeStackNavigator();
 // Work Order of AC stack page directions
 // Author: Nguyen Cao Nhan
 const WorkOrderPageStack = () => (
-	<Stack.Navigator initialRouteName="WorkOrderPage" screenOptions={{ headerShown: false }} >
+	<Stack.Navigator
+		initialRouteName="WorkOrderPage"
+		screenOptions={{ headerShown: false }}
+	>
 		<Stack.Screen name="WorkOrderPage" component={WorkOrderPage} />
 		<Stack.Screen name="WorkOrderAC" component={WorkOrderAC} />
 	</Stack.Navigator>

@@ -10,10 +10,18 @@ import {
 	deleteSaleForecast,
 	updateSaleForecast,
 } from "../../services/SaleForecastService";
-import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFModal, LeftSwipe } from "../../components";
+import {
+	CustomButton,
+	AppLoader,
+	ToastMessage,
+	AlertWithTwoOptions,
+	SFModal,
+	LeftSwipe,
+} from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
 import dateUtilsInstance from "../../utils/DateUtils";
+import { th } from "date-fns/locale";
 
 // Sale Forecast Page
 // Author: Nguyen Cao Nhan
@@ -24,7 +32,8 @@ const SaleForecast = () => {
 	const [error, setError] = useState(null);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
-	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false);
 	const [sfModalVisible, setsfModalVisible] = useState(false);
 	const [id, setId] = useState(false);
 	const [startDate, setStartDate] = useState(new Date());
@@ -68,13 +77,23 @@ const SaleForecast = () => {
 
 	// Handle edit press
 	const handleEditPress = (item) => {
-		setsfModalVisible(true);
-		setId(item.id);
-		setStartDate(new Date(item.dateStart));
-		if (item.dateEnd === null) {
-			setEndDate(new Date(item.dateStart));
-		} else {
-			setEndDate(new Date(item.dateEnd));
+		try {
+			setsfModalVisible(true);
+			setId(item.id);
+			setStartDate(new Date(item.dateStart));
+			if (item.dateEnd === null) {
+				setEndDate(new Date(item.dateStart));
+			} else {
+				setEndDate(new Date(item.dateEnd));
+			}
+		} catch (error) {
+			if (successToastRef.current) {
+				successToastRef.current.show({
+					type: "error",
+					text: "Error",
+					description: error.message,
+				});
+			}
 		}
 	};
 
@@ -144,16 +163,13 @@ const SaleForecast = () => {
 	async function upSaleForecast(dateStart, dateEnd) {
 		try {
 			setLoading(true);
+			if (dateEnd < dateStart) {
+				throw new Error("End date must be greater than start date");
+			}
 			// Update sale forecast in database
 			const up_res = await updateSaleForecast(token, id, dateStart, dateEnd);
 			if (!up_res) {
-				if (errorToastRef.current) {
-					errorToastRef.current.show({
-						type: "danger",
-						text: "Error",
-						description: "Fail to update!",
-					});
-				}
+				throw new Error("Fail to update!");
 			} else {
 				if (successToastRef.current) {
 					successToastRef.current.show({
@@ -165,12 +181,18 @@ const SaleForecast = () => {
 				await fetchData();
 			}
 		} catch (error) {
-			Alert.alert("Error", "Failed to update sale forecast");
+			if (errorToastRef.current) {
+				errorToastRef.current.show({
+					type: "danger",
+					text: "Error",
+					description: error.message,
+				});
+			}
 		} finally {
 			setLoading(false);
 		}
 	}
-	
+
 	return (
 		<>
 			<SafeAreaView style={styles.backgroundColor}>

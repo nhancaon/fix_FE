@@ -10,7 +10,14 @@ import {
 	addSaleForecastDetail,
 	updateSaleForecastDetail,
 } from "../../services/SaleForecastDetailService";
-import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, SFDModal, LeftSwipe } from "../../components";
+import {
+	CustomButton,
+	AppLoader,
+	ToastMessage,
+	AlertWithTwoOptions,
+	SFDModal,
+	LeftSwipe,
+} from "../../components";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "react-native-paper";
@@ -24,7 +31,8 @@ const SaleForecastDetail = ({ route }) => {
 	const [loading, setLoading] = useState(true);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
-	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false);
 	const [sfdModalVisible, setsfdModalVisible] = useState(false);
 	const [id, setId] = useState(false);
 	const [dataProducts, setDataProducts] = useState([]);
@@ -222,6 +230,9 @@ const SaleForecastDetail = ({ route }) => {
 	async function upSaleForecastDetail(quantity, totalPrice, totalSalePrice) {
 		try {
 			setLoading(true);
+			if (quantity <= 0) {
+				throw new Error("Quantity must > 0");
+			}
 			// Update Sale Forecast Detail in database
 			const up_res = await updateSaleForecastDetail(
 				token,
@@ -250,14 +261,14 @@ const SaleForecastDetail = ({ route }) => {
 				errorToastRef.current.show({
 					type: "danger",
 					text: "Error",
-					description: error.ToastMessage,
+					description: error.message,
 				});
 			}
 		} finally {
 			setLoading(false);
 		}
 	}
-	
+
 	return (
 		<SafeAreaView style={styles.backgroundColor}>
 			<View style={{ paddingLeft: 10 }}>
