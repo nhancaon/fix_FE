@@ -145,7 +145,7 @@ const ChairmanLayout = () => {
 				name="SaleForecast Report"
 				options={{
 					drawerLabel: "Sale Report",
-					title: "SaleForecast Report",
+					title: "Sale Forecast Report",
 					headerShadowVisible: false,
 					drawerIcon: () => (
 						<MaterialIcons name="edit-calendar" size={20} color={"#ff9c01"} />

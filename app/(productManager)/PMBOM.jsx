@@ -1,15 +1,11 @@
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import {
-	getAllBOMs,
-	getBOMlikeName,
-	getBOMsByStatus,
-} from "../../services/BOMServices";
+import { getAllBOMs, getBOMsByStatus } from "../../services/BOMServices";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { Card } from "react-native-paper";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { CustomButton, AppLoader, ToastMessage } from "../../components";
+import { CustomButton } from "../../components";
 
 const PMBOM = () => {
 	const [loading, setLoading] = useState(true);
