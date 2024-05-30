@@ -321,6 +321,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 										onChangeText={(text) => {
 											const newDetails = [...workOrderDetails];
 											newDetails[index].actualProduction = Number(text);
+											newDetails[index].actualProductionPrice = Number(text) * detail.productPrice;
 											setWorkOrderDetails(newDetails);
 										}}
 									/>
@@ -332,11 +333,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 									<TextInput
 										style={{ fontSize: 14 }}
 										value={String(detail.actualProductionPrice)}
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].actualProductionPrice = Number(text);
-											setWorkOrderDetails(newDetails);
-										}}
+										editable={false}
 									/>
 								</View>
 								<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -346,11 +343,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 									<TextInput
 										style={{ fontSize: 14 }}
 										value={String(detail.faultyProductPrice)}
-										onChangeText={(text) => {
-											const newDetails = [...workOrderDetails];
-											newDetails[index].faultyProductPrice = Number(text);
-											setWorkOrderDetails(newDetails);
-										}}
+										editable={false}
 									/>
 								</View>
 								<View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -363,6 +356,7 @@ const ProductManagerHomeDetail = ({ route }) => {
 										onChangeText={(text) => {
 											const newDetails = [...workOrderDetails];
 											newDetails[index].faultyProducts = Number(text);
+											newDetails[index].faultyProductPrice = Number(text) * detail.productPrice;
 											setWorkOrderDetails(newDetails);
 										}}
 									/>

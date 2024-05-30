@@ -79,12 +79,14 @@ function BOMDetail({ route }) {
 			materialUnit: newMaterialUnit,
 			materialPrice: newMaterialPrice,
 			materialQuantity: newMaterialQuantity,
+			totalUnitPrice: newMaterialPrice * newMaterialQuantity,
 		};
 
 		setMaterials([...materials, newMaterial]);
 		setBomDetail((prevState) => ({
 			...prevState,
 			materials: [...prevState.materials, newMaterial],
+			totalPrice: prevState.totalPrice ? prevState.totalPrice + newMaterial.totalUnitPrice : newMaterial.totalUnitPrice,
 		}));
 
 		console.log("materials: ", materials);
