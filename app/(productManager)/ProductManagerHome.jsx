@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	ScrollView,
-	FlatList,
-	TouchableOpacity,
-	Alert,
-	TextInput,
-	Button,
-} from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, FlatList, TextInput } from "react-native";
 import { getWorkOrderToday } from "../../services/WorkOrderServices";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -19,6 +9,8 @@ import { AppLoader } from "../../components";
 import { Chatbot } from "../../services/ChatbotServices";
 import { CustomButton } from "../../components";
 
+// Product Manager Home page
+// Author: Pham Van Cao
 const ProductManagerHome = () => {
 	const { token, userId } = useGlobalContext();
 	const navigation = useNavigation();
@@ -30,10 +22,14 @@ const ProductManagerHome = () => {
 		{ label: "Finish", value: "PMcheck" },
 	]);
 
+	// Refetch data when focus
+	// Author: Pham Van Cao
 	useFocusEffect(
 		React.useCallback(() => {
 			const fetchData = async () => {
 				setLoading(true);
+				// Get all work orders of today
+				// Author: Pham Van Cao
 				const data = await getWorkOrderToday(token);
 				setWorkOrders(data.result);
 				setLoading(false);
@@ -43,6 +39,8 @@ const ProductManagerHome = () => {
 		}, [token, userId])
 	);
 
+	// Navigate to Home Detail page
+	// Author: Pham Van Cao
 	const handleCardPress = (id) => {
 		try {
 			navigation.navigate("ProductManagerHomeDetail", { id });
@@ -54,10 +52,14 @@ const ProductManagerHome = () => {
 	const [input, setInput] = useState("");
 	const [response, setResponse] = useState(null);
 
+	// Handle input chatbox change
+	// Author: Pham Van Cao
 	const handleInputChange = (text) => {
 		setInput(text);
 	};
 
+	// Handle submit chatbox
+	// Author: Pham Van Cao
 	const handleSubmit = async () => {
 		try {
 			console.log("input: ", input);
@@ -205,6 +207,8 @@ const ProductManagerHome = () => {
 	);
 };
 
+// Styles of Product Manager Home page
+// Author: Pham Van Cao
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

@@ -80,6 +80,9 @@ const WorkOrderDetail = ({ route }) => {
 					description: "Work Order updated successfully!",
 				});
 			}
+			setTimeout(() => {
+				navigation.navigate("WorkOrderHome");
+			}, 3500);
 		} catch (error) {
 			console.error(error);
 			if (errorToastRef.current) {
@@ -106,9 +109,9 @@ const WorkOrderDetail = ({ route }) => {
 					description: "Work Order deleted successfully!",
 				});
 			}
-			const timer = setTimeout(() => {
+			setTimeout(() => {
 				navigation.navigate("WorkOrderHome");
-			}, 4000);
+			}, 3500);
 		} catch (error) {
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
