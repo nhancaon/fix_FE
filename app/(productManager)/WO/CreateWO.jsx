@@ -86,49 +86,49 @@ const CreateWorkOrder = () => {
 
 	const handleSave = async () => {
 		console.log('mps', mps);
-		// try {
-		// 	setLoading(true);
-		// 	const WO = await creatWorkOrder(token, workOrder);
-		// 	if (WO && WO.result) {
-		// 		const WOID = WO.result;
-		// 		console.log("WOID: ", WOID);
-		// 		const newWorkOrderDetails = workOrderDetails.map((detail) => ({
-		// 			...detail,
-		// 			workOrderId: WOID,
-		// 		}));
+		try {
+			setLoading(true);
+			const WO = await creatWorkOrder(token, workOrder);
+			if (WO && WO.result) {
+				const WOID = WO.result;
+				console.log("WOID: ", WOID);
+				const newWorkOrderDetails = workOrderDetails.map((detail) => ({
+					...detail,
+					workOrderId: WOID,
+				}));
 
-		// 		setWorkOrderDetails(newWorkOrderDetails);
-		// 		console.log(newWorkOrderDetails);
-		// 		const WODetail = await createWorkOrderDetail(
-		// 			token,
-		// 			newWorkOrderDetails
-		// 		);
-		// 		console.log(WODetail);
-		// 		if (successToastRef.current) {
-		// 			successToastRef.current.show({
-		// 				type: "success",
-		// 				text: "Success",
-		// 				description: "MPS created successfully!",
-		// 			});
-		// 		}
-		// 		const timer = setTimeout(() => {
-		// 			navigation.navigate("WorkOrderHome");
-		// 		}, 4000);
-		// 	} else {
-		// 		if (errorToastRef.current) {
-		// 			errorToastRef.current.show({
-		// 				type: "danger",
-		// 				text: "Error",
-		// 				description:
-		// 					"API call failed, WO or WO.result is null or undefined!",
-		// 			});
-		// 		}
-		// 	}
-		// } catch (error) {
-		// 	console.error(error);
-		// } finally {
-		// 	setLoading(false);
-		// }
+				setWorkOrderDetails(newWorkOrderDetails);
+				console.log(newWorkOrderDetails);
+				const WODetail = await createWorkOrderDetail(
+					token,
+					newWorkOrderDetails
+				);
+				console.log(WODetail);
+				if (successToastRef.current) {
+					successToastRef.current.show({
+						type: "success",
+						text: "Success",
+						description: "MPS created successfully!",
+					});
+				}
+				const timer = setTimeout(() => {
+					navigation.navigate("WorkOrderHome");
+				}, 4000);
+			} else {
+				if (errorToastRef.current) {
+					errorToastRef.current.show({
+						type: "danger",
+						text: "Error",
+						description:
+							"API call failed, WO or WO.result is null or undefined!",
+					});
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
