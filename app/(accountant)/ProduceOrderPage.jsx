@@ -4,8 +4,21 @@ import { FlatList } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Swipeable } from "react-native-gesture-handler";
-import { getAllOrder, addOrder, deleteOrder, updateOrder } from "../../services/OrderService";
-import { CustomButton, AppLoader, ToastMessage, AlertWithTwoOptions, OCModal, OUModal, LeftSwipe } from "../../components";
+import {
+	getAllOrder,
+	addOrder,
+	deleteOrder,
+	updateOrder,
+} from "../../services/OrderService";
+import {
+	CustomButton,
+	AppLoader,
+	ToastMessage,
+	AlertWithTwoOptions,
+	OCModal,
+	OUModal,
+	LeftSwipe,
+} from "../../components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-paper";
 import dateUtilsInstance from "../../utils/DateUtils";
@@ -19,7 +32,8 @@ const ProduceOrder = () => {
 	const [error, setError] = useState(null);
 	const successToastRef = useRef(null);
 	const errorToastRef = useRef(null);
-	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false);
 	const [ocModalVisible, setocModalVisible] = useState(false);
 	const [ouModalVisible, setouModalVisible] = useState(false);
 	const [id, setId] = useState(false);
@@ -100,6 +114,9 @@ const ProduceOrder = () => {
 			setLoading(true);
 			// Add new order to database
 			// Author: Nguyen Cao Nhan
+			if (name === "" || contact === "" || kindOrder === "" || dateEnd === "") {
+				throw new Error("Please fill all fields!");
+			}
 			const add_res = await addOrder(
 				token,
 				parseInt(userLogin.id),
@@ -127,7 +144,13 @@ const ProduceOrder = () => {
 				await fetchData();
 			}
 		} catch (error) {
-			Alert.alert("Error", "Failed to create sale forecast");
+			if (errorToastRef.current) {
+				errorToastRef.current.show({
+					type: "danger",
+					text: "Error",
+					description: error.message,
+				});
+			}
 		} finally {
 			setLoading(false);
 		}

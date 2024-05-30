@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Author: Pham Van Cao
 // Base URL for the API
-const BASE_URL = "http://172.0.0.159:8082";
+const BASE_URL = "http://192.168.1.5:8082";
 
 // Create an Axios instance with the base URL
 const httpRequest = axios.create({

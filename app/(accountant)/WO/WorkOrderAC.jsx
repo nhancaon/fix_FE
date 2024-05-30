@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	ScrollView,
+	TouchableOpacity,
+	TextInput,
+	Image,
+} from "react-native";
 import {
 	deleteWorkOrder,
 	getWorkOrderDetail,
@@ -38,7 +46,8 @@ const WorkOrderAC = ({ route }) => {
 		{ label: "Processing", value: "processing" },
 		{ label: "Finish", value: "ACcheck" },
 	]);
-	const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false);
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(workOrder.workOrderStatus);
@@ -54,7 +63,7 @@ const WorkOrderAC = ({ route }) => {
 		React.useCallback(() => {
 			const fetchData = async () => {
 				setLoading(true);
-				// Get work order details 
+				// Get work order details
 				// Author: Nguyen Cao Nhan
 				const response = await getWorkOrderDetail(token, id);
 				setWorkOrder(response.result.workOrder);
@@ -86,6 +95,9 @@ const WorkOrderAC = ({ route }) => {
 			const responseDT = await createWorkOrderDetail(token, workOrderDetails);
 			console.log("response: ", response);
 			console.log("responseDT: ", responseDT);
+			if (!response || !responseDT) {
+				throw new Error("Update failed!");
+			}
 			if (successToastRef.current) {
 				successToastRef.current.show({
 					type: "success",
@@ -94,15 +106,14 @@ const WorkOrderAC = ({ route }) => {
 				});
 			}
 			setTimeout(() => {
-                navigation.goBack();
-            }, 3500);
+				navigation.goBack();
+			}, 3500);
 		} catch (error) {
-			console.error(error);
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
 					type: "danger",
 					text: "Error",
-					description: "Work Order update failed:!",
+					description: error.message,
 				});
 			}
 		} finally {
@@ -125,8 +136,8 @@ const WorkOrderAC = ({ route }) => {
 				});
 			}
 			setTimeout(() => {
-                navigation.goBack();
-            }, 3500);
+				navigation.goBack();
+			}, 3500);
 		} catch (error) {
 			if (errorToastRef.current) {
 				errorToastRef.current.show({
@@ -205,10 +216,13 @@ const WorkOrderAC = ({ route }) => {
 								setOpen={setOpen}
 								setValue={setValue}
 								setItems={setItems}
-								containerStyle={[styles.dropDownContainer, open && { zIndex: 1000 }]}
-        						style={styles.dropDown}
-        						itemStyle={{ justifyContent: 'flex-start' }}
-        						dropDownStyle={styles.dropDown}
+								containerStyle={[
+									styles.dropDownContainer,
+									open && { zIndex: 1000 },
+								]}
+								style={styles.dropDown}
+								itemStyle={{ justifyContent: "flex-start" }}
+								dropDownStyle={styles.dropDown}
 								onChangeValue={(value) => {
 									console.log("onChangeValue called with:", value);
 									setWorkOrder((prevState) => ({
@@ -423,11 +437,11 @@ const WorkOrderAC = ({ route }) => {
 			</View>
 
 			<CustomButton
-              	icon={"plus"}
-            	iconSize={28}
-              	containerStyles="p-0 absolute bottom-28 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
-              	isLoading={false}
-              	handlePress={() =>
+				icon={"plus"}
+				iconSize={28}
+				containerStyles="p-0 absolute bottom-28 self-end right-4 h-12 w-12 rounded-full bg-green-500 items-center justify-center"
+				isLoading={false}
+				handlePress={() =>
 					setWorkOrderDetails((prevState) => [
 						...prevState,
 						{
@@ -439,8 +453,10 @@ const WorkOrderAC = ({ route }) => {
 							faultyProducts: 0,
 							actualProductionPrice: 0,
 							faultyProductPrice: 0,
-						},])}
-            />
+						},
+					])
+				}
+			/>
 
 			<View style={styles.buttonContainer}>
 				<IconButton
@@ -472,7 +488,7 @@ const WorkOrderAC = ({ route }) => {
 
 const styles = StyleSheet.create({
 	dropDownContainer: {
-		height: 45, 
+		height: 45,
 		width: "45%",
 		zIndex: 2000,
 	},
